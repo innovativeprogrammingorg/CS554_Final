@@ -3,17 +3,30 @@ import PropTypes from 'prop-types';
 
 
 class White_Card extends Component{
+	renderText(){
+		if(this.props.visible){
+			return (
+				<p className="White_Card Card_Text White">{this.props.text}</p>
+			);
+		}else{
+			return (
+				<p className="White_Card Card_Text White"></p>
+			);
+		}
+		
+	}
 	render(){
 		return (
 			<div className="White_Card">
-				<p className="White_Card Card_Text White">{this.props.text}</p>
+				{this.renderText()}
 			</div>
 		);
 	}
 }
 
 Search.propTypes = {
-  	text: PropTypes.string
+  	text: PropTypes.string,
+  	visible: PropTypes.bool
 };
 
 export default White_Card;
