@@ -6,7 +6,7 @@ class Players_Bar extends Component{
 	renderInternal(){
 		return this.props.players.map((player,i)=>{
 			return (
-				<User username={player.username} isOwner={i==0? true : false} />
+				<User username={player.username} isOwner={ i==0 ? true : false} />
 			);
 		});
 	}
