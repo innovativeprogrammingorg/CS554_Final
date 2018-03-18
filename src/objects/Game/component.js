@@ -9,20 +9,23 @@ class Game extends Component{
 	render(){
 		return(
 			<div className="game">
-				<Game_Action_Bar black_card={this.props.black_card} />
-				<Played_Cards all_cards={this.props.all_cards} users_cards={this.props.users_cards}/>
-				<Player_Hand cards={this.props.hand_cards} />
+				<div className="game_top_bar">
+					<span className="game_top_bar" id="Round">{this.props.round}</span>
+					<span className="game_top_bar" id="Time">{this.props.min}:{this.props.sec}</span>
+				</div>
+				<Game_Action_Bar/>
+				<Played_Cards/>
+				<Player_Hand/>
 			</div>
 			);
 	}
 }
 
 
-Game.propTypes = {	
-	all_cards: PropTypes.array,
-	users_cards: PropTypes.number,
-	hand_cards: PropTypes.array,
-	black_card: PropTypes.string
+Game.propTypes = {
+	round:PropTypes.number,
+	min:PropTypes.number,
+	sec:PropTypes.number	
 };
 
 export default Game;
