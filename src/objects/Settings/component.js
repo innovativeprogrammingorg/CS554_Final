@@ -50,6 +50,7 @@ class Settings extends Component{
 	}
 	render(){
 		<div className="settings">
+			{renderSettings()}
 		</div>
 	}
 }
