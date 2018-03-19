@@ -354,13 +354,77 @@
 		"In the final round of this year’s Omegathon, Omeganauts must face off in a game of _______."
 	],
 	"PAX 2013 East Pack C":[
-		"Achieving 500 actions per minute.",
-		"Forgetting to eat, and consequently dying.",
-		"Wil Wheaton crashing an actual spaceship.",
-		"The Klobb.",
-		"Charging up all the way.",
-		"Vespene gas.",
-		"Judging elves by the color of their skin and not by the content of their character.",
-		"Smashing all the pottery in a Pottery Barn in search of rupees."
-	]
+		"Press (down)(down)(back)(forward)(B) to unleash _______.",
+		"I don’t know exactly how I got the PAX plague, but I suspect it had something to do with _______."
+	],
+	"PAX 2013 Prime Pack":[
+		"The most controversial game at PAX this year is an 8-bit indie platformer about ___.",
+		"What made Spock cry?",
+		"___: Achievement unlocked.",
+		"There was a riot at the Gearbox panel when they gave the attendees ____.",
+		"In the new DLC for Mass Effect, Sheppard must save the galaxy from ___.",
+		"What’s the latest bullshit that’s troubling this quaint fantasy town?",
+		"&nbsp;No Enforcer wants to manage the panel on ___."
+	],
+	"PAX 2014 East Pack":[],
+	"PAX 2014 East Panel Pack":[
+		"___ was totally worth the trauma.",
+		"Let me tell you about my new startup. It’s basically ____, but for ____."
+	],
+	"PAX 2014 Prime Panel Pack":[
+		"The Discovery Channel presents: ___ week.",
+		"Like ___, State Farm is there.",
+		"Bob Ross’s little-known first show was called “The Joy of ___.”",
+		"During my first game of D&amp;D I accidentally summoned ____.",
+		"Buzzfeed presents 10 pictures of ___ that look like ___."
+	],
+	"90's Nostalgia Pack":[
+		"Siskel and Ebert have panned _______ as “poorly conceived” and “sloppily executed.”",
+		"Up next on Nickelodeon: “Clarissa Explains _______.”",
+		"I’m a bitch, I’m a lover, I’m a child, I’m _______.",
+		"How did Stella get her groove back?",
+		"Believe it or not, Jim Carrey can do a dead-on impression of _______.",
+		"It’s Morphin’ Time! Mastodon! Pterodactyl!",
+		"Triceratops! Sabertooth Tiger! _______!",
+		"Tonight on SNICK: “Are You Afraid of _______?”"
+	],
+	"Bigger Blacker Box Pack":[],
+	"Fascism Pack":[
+		"Leni Riefenstahl’s last movie was called Triumph of _____.",
+		"Before swallowing his pride and a cyanide pill, Adolf whispered to Eva, “Sorry about _____”."
+	],
+	"Fantasy Pack":[
+		"Your father was a powerful wizard, Harry. Before he died, he left you something very precious: ___.",
+		"Legend tells of a princess who has been asleep for a thousand years and can only be awoken by ___.",
+		"And in the end, the dragon was not evil; he just wanted___.",
+		"Who blasphemes and bubbles at the center of all infinity, whose name no lips dare speak aloud, and who gnaws hungrily in inconceivable, unlighted chambers beyond time?",
+		"Critics are raving about HBO’s new Game Of Thrones spin-off, “___ of ___.”",
+		"Having tired of poetry and music, the immortal elves now fill their days with ___."
+	],
+	"Food Pack":[
+		"I’m Bobby Flay, and if you can’t stand ___. get out of the kitchen!",
+		"Now on Netflix: <em>Jiro Dreams Of ___</em>.",
+		"It’s not delivery. It’s ___.",
+		"Excuse me, waiter. Could you take this back? This soup tastes like ___.",
+		"Aw babe, your burbs smell like ___.",
+		"Don’t miss Rachel Ray’s hit new show, <em>Cooking with ___</em>."
+	],
+	"Hanukkah LOL Pack":[],
+	"House Of Cards Pack":[
+		"I can’t believe Netflix is using __________ to promote House of Cards.",
+		"I’m not going to lie. I despise __________. There, I said it.",
+		"A wise man said, “Everything is about sex. Except sex. Sex is about __________.”",
+		"Corruption. Betrayal. __________. Coming soon to Netflix, “House of __________.”",
+		"Our relationship is strictly professional. Let’s not complicate things with __________.",
+		"Because you enjoyed __________, we thought you’d like __________.",
+		"We’re not like other news organizations. Here at Slugline, we welcome__________ in the office.",
+		"Cancel all my meetings. We’ve got a situation with __________ that requires my immediate attention.",
+		"If you need him to, Remy Danton can pull some strings and get you __________, but it’ll cost you."
+	],
+	"Mass Effect Pack":[
+		"We were the two best hand-to-hand combatants on the ship. I had reach, but she had ___.",
+		"It turns out The Reapers didn’t want to destroy the galaxy. They just wanted ___.",
+		"Coming this spring from BioWare, Mass Effect: ___.",
+		"I’m Commander Shepard, and this is my favorite place for ____ on the Citadel."
+	]	
 }
