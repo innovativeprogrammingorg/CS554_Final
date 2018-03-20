@@ -1,7 +1,7 @@
 import Settings from "./component.js";
-import { connect } from "react-redux";
+/**import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import {init_settings} from '../actions/settings_actions.js';
+import {init_settings} from '../../actions/settings_actions.js';
 
 const mapStateToProps = (state) => {
 
@@ -15,5 +15,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
 
   	return bindActionCreators({init_settings}, dispatch);
-};
-export default connect(mapStateToProps,mapDispatchToProps)(Settings);
+};*/
+//export default connect(mapStateToProps,mapDispatchToProps)(Settings);
+export default Settings;

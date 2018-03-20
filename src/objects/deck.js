@@ -8,11 +8,7 @@ const d_sorter = (a,b)=>{
 }
 
 class Deck{
-	constructor(){
-
-	}
-
-	constructor(cards){
+	constructor(cards = []){
 		this.cards = cards;
 		this.shuffle();
 	}
@@ -35,7 +31,14 @@ class Deck{
 	}
 
 	draw(no_cards = 1){
-		return this.cards.pop();
+		if(no_cards > this.cards.length){
+			throw new Exception("Not enough cards left in deck");
+		}
+		let out = [];
+		for(let i = 0;i<no_cards;i++){
+			out.push(this.cards.pop());
+		}
+		return out;
 	}
 
 

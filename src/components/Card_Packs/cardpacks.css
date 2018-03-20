@@ -1,0 +1,9 @@
+div.card_packs{
+	user-select: none;
+}
+
+p.card_pack{
+	margin:0;
+	padding:0;
+	line-height: normal;
+}

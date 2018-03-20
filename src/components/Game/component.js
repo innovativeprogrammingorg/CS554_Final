@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Game_Action_Bar from '../Game_Action_Bar/component.js';
-import Played_Cards from '../Played_Cards/component.js';
-import Player_Hand from '../Player_Hand/component.js';
+import GameActionBar from '../Game_Action_Bar/component.js';
+import PlayedCards from '../Played_Cards/component.js';
+import PlayerHand from '../Player_Hand/component.js';
 
 class Game extends Component{
 	
@@ -13,9 +13,9 @@ class Game extends Component{
 					<span className="game_top_bar" id="Round">{this.props.round}</span>
 					<span className="game_top_bar" id="Time">{this.props.min}:{this.props.sec}</span>
 				</div>
-				<Game_Action_Bar/>
-				<Played_Cards/>
-				<Player_Hand/>
+				<GameActionBar/>
+				<PlayedCards/>
+				<PlayerHand/>
 			</div>
 			);
 	}

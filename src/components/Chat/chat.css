@@ -1,0 +1,19 @@
+
+div.chat{
+	float:left;
+	height:35vh;
+	min-height:400px;
+	width:80vw;
+}
+form.msg_sender{
+	text-align: center;
+
+}
+#msg{
+	width:94.5%;
+	padding-left:0.5%;
+	border-width: 2px;
+	border-style:solid;
+	border-top-color: #AAA;
+
+}

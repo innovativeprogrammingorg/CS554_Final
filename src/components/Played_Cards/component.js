@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import White_Card from "../White_Card/component.js";
+import WhiteCard from "../White_Card/component.js";
 
 
-class Played_Cards extends Component{
+class PlayedCards extends Component{
 	renderCards(){
 		return this.props.cards.map((card,i)=>{
-			<White_Card text={card.text} visible={this.props.users_cards} /> 
+			return(
+				<WhiteCard text={card.text} visible={this.props.usersCards} /> 
+				);
+			
 		});	
 	}
 	render(){
@@ -18,28 +21,31 @@ class Played_Cards extends Component{
 	}
 }
 
-class Played_Cards_Main extends Component{
+class PlayedCardsMain extends Component{
 	renderCards(){
-		return this.props.all_cards.map((cards,i)=>{
-			<White_Card cards={cards} users_cards = {i == this.props.users_cards}/>
+		return this.props.allCards.map((cards,i)=>{
+			return(
+					<WhiteCard cards={cards} usersCards = {i === this.props.usersCards}/>
+				);
+			
 		});
 	}
 
 	render(){
 		return(
-			<div id="player_hand">{renderCards()}</div>
+			<div id="player_hand">{this.renderCards()}</div>
 		);
 	}
 }
 
-Played_Cards.propTypes = {
+PlayedCards.propTypes = {
 	cards: PropTypes.array,
-	users_cards: PropTypes.bool
+	usersCards: PropTypes.bool
 };
 
-Played_Cards_Main.propTypes = {
-	all_cards: PropTypes.array,
-	users_cards: PropTypes.number  	
+PlayedCardsMain.propTypes = {
+	allCards: PropTypes.array,
+	usersCards: PropTypes.number  	
 };
 
-export default Played_Cards_Main;
+export default PlayedCardsMain;

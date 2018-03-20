@@ -1,46 +1,42 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import CardPacks from '../Card_Packs/component.js';
+import './settings.css';
 
 class Settings extends Component{
 	renderSettings(){
 		return this.props.settings.map((setting,i) =>{
 			let value = setting.default;
-			if(this.props.settings_values.hasOwnProperty(setting.name)){
-				value = settings_values[setting.name];
-			}else{
-				settings_values[setting.name] = value;
-			}
-
 			switch(setting.type){
 				case "number":
 					return (
-						<div className="setting">
-							<label className={setting.class} for={setting.name}> {setting.display_name} </label>
-							<input class={setting.class} type={setting.type} name={setting.name} id={setting.name}
-								max={setting.max} min={setting.min} value={value} />  
+						<div key={i} className="setting">
+							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
+							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name}
+								max={setting.max} min={setting.min} defaultValue={value} />  
 						</div>
 						);
 				case "password":
 					return (
-						<div className="setting">
-							<label className={setting.class} for={setting.name}> {setting.display_name} </label>
+						<div key={i} className="setting">
+							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
 							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name}
-								maxLength={setting.max} minLength={setting.min} value={value} />  
+								maxLength={setting.max} minLength={setting.min} defaultValue={value} autoComplete="off" />  
 						</div>
 						);
 				case "text":
 					return (
-						<div className="setting">
-							<label className={setting.class} for={setting.name}> {setting.display_name} </label>
+						<div key={i} className="setting">
+							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
 							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name}
-								maxLength={setting.max} minLength={setting.min} value={value} />  
+								maxLength={setting.max} minLength={setting.min} defaultValue={value} />  
 						</div>
 						);
 				default:
 					return (
-						<div className="setting">
-							<label className={setting.class} for={setting.name}> {setting.display_name} </label>
-							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name} value={value} />  
+						<div key={i} className="setting">
+							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
+							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name} defaultValue={value} />  
 						</div>
 					);
 			}
@@ -49,15 +45,18 @@ class Settings extends Component{
 	    });
 	}
 	render(){
-		<div className="settings">
-			{renderSettings()}
-		</div>
+		return(
+				<form className="settings">
+					{this.renderSettings()}
+					<CardPacks/>
+				</form>
+			);
+
 	}
 }
 
 Settings.propTypes = {
-  	settings: PropTypes.array,
-  	settings_values:PropTypes.object
+  	settings: PropTypes.array
 };
 
 export default Settings;

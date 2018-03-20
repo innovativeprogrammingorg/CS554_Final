@@ -1,4 +1,4 @@
-[
+export const CARD_PACKS = [
 	"First Expansion",
 	"Second Expansion",
 	"Third Expansion",
@@ -35,4 +35,6 @@
 	"Mass Effect Pack",
 	"Post-Trump Pack",
 	"Reject Pack"
-]
+];
+
+export default CARD_PACKS;

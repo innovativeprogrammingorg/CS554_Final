@@ -1,0 +1,10 @@
+div.message_history{
+	width:95%;
+	height:95%;
+	margin: auto auto auto auto;
+	background-color: #DDD;
+	overflow-y: scroll;
+	border-width: 2px 2px 0 2px;
+	border-style:solid;
+	border-color:#000;
+}

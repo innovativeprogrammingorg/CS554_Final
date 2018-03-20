@@ -1,4 +1,4 @@
-[	
+export const GAME_SETTINGS = [	
 	{
 		"display_name":"Game Name",
 		"class":"game_name",
@@ -52,9 +52,8 @@
 		"max":60,
 		"min":0,
 		"default":""
-	},
-	{
-
 	}
 
-]
+];
+
+export default GAME_SETTINGS;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 
-class Black_Card extends Component{
+class BlackCard extends Component{
 	render(){
 		return (
 			<div className="Black_Card">
@@ -12,8 +12,8 @@ class Black_Card extends Component{
 	}
 }
 
-User.propTypes = {
+BlackCard.propTypes = {
   	text: PropTypes.string
 };
 
-export default Black_Card;
+export default BlackCard;

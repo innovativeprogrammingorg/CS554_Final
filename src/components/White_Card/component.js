@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 
-class White_Card extends Component{
+class WhiteCard extends Component{
 	renderText(){
 		if(this.props.visible){
 			return (
@@ -24,9 +24,9 @@ class White_Card extends Component{
 	}
 }
 
-Search.propTypes = {
+WhiteCard.propTypes = {
   	text: PropTypes.string,
   	visible: PropTypes.bool
 };
 
-export default White_Card;
+export default WhiteCard;

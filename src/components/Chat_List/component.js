@@ -1,14 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import './chatlist.css';
 
 
-import React, { Component } from 'react';
-
-import PropTypes from 'prop-types';
-
-
-class Chat_List extends Component{
-	render(){
+class ChatList extends Component{
+	renderMessages(){
 		return this.props.history.map((msg,i) =>{
 	        return (
 	          	<div className="message" >
@@ -17,11 +13,18 @@ class Chat_List extends Component{
 	        );
 	    });
 	}
+	render(){
+		return (
+			<div className="message_history">
+				{this.renderMessages()}
+			</div>
+		);
+	}
 }
 
-Chat_List.propTypes = {
+ChatList.propTypes = {
   	user: PropTypes.string,
   	history: PropTypes.array
 };
 
-export default Chat_List;
+export default ChatList;
