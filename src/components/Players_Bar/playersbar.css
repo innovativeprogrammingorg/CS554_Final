@@ -7,3 +7,7 @@ div.players_bar{
 	overflow-y: auto;
 	text-align:center;
 }
+h2.player_bar_title{
+	margin:0;
+	padding:0;
+}

@@ -1,0 +1,17 @@
+
+div.user{
+	background-color: #EEE;
+	border-style:outset;
+	border-width:0 0 1px 0;
+}
+
+
+div.user p{
+	margin:0;
+	padding:0;
+
+}
+
+p.user_name{
+	font-weight: bold;
+}

@@ -1,9 +1,14 @@
 div.card_packs{
 	user-select: none;
+	border:1px solid #444;
+	padding:5px;
 }
 
 p.card_pack{
 	margin:0;
 	padding:0;
 	line-height: normal;
+}
+p.card_pack input:hover{
+	cursor:pointer;
 }

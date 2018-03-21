@@ -1,0 +1,22 @@
+nav{
+	padding:2px 5px 2px 10px;
+	background-color:#333;
+}
+
+button.nav{
+	margin:0 1% 0 0;
+}
+button.nav:hover{
+	cursor:pointer;
+}
+
+button.logout{
+	float:right;
+	background-color:transparent;
+	color:white;
+	border:none;
+}
+button.logout:hover{
+	color:red;
+	cursor:pointer;
+}
