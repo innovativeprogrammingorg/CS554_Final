@@ -4,7 +4,7 @@ import GameActionBar from '../Game_Action_Bar/component.js';
 import PlayedCards from '../Played_Cards/component.js';
 import PlayerHand from '../Player_Hand/component.js';
 
-class Game extends Component{
+class GameUI extends Component{
 	
 	render(){
 		return(
@@ -22,10 +22,10 @@ class Game extends Component{
 }
 
 
-Game.propTypes = {
+GameUI.propTypes = {
 	round:PropTypes.number,
 	min:PropTypes.number,
 	sec:PropTypes.number	
 };
 
-export default Game;
+export default GameUI;
