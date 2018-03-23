@@ -3,15 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "ajv": "^6.3.0",
     "fs": "0.0.1-security",
     "fs-es6": "0.0.2",
     "grunt": "^1.0.2",
     "mongodb": "^3.0.4",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-redux": "^5.0.7",
     "react-scripts": "1.1.1",
-    "redux": "^3.7.2",
     "socket.io": "^2.0.4"
   },
   "scripts": {
