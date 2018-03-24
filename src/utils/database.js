@@ -29,7 +29,6 @@ export const init = ()=>{
 	}
 };
 
-
 export const getUser = (username)=>{
 	return new Promise((resolve,reject)=>{
 		if(typeof id == "undefined"){
@@ -55,7 +54,7 @@ export async function userExists(username){
 		throw err;
 	}
 	
-}	
+};	
 
 export async function insertUser(user){
 	if(userExists(user.username)){
@@ -71,55 +70,30 @@ export async function insertUser(user){
 
 };
 
-const getR = (id)=>{
-	return new Promise((resolve,reject)=>{
-		if(typeof id == "undefined"){
-			throw new Error("undefined id");
-		}
-		MongoClient.connect(url, function(err, db) {
-		  	if (err) throw err;
-		  	db.collection("recipes").findOne({ _id: id },function(error, result) {
-			    if (error) throw error;
-			    resolve(result);
-			    db.close();
-			});
-		  	
-		});
+export async function updateUser(user)=>{
+	await MongoClient.connect(url, function(err, db) {
+	  	if (err) throw err;
+	  	var myquery = { username: user.username };
+	  	var newvalues = { $set: user };
+	  	await db.collection("users").updateOne(myquery, newvalues, function(error, res) {
+	    	if (error) throw error;
+	    	if(res.result.nModified === 0){
+	    		throw new Error("No user exists with given username");
+	    	}
+    		
+	    	db.close();
+	  	});
 	});
 	
-}
-const update = (id,data)=>{
+};
+
+export const remove = (username)=>{
 	return new Promise((resolve,reject)=>{
-		if(typeof id == "undefined"){
-			throw new Error("undefined id");
-		}
 		
 		MongoClient.connect(url, function(err, db) {
 		  	if (err) throw err;
-		  	var myquery = { _id: id };
-		  	var newvalues = { $set: data };
-		  	db.collection("recipes").updateOne(myquery, newvalues, function(error, res) {
-		    	if (error) throw error;
-		    	if(res.result.nModified === 0){
-		    		throw new Error("No task exists with given id");
-		    	}
-	    		getR(id).then(task=>{
-	    			resolve(task);
-	    		});
-		    	db.close();
-		  	});
-		});
-	});
-}
-const remove = (id)=>{
-	return new Promise((resolve,reject)=>{
-		if(typeof id == "undefined"){
-			throw new Error("undefined id");
-		}
-		MongoClient.connect(url, function(err, db) {
-		  	if (err) throw err;
-		  	var my_query = { _id: id };
-		  	db.collection("recipes").deleteMany(my_query, function(error, obj) {
+		  	var my_query = { username: username };
+		  	db.collection("users").deleteMany(my_query, function(error, obj) {
 		    	if (error) throw error;
 		    	if(obj.result.n === 0){
 		    		throw new Error("No tasks have been removed");
