@@ -1,18 +1,31 @@
-
-
 /**
- * Dynamic array which allows the deletion of elements at a certain index
+ * A simulated dynamic array which contains methods for array manulation which are more 
+ * relevant to this game
  */
 class DArray{
+
+	constructor(){
+		this.length = 0;
+	}
+
 	constructor(...args){
 		this.length = args.length;
 		for(let i = 0;i < args.length;i++){
 			this[i] = args[i];
 		}
 	}
+	/**
+	 * Gives this object array-like functionality
+	 */
 	[Symbol.iterator](){
 		return Object.keys(this).map(key=>this[key]).values();
 	}
+
+	/**
+	 * Removes the element at the given index
+	 * @param  {Integer} index The index of the element to be deleted
+	 * @return {Any}           The deleted element
+	 */
 	remove(index){
 		if(typeof index != 'number'){
 			throw new Exception('InvalidArgumentException');
@@ -44,10 +57,25 @@ class DArray{
 			this.remove(index);
 		}
 	}
+	removeByProperty(prop,attribute){
+		let index = -1;
+		for(let i = 0;i<this.length;i++){
+			if(this[i][property_name] == value){
+				index = i;
+				break;
+			}
+		}
+		if(index != -1){
+			return this.remove(index);
+		}
+		return -1;
+	}
+
 	append(obj){
 		this[this.length] = obj;
 		this.length++;
 	}
+
 	toArray(){
 		let out = [];
 		for(let i = 0;i<this.length;i++){

@@ -1,4 +1,4 @@
-import DArray from 'dynamic_array.js';
+import DArray from 'DynamicArray.js';
 import {HAND_SIZE} from 'config.js';
 
 class Player{
@@ -7,20 +7,21 @@ class Player{
 		this.name = name;
 		this.score = 0;
 		this.hand = new DArray();
+		this.missed_turns = 0;
 	}
-	get_cards(args){
+	getCards(args){
 		let out = [];
 		for(let i = 0;i<args.length;i++){
 			out.push[this.hand[args[i]]];
 		}
 		return out;
 	}
-	remove_cards(args){
+	removeCards(args){
 		for(let i = 0;i<args.length;i++){
 			this.hand.remove(args[i]);
 		}
 	}
-	give_cards(args){
+	giveCards(args){
 		if((args.length+this.hand.length)>HAND_SIZE){
 			throw new Exception("Player given too many cards");
 		}
@@ -28,7 +29,7 @@ class Player{
 			this.hand.append(args[i]);
 		}
 	}
-	award_point(){
+	awardPoint(){
 		this.score++;
 	}
 	static compareByName(player,prop){

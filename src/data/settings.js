@@ -33,7 +33,7 @@ export const GAME_SETTINGS = [
 		type:"number",
 		max:120,
 		min:0,
-		default:"30"
+		default:30
 	},
 	{
 		display_name:"Blank Cards",

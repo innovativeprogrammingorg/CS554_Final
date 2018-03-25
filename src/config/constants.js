@@ -8,3 +8,7 @@ export const CRYPTO_KEY_LEN = 4096
 export const CRYPTO_ALG = 'sha256';
 
 export const HAND_SIZE = 10;
+
+export const BLANK_SPACE = '______';
+
+export const GAME_CAPACITY = 100;
