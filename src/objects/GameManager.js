@@ -8,14 +8,27 @@ import {GAME_CAPACITY} from '../config/constants.js';
  * Only one instance of this class should exist per shard
  */
 class GameManager{
-
-	constructor(){
+	/**
+	 * Constructs a new GameManager
+	 * @param  callbacks
+			onMaxCapacity:called when max capacity is reached,
+			onSpaceAvailible:called when all spaces are no longer filled,
+			onGameStart:called when a game is started,
+			game: callbacks which will be passed to the game objects
+				onAllUsersPlayed:called when all users have played their cards
+					@param game_id The id of the game calling the function
+				onPlayerWin:called when a player has won the game
+					@param game_id The id of the game calling the function
+					@param name    The name of the player who won the game
+				onOutOfCards: called when a game has run out of cards before a player has won
+					@param game_id The id of the game calling the function
+			
+		
+	 */
+	constructor(callbacks){
 		this.full = false;
-		this.callbacks = {
-			onMaxCapacity:undefined,
-			onSpaceAvailible:undefined,
-			onGameStart:undefined
-		};
+		this.callbacks = callbacks;
+		this.callbacks.game.onGameOver = this.removeGame;
 		this.deckManager = new DeckManager();
 		this.games = new DArray();
 	}
@@ -27,7 +40,7 @@ class GameManager{
 	 * @return {Boolean}           Whether or not a game was created successfully
 	 */
 	createGame(card_packs,settings,players){
-		if(this.games.length >= GAME_CAPACITY){
+		if(this.games.length >= GAME_CAPACITY || this.full){
 			return false;
 		}
 		if(this.games.length == GAME_CAPACITY - 1){
@@ -54,15 +67,13 @@ class GameManager{
 		this.games.removeByProperty("_id",game_id);
 		if(this.full){
 			this.callbacks.onSpaceAvailible();
+			this.full = false;
 		}
 	}
 
 	getGame(game_id){
 		return this.games.lookup("_id",game_id);
 	}
-
-
-
 
 
 }
