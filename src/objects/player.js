@@ -6,22 +6,21 @@ class Player{
 	constructor(name){
 		this.name = name;
 		this.score = 0;
-		this.is_zar = false;
 		this.hand = new DArray();
 	}
-	get_cards(args...){
+	get_cards(args){
 		let out = [];
 		for(let i = 0;i<args.length;i++){
 			out.push[this.hand[args[i]]];
 		}
 		return out;
 	}
-	remove_cards(args...){
+	remove_cards(args){
 		for(let i = 0;i<args.length;i++){
 			this.hand.remove(args[i]);
 		}
 	}
-	give_cards(args...){
+	give_cards(args){
 		if((args.length+this.hand.length)>HAND_SIZE){
 			throw new Exception("Player given too many cards");
 		}

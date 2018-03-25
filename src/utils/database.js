@@ -31,9 +31,7 @@ export const init = ()=>{
 
 export const getUser = (username)=>{
 	return new Promise((resolve,reject)=>{
-		if(typeof id == "undefined"){
-			throw new Error("undefined id");
-		}
+		
 		MongoClient.connect(url, function(err, db) {
 		  	if (err) throw err;
 		  	db.collection("users").findOne({ username: username },function(error, result) {

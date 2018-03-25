@@ -48,4 +48,20 @@ class DArray{
 		this[this.length] = obj;
 		this.length++;
 	}
+	toArray(){
+		let out = [];
+		for(let i = 0;i<this.length;i++){
+			out.push(this[i]);
+		}
+		return out;
+	}
+
+	lookup(property_name,value){
+		for(let i = 0;i<this.length;i++){
+			if(this[i][property_name] == value){
+				return this[i];
+			}
+		}
+		return null;
+	}
 }

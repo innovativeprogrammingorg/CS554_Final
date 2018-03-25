@@ -34,6 +34,9 @@ class Deck{
 		if(no_cards > this.cards.length){
 			throw new Exception("Not enough cards left in deck");
 		}
+		if(no_cards == 1){
+			return this.cards.pop();
+		}
 		let out = [];
 		for(let i = 0;i<no_cards;i++){
 			out.push(this.cards.pop());
