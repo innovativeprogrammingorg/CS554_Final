@@ -9,7 +9,7 @@ class Game extends Component{
 	}
 	createGameHeader(){
 		return(
-			<h1 className='game'><span className="game_name">{this.props.gameName}</span>{this.getStatus}</h1>
+			<h1 className='game'><span className="game_name">{this.props.gameName}</span>{this.getStatus()}</h1>
 			);
 		
 	}
@@ -18,10 +18,10 @@ class Game extends Component{
 			<div className="game">
 				<div className="game_info">
 					{this.createGameHeader()}
-					<p className="game_info"><span>Players:</span></p>
-					<p className="game_info"><span>Spectators:</span></p>
-					<p className="game_info"><span>Pts to Win:</span></p>
-					<p className="game_info"><span>Card Packs:</span></p>
+					<p className="game_info"><span>Players:</span>({this.props.no_players}){this.props.players}</p>
+					<p className="game_info"><span>Spectators:</span>{this.props.spectators}</p>
+					<p className="game_info"><span>Pts to Win:</span>{this.props.goal}</p>
+					<p className="game_info"><span>Card Packs:</span>{this.props.card_packs}</p>
 				</div>
 			</div>
 			);

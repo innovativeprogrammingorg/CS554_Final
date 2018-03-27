@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import User from '../User/component.js';
+import User from '../User';
 import './playersbar.css';
 
 class PlayersBar extends Component{

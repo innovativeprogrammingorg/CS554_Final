@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import './create_account';
+import './create_account.css';
 
 class CreateAccount extends Component{
 	render(){

@@ -1,8 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import { Router} from 'react-router';
 import registerServiceWorker from './registerServiceWorker';
-import Main from './components/Main/component.js';
+import createBrowserHistory from 'history/createBrowserHistory'
 
-ReactDOM.render(<Main viewType={"SETTINGS"}/>, document.getElementById('root'));
+import routes from './routes.js';
+import './index.css';
+
+const history = createBrowserHistory();
+
+ReactDOM.render(<Router history={history} >{routes}</Router>, document.getElementById('root'));
 registerServiceWorker();

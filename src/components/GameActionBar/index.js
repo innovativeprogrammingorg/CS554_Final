@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import BlackCard from '../Black_Card/component.js';
+import BlackCard from '../BlackCard';
 
 class GameActionBar extends Component{
 	render(){

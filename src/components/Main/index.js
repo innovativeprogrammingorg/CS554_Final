@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import GameUI from '../GameUI/';
+import GameUI from '../GameUI';
 import Settings from '../Settings';
-import PlayersBar from '../Players_Bar/component.js';
-import Chat from '../Chat/component.js';
-import TopPanel from '../Top_Panel';
+import PlayersBar from '../PlayersBar';
+import Chat from '../Chat';
+import TopPanel from '../TopPanel';
 import {GAME_SETTINGS} from '../../data/settings.js';
 
 class Main extends Component{
@@ -37,6 +37,10 @@ class Main extends Component{
 			</div>
 			);
 	}
+}
+
+Main.defaultProps = {
+	viewType:'SETTINGS'
 }
 
 Main.propTypes = {

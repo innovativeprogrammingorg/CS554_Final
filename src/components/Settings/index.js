@@ -1,20 +1,63 @@
-import Settings from "./component.js";
-/**import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import {init_settings} from '../../actions/settings_actions.js';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import CardPacks from '../CardPacks';
+import './settings.css';
 
-const mapStateToProps = (state) => {
+class Settings extends Component{
+	renderSettings(){
+		return this.props.settings.map((setting,i) =>{
+			let value = setting.default;
+			switch(setting.type){
+				case "number":
+					return (
+						<div key={i} className="setting">
+							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
+							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name}
+								max={setting.max} min={setting.min} defaultValue={value} />  
+						</div>
+						);
+				case "password":
+					return (
+						<div key={i} className="setting">
+							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
+							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name}
+								maxLength={setting.max} minLength={setting.min} defaultValue={value} autoComplete="off" />  
+						</div>
+						);
+				case "text":
+					return (
+						<div key={i} className="setting">
+							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
+							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name}
+								maxLength={setting.max} minLength={setting.min} defaultValue={value} />  
+						</div>
+						);
+				default:
+					return (
+						<div key={i} className="setting">
+							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
+							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name} defaultValue={value} />  
+						</div>
+					);
+			}
 
-	return {
-		settings: state.settings_reducer.settings,
-		settings_values: state.settings_reducer.settings_values
-	};
+	       
+	    });
+	}
+	render(){
+		return(
+				<form className="settings">
+					{this.renderSettings()}
+					<CardPacks/>
+				</form>
+			);
 
+	}
+}
+
+Settings.propTypes = {
+  	settings: PropTypes.array
 };
 
-const mapDispatchToProps = (dispatch) => {
-
-  	return bindActionCreators({init_settings}, dispatch);
-};*/
-//export default connect(mapStateToProps,mapDispatchToProps)(Settings);
 export default Settings;
+

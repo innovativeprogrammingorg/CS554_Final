@@ -1,14 +1,22 @@
-import User from "./component.js";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import {init_settings} from '../actions/settings_actions.js';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import './user.css';
 
-const mapStateToProps = (state) => {
+class User extends Component{
+	render(){
+		/**TODO change look for owner**/
+		return (
+			<div className="user">
+				<p className="user_name" > {this.props.username}</p>
+				<p className="user_points">Score {this.props.points}</p>
+			</div>
+			);
+	}
+}
 
-	return {
-		
-	};
-
+User.propTypes = {
+  	username: PropTypes.string,
+  	points: PropTypes.number
 };
 
-export default Settings;
+export default User;

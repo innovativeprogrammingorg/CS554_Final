@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import WhiteCard from "../White_Card/component.js";
+import WhiteCard from "../WhiteCard";
 
 class PlayerHand extends Component{
 	renderCards(){

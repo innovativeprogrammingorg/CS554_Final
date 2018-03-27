@@ -1,0 +1,54 @@
+h1.login,h2.login{
+	text-align: center;
+}
+
+form.login{
+	width:600px;
+	background-color: #DDD;
+	padding:2% 3% 2% 3%;
+	margin:auto;
+	border-radius:5px;
+}
+div.login{
+	width:80%;
+	height:180px;
+	margin:auto;
+	background-color: #CCC;
+	padding:3px 10px 3px 10px;
+}
+
+p.login{
+	width:300px;
+	display:block;
+	margin-left:15%; 
+}
+input.login{
+	float:right;
+}
+label.login{
+	padding-right: 5px
+}
+input.login_button{
+	padding:3px 5px 3px 5px;
+	display:block;
+	margin:auto;
+}
+input.login_button:hover, input.guest_login_button:hover{
+	cursor:pointer;
+}
+
+p.guest_name{
+	display:block;
+	margin:auto;
+	width:300px;
+}
+p.guest_name span{
+	float:right;
+}
+input.guest_login_button{
+	margin-left:5px;
+}
+
+a.login:hover{
+	color:#5555FF;
+}
