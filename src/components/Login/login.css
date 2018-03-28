@@ -28,12 +28,12 @@ input.login{
 label.login{
 	padding-right: 5px
 }
-input.login_button{
+button.login{
 	padding:3px 5px 3px 5px;
 	display:block;
 	margin:auto;
 }
-input.login_button:hover, input.guest_login_button:hover{
+button.login:hover, button.guest_login_button:hover{
 	cursor:pointer;
 }
 
@@ -45,7 +45,7 @@ p.guest_name{
 p.guest_name span{
 	float:right;
 }
-input.guest_login_button{
+button.guest_login_button{
 	margin-left:5px;
 }
 

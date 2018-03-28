@@ -6,10 +6,19 @@ import PlayersBar from '../PlayersBar';
 import Chat from '../Chat';
 import TopPanel from '../TopPanel';
 import {GAME_SETTINGS} from '../../data/settings.js';
-
+const defaultState = {
+	players:[{username:"test_user",points:0},{username:"test_user2",points:0}],
+	chatHistory:[],
+	username:"test user",
+	viewType:'SETTINGS'
+};
 class Main extends Component{
+	constructor(){
+		super();
+		this.state = defaultState;
+	}
 	renderGameArea(){
-		switch(this.props.viewType){
+		switch(this.state.viewType){
 			case 'SETTINGS':
 					return (
 						<Settings settings= {GAME_SETTINGS}/>
@@ -24,11 +33,15 @@ class Main extends Component{
 		return (
 			<div>
 			<TopPanel/>
+			<h1>{this.props.match.params.id}</h1>
 			{this.renderGameArea()}
-			<PlayersBar players={[{username:"test_user",points:0},{username:"test_user2",points:0}]}/>
-			<Chat user={"test user"} history={[]} />
+			<PlayersBar players={this.state.players}/>
+			<Chat user={this.username} history={this.state.chatHistory} />
 			</div>
 			);
+	}
+	startGame(){
+
 	}
 	render(){
 		return (
@@ -38,13 +51,5 @@ class Main extends Component{
 			);
 	}
 }
-
-Main.defaultProps = {
-	viewType:'SETTINGS'
-}
-
-Main.propTypes = {
-	viewType:PropTypes.string
-};
 
 export default Main;
