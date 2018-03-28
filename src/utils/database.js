@@ -85,7 +85,7 @@ export async function updateUser(user)=>{
 	
 };
 
-export const remove = (username)=>{
+export const removeUser = (username)=>{
 	return new Promise((resolve,reject)=>{
 		
 		MongoClient.connect(url, function(err, db) {
@@ -103,3 +103,76 @@ export const remove = (username)=>{
 	});
 }
 
+
+export const getGame = (game_id)=>{
+	return new Promise((resolve,reject)=>{
+		
+		MongoClient.connect(url, function(err, db) {
+		  	if (err) throw err;
+		  	db.collection("games").findOne({ _id: game_id },function(error, result) {
+			    if (error) throw error;
+			    resolve(result);
+			    db.close();
+			});
+		  	
+		});
+	});
+};
+
+export async function gameExists(game_id){
+	try{
+		let results = await getUser(game_id);
+		return results == null;
+	}catch(err){
+		throw err;
+	}
+};	
+
+export async function insertGame(game){
+	if(userExists(game._id)){
+		throw new Error("Game already exists");
+	}
+	await MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		db.collection("games").insertOne(game, function(error, res) {
+			if (error) throw error;
+		    db.close();
+	  	});
+	});
+
+};
+
+export async function updateUser(game)=>{
+	await MongoClient.connect(url, function(err, db) {
+	  	if (err) throw err;
+	  	var myquery = { game_id: game._id };
+	  	var newvalues = { $set: user };
+	  	await db.collection("games").updateOne(myquery, newvalues, function(error, res) {
+	    	if (error) throw error;
+	    	if(res.result.nModified === 0){
+	    		throw new Error("No game exists with given id");
+	    	}
+    		
+	    	db.close();
+	  	});
+	});
+	
+};
+
+export const removeGame = (game_id)=>{
+	return new Promise((resolve,reject)=>{
+		
+		MongoClient.connect(url, function(err, db) {
+		  	if (err) throw err;
+		  	var my_query = { game_id: _id };
+		  	db.collection("games").deleteMany(my_query, function(error, obj) {
+		    	if (error) throw error;
+		    	if(obj.result.n === 0){
+		    		throw new Error("No tasks have been removed");
+		    	}
+		    	resolve(true);
+		    	db.close();
+		  	});
+		});
+	});
+}

@@ -51,13 +51,18 @@ class Game{
 		this.state.roundStart = Math.floor(Date.now()/1000);
 	}
 
-	add_player(player){
+	addPlayer(player){
 		this.players.append(player);
 	}
 
-	remove_player(name){
+	removePlayer(name){
 		this.players.remove(name,Player.compareByName);
 	}
+
+	hasRoom(){
+		return this.settings.maxPlayers < this.players.length; 
+	}
+	
 
 	dealCards(){
 		for(let i = 0;i<this.players.length;i++){

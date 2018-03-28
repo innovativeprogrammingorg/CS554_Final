@@ -10,7 +10,7 @@ class TopPanel extends Component{
 			case 'game':
 				return(
 					<nav>
-						<button className="nav">Start Game</button>
+						<button className="nav" onClick={this.props.startGame}>Start Game</button>
 						<button className="nav">Leave Game</button>
 						<button className="logout">Logout</button>
 					</nav>
@@ -38,7 +38,11 @@ TopPanel.defaultProps = {
 };
 
 TopPanel.propTypes = {
-	location:PropTypes.string
+	location:PropTypes.string,
+	startGame:PropTypes.func,
+	logout:PropTypes.func,
+	createGame:PropTypes.func,
+	leaveGame:PropTypes.func
 };
 
 export default TopPanel;

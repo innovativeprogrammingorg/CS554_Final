@@ -22,10 +22,17 @@ class PlayedCards extends Component{
 }
 
 class PlayedCardsMain extends Component{
+	constructor(){
+		super();
+		this.state = {
+			allCards:[],
+			usersCards:0
+		};
+	}
 	renderCards(){
-		return this.props.allCards.map((cards,i)=>{
+		return this.state.allCards.map((cards,i)=>{
 			return(
-					<WhiteCard cards={cards} usersCards = {i === this.props.usersCards}/>
+					<PlayedCards cards={cards} usersCards = {i === this.props.usersCards}/>
 				);
 			
 		});
@@ -37,15 +44,15 @@ class PlayedCardsMain extends Component{
 		);
 	}
 }
-
+PlayedCards.defaultProps = {
+	cards:[],
+	usersCards:false
+}
 PlayedCards.propTypes = {
 	cards: PropTypes.array,
 	usersCards: PropTypes.bool
 };
 
-PlayedCardsMain.propTypes = {
-	allCards: PropTypes.array,
-	usersCards: PropTypes.number  	
-};
+
 
 export default PlayedCardsMain;

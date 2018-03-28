@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import WhiteCard from "../WhiteCard";
 
 class PlayerHand extends Component{
+	constructor(){
+		super();
+		this.state = {
+			cards:[]
+		};
+	}
+	componentWillMount(){
+
+	}
 	renderCards(){
-		return this.props.cards.map((card,i)=>{
+		return this.state.cards.map((card,i)=>{
 			return(
 					<WhiteCard text={card.text}/>
 				);
@@ -19,8 +27,6 @@ class PlayerHand extends Component{
 	}
 }
 
-PlayerHand.propTypes = {
-	cards: PropTypes.array  	
-};
+
 
 export default PlayerHand;

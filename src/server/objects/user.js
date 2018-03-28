@@ -19,7 +19,7 @@ class User{
 	}
 
 
-	async verify(username,password){
+	async verify(password){
 		return new Promise((resolve,reject)=>{
 			crypto.pbkdf2(password,this.salt,CRYPTO_ITERATIONS,CRYPTO_KEY_LEN,CRYPTO_ALG,(err,result)=>{
 				if (err) throw err;
