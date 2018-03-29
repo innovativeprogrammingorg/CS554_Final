@@ -93,3 +93,5 @@ class DArray{
 		return null;
 	}
 }
+
+module.exports = DArray;

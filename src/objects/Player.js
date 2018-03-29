@@ -1,5 +1,5 @@
-import DArray from 'DynamicArray.js';
-import {HAND_SIZE} from 'config.js';
+const DArray = require('DynamicArray.js');
+const HAND_SIZE = require('../config/constants.js').HAND_SIZE;
 
 class Player{
 
@@ -37,4 +37,4 @@ class Player{
 	}
 }
 
-export default Player;
+module.exports = Player;

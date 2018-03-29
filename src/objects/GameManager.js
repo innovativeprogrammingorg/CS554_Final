@@ -1,7 +1,7 @@
-import DeckManager from './DeckManager.js';
-import DArray from './DynamicArray.js';
-import Game from './Game.js';
-import {GAME_CAPACITY} from '../config/constants.js';
+const DeckManager = require('./DeckManager.js');
+const DArray = require('./DynamicArray.js');
+const Game = require('./Game.js');
+const GAME_CAPACITY = require('../config/constants.js').GAME_CAPACITY;
 
 /**
  * Handles game creation and capacity
@@ -13,7 +13,7 @@ class GameManager{
 	 * @param  callbacks
 			onMaxCapacity:called when max capacity is reached,
 			onSpaceAvailible:called when all spaces are no longer filled,
-			onGameStart:called when a game is started,
+			onGameStart:called when a game is started
 			game: callbacks which will be passed to the game objects
 				onAllUsersPlayed:called when all users have played their cards
 					@param game_id The id of the game calling the function
@@ -32,30 +32,31 @@ class GameManager{
 		this.deckManager = new DeckManager();
 		this.games = new DArray();
 	}
+	updateGame(game_id){
+		let game = this.getGame(game_id);
+	}
+
+	createGame(owner){
+		let game = new Game();
+		game.addPlayer(owner);
+	}
 	/**
-	 * Creates a new game, and then starts that game
-	 * @param  {Array} card_packs  The cardpacks chosen for the game
-	 * @param  {Object} settings   The game settings
-	 * @param  {Array} players     The current players in the game
+	 * starts a game
 	 * @return {Boolean}           Whether or not a game was created successfully
 	 */
-	createGame(card_packs,settings,players){
+	startGame(game_id){
 		if(this.games.length >= GAME_CAPACITY || this.full){
 			return false;
 		}
 		if(this.games.length == GAME_CAPACITY - 1){
-			this.callbacks.onMaxCapacity(this._id);
+			this.callbacks.onMaxCapacity();
 			this.full = true;
 		}
 		try{
-			let game = new Game(
-				this.deckManager.getBCDeck(cardpacks),
-				this.deckManager.getWCDeck(cardpacks),
-				settings,
-				players);
+			
 			game.start();
 			this.games.append(game);
-			this.callbacks.onGameStart(game);
+			this.callbacks.onGameStart(game._id);
 			return true;
 		}catch(err){
 			return false;
@@ -77,3 +78,5 @@ class GameManager{
 
 
 }
+
+module.exports = GameManager;

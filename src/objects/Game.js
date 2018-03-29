@@ -1,18 +1,20 @@
-import DArray from 'DynamicArray.js';
-import * as uuidv4 from 'uuid/v4';
-import {HAND_SIZE} from '../config/constants.js';
+const DArray = require('DynamicArray.js');
+const uuidv4 = require('uuid/v4');
+const HAND_SIZE = require('../config/constants.js').HAND_SIZE ;
+const Settings = require('./Settings.js');
+const Player = require('./Player.js');
 /**
  * Represents the individual game
  */
 class Game{
-	constructor(blackDeck,whiteDeck,settings,players){
+	constructor(blackDeck=null,whiteDeck=null,settings=null,players=[]){
 		/**
 		 * Game vars
 		 */
 		this._id = uuidv4();
 		this.blackDeck = blackDeck;
 		this.whiteDeck = whiteDeck;
-		this.settings = settings;
+		this.settings = (settings===null)? new Settings() : settings;
 		this.players = new DArray();
 		this.winner = undefined;
 
@@ -37,7 +39,8 @@ class Game{
 			onAllUsersPlayed:undefined,
 			onPlayerWin:undefined,
 			onOutOfCards:undefined,
-			onGameOver:undefined
+			onGameOver:undefined,
+			onPlayerLeave:undefined
 		};
 
 	}
@@ -50,13 +53,18 @@ class Game{
 		this.state.cardZar = Math.floor(Math.random()*this.players.length);
 		this.state.roundStart = Math.floor(Date.now()/1000);
 	}
-
-	addPlayer(player){
-		this.players.append(player);
+	
+	addPlayer(name){
+		this.players.append(new Player(name));
 	}
 
 	removePlayer(name){
 		this.players.remove(name,Player.compareByName);
+		if(this.players.length === 0){
+			this.onGameOver(this._id);
+		}else{
+			this.onPlayerLeave(this._id,name);
+		}
 	}
 
 	hasRoom(){
@@ -85,12 +93,14 @@ class Game{
 			return;
 		}
 		let player = this.players.lookup("name",name);
-		this.state.playedCards.push(player.getCards(cards));
+		let played_cards = player.getCards(cards);
+		this.state.playedCards.push(played_cards);
 		player.removeCards(cards);
 		this.state.played.push(name);
 		if(this.state.played === this.players.length - 1){
 			this.callbacks.onAllUsersPlayed(this._id);
 		}
+		return played_cards;
 	}
 
 	roundWinner(cards_index){
@@ -123,4 +133,4 @@ class Game{
 
 }
 
-export default Game;
+module.exports = Game;

@@ -1,5 +1,6 @@
 
 const Auth = require('./authenication.js');
+
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
@@ -16,11 +17,11 @@ app.use(bodyParser.urlencoded({
   extended: true
 })); 
 
-app.use(session({ secret: "cats",resave: true,saveUninitialized: true}));
+//app.use(session({ secret: "4wehjgwegfwkw3k23",resave: true,saveUninitialized: true}));
 
 var sessionMiddleware = session({
     store: new RedisStore({}), // XXX redis server config
-    secret: "keyboard cat",
+    secret: "4wehjgwegfwkw3k23",
 });
 
 io.use(function(socket, next) {

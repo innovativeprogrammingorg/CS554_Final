@@ -1,4 +1,4 @@
-import Card from 'card.js';
+const Card = require('card.js');
 
 
 class WhiteCard extends Card{
@@ -12,4 +12,4 @@ class WhiteCard extends Card{
 }
 
 
-export default WhiteCard;
+module.exports = WhiteCard;

@@ -1,17 +1,17 @@
 
-export const MONGODB_URL = "mongodb://localhost:27017/";
+const MONGODB_URL = "mongodb://localhost:27017/";
 
-export const CRYPTO_ITERATIONS = 4000;
+const CRYPTO_ITERATIONS = 4000;
 
-export const CRYPTO_KEY_LEN = 4096
+const CRYPTO_KEY_LEN = 4096
 
-export const CRYPTO_ALG = 'sha256';
+const CRYPTO_ALG = 'sha256';
 
-export const HAND_SIZE = 10;
+const HAND_SIZE = 10;
 
-export const BLANK_SPACE = '______';
+const BLANK_SPACE = '______';
 
-export const GAME_CAPACITY = 100;
+const GAME_CAPACITY = 100;
 
 
 module.exports = {
