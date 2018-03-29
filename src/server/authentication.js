@@ -1,14 +1,12 @@
-import React from 'react';
-import User from './objects/user.js';
-import {getUser,userExists,getGame} from '../utils/database.js';
-import {Route, Redirect} from 'react-router'
+const User = require('./objects/user.js');
+const db = require('../utils/database.js');
 
 
 class Authentication{
 
 	static async authUser(username, password, cb){
 		try{
-			let result = await getUser(username);
+			let result = await db.getUser(username);
 			let user = new User(result.username,result.password,result.salt);
 			let out = await user.verify(password);
 			cb(out);
@@ -19,7 +17,7 @@ class Authentication{
 
 	static async authGuest(name,cb){
 		try{
-			let result = await userExists(name);
+			let result = await db.userExists(name);
 			cb(!result);
 		}catch(err){
 			console.log(err);
@@ -28,7 +26,7 @@ class Authentication{
 
 	static async authGame(game_id,game_password,cb,password_cb){
 		try{
-			let game = await getGame(game_id);
+			let game = await db.getGame(game_id);
 			if(!game.hasRoom()){
 				cb(false);
 				return;
@@ -45,22 +43,4 @@ class Authentication{
 	}
 }
 
-export const UserRoute = ({ component: Component, ...rest }) => (
-  <Route
-    {...rest}
-    render={props =>
-      auth.isUserAuthenticated ? (
-        <Component {...props} />
-      ) : (
-        <Redirect
-          to={{
-            pathname: "/",
-            state: { from: props.location }
-          }}
-        />
-      )
-    }
-  />
-);
-
-export default Authentication;
+module.exports = Authentication;

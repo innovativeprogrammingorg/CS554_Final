@@ -37,12 +37,12 @@ button.login:hover, button.guest_login_button:hover{
 	cursor:pointer;
 }
 
-p.guest_name{
+p.guestName{
 	display:block;
 	margin:auto;
 	width:300px;
 }
-p.guest_name span{
+p.guestName span{
 	float:right;
 }
 button.guest_login_button{

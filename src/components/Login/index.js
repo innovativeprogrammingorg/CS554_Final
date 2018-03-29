@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Link } from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import {Redirect} from 'react-router'
 import './login.css';
 
@@ -28,10 +28,20 @@ class Login extends Component{
 		xhttp.send("username="+username+"&password="+password);
 	}
 	handleGuestLogin(){
-		let guestName = document.forms.login.guest_name.value;
-		auth.authGuest(guestName,()=>{
-			this.setState({redirect:true});
-		});
+		let guestName = document.forms.login.guestName.value;
+		let xhttp = new XMLHttpRequest();
+		let login = this;
+		xhttp.onreadystatechange = ()=>{
+			if(this.readyState == 4 && this.status == 200){
+				login.setState({redirect:true});
+			}else if(this.readyState == 4 && this.status == 403){
+				alert("Name is already taken");
+			}
+		};
+		let url = window.location.protocol + "//" + window.location.hostname + ":8989"+"/login/";
+		xhttp.open("POST",url,true);
+		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhttp.send("username="+guestName);
 
 	}
 	render(){
@@ -58,9 +68,9 @@ class Login extends Component{
 					</div>
 					<Link to="/create"><h2 className="login">Click Here to Create an Account</h2></Link>
 					<h2 className="login">Continue as a guest</h2>
-					<p className="guest_name">
-						<label htmlFor="guest_name" className="login">Name</label>
-						<span><input type="text" name="guest_name" id="guest_name" className="guest_name" ref={(c) => this.guest_user_name = c}/>
+					<p className="guestName">
+						<label htmlFor="guestName" className="login">Name</label>
+						<span><input type="text" name="guestName" id="guestName" className="guestName" ref={(c) => this.guest_user_name = c}/>
 						<button type="button" name="guest" className="guest_login_button"  
 									onClick={()=>{this.handleGuestLogin()}} autoComplete="guest_username">Go</button>
 						</span>

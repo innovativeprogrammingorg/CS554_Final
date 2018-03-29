@@ -1,6 +1,5 @@
-import User from './objects/user.js';
-import Authentication as Auth from './authenication.js';
 
+const Auth = require('./authenication.js');
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
@@ -42,18 +41,35 @@ app.post('/login',(req,res)=>{
 		let password = req.body.password;
 		Auth.authUser(username,password,(valid)=>{
 			if(valid){
+				req.session.username = username;
+				req.session.isGuest = false;
 				res.status(200).send("VALID");
 			}else{
 				res.status(403).send("INVALID");
 			}
 		});
 	}catch(err){
+		console.log(err);
 		res.status(400).send("ERROR");
 	}
 });
 
 app.post('/login/guest',(req,res)=>{
-
+	try{
+		let guestName = req.body.username;
+		Auth.authGuest(guestName,(valid)=>{
+			if(valid){
+				req.session.username = guest_name;
+				req.session.isGuest = true;
+				res.status(200).send("VALID");
+			}else{
+				res.status(403).send("INVALID");
+			}
+		});
+	}catch(err){
+		console.log(err);
+		res.status(400).send("ERROR");
+	}
 });
 
 app.listen(8989, function () {
