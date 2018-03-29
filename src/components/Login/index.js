@@ -1,19 +1,48 @@
 import React, {Component} from 'react';
+import { Link } from 'react-router-dom'
+import {Redirect} from 'react-router'
 import './login.css';
+
 class Login extends Component{
+	constructor(){
+		super();
+		this.state = {
+			redirect:false
+		};
+	}
+
 	handleLogin(){
-		console.log("Login would be handled here");
-		
+		let username = document.forms.login.username.value;
+		let password = document.forms.login.password.value;
+		let xhttp = new XMLHttpRequest();
+		let login = this;
+		xhttp.onreadystatechange = ()=>{
+			if(this.readyState == 4 && this.status == 200){
+				login.setState({redirect:true});
+			}else if(this.readyState == 4 && this.status == 403){
+				alert("Incorrect username or password");
+			}
+		};
+		xhttp.open("POST","/login",true);
+		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhttp.send("username="+username+"&password="+password);
 	}
 	handleGuestLogin(){
-		console.log("Guest login would be handled here");
+		let guestName = document.forms.login.guest_name.value;
+		auth.authGuest(guestName,()=>{
+			this.setState({redirect:true});
+		});
 
 	}
 	render(){
+		if(this.state.redirect){
+			return <Redirect to="/" />;
+		}
+
 		return (
 			<div>
 				<h1 className="login">Welcome</h1>
-				<form className="login">
+				<form name="login" className="login">
 					
 					<div className="login">
 						<h2 className="login">Please Login</h2>
@@ -27,7 +56,7 @@ class Login extends Component{
 						</p>
 						<button type="button" name="login" className="login" onClick={this.handleLogin} >Login </button>
 					</div>
-					<a className="login" href="/create"><h2 className="login">Click Here to Create an Account</h2></a>
+					<Link to="/create"><h2 className="login">Click Here to Create an Account</h2></Link>
 					<h2 className="login">Continue as a guest</h2>
 					<p className="guest_name">
 						<label htmlFor="guest_name" className="login">Name</label>

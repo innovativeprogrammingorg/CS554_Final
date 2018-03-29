@@ -11,7 +11,6 @@ class CardPack extends Component{
 				<p key={i} className="card_pack">
 					<input type="checkbox" name={name} id={name} />
 					<label className="card_pack" htmlFor={name}>{pack}</label>
-					
 				</p> 
 			);
 		});

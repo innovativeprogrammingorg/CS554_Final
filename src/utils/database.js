@@ -1,6 +1,6 @@
-import * as MongoClient = from 'mongodb';
+
 import {MONGODB_URL} from '../config/constants.js';
-import User from '../server/objects/user.js';
+const MongoClient = require('mongodb');
 
 const database = "cah_clone"
 const url = MONGODB_URL+database;
@@ -29,7 +29,7 @@ export const init = ()=>{
 	}
 };
 
-export const getUser = (username)=>{
+export const getUser = async(username)=>{
 	return new Promise((resolve,reject)=>{
 		
 		MongoClient.connect(url, function(err, db) {
@@ -44,7 +44,7 @@ export const getUser = (username)=>{
 	});
 };
 
-export async function userExists(username){
+export const userExists = async(username)=>{
 	try{
 		let results = await getUser(username);
 		return results == null;
@@ -54,7 +54,7 @@ export async function userExists(username){
 	
 };	
 
-export async function insertUser(user){
+export const insertUser = async(user)=>{
 	if(userExists(user.username)){
 		throw new Error("User already exists");
 	}
@@ -68,8 +68,8 @@ export async function insertUser(user){
 
 };
 
-export async function updateUser(user)=>{
-	await MongoClient.connect(url, function(err, db) {
+export const updateUser = async(user)=>{
+	await MongoClient.connect(url, async(err, db)=> {
 	  	if (err) throw err;
 	  	var myquery = { username: user.username };
 	  	var newvalues = { $set: user };
@@ -85,7 +85,7 @@ export async function updateUser(user)=>{
 	
 };
 
-export const removeUser = (username)=>{
+export const removeUser = async(username)=>{
 	return new Promise((resolve,reject)=>{
 		
 		MongoClient.connect(url, function(err, db) {
@@ -104,7 +104,7 @@ export const removeUser = (username)=>{
 }
 
 
-export const getGame = (game_id)=>{
+export const getGame = async(game_id)=>{
 	return new Promise((resolve,reject)=>{
 		
 		MongoClient.connect(url, function(err, db) {
@@ -119,7 +119,7 @@ export const getGame = (game_id)=>{
 	});
 };
 
-export async function gameExists(game_id){
+export const gameExists = async(game_id)=>{
 	try{
 		let results = await getUser(game_id);
 		return results == null;
@@ -128,8 +128,8 @@ export async function gameExists(game_id){
 	}
 };	
 
-export async function insertGame(game){
-	if(userExists(game._id)){
+export const insertGame = async(game)=>{
+	if(await userExists(game._id)){
 		throw new Error("Game already exists");
 	}
 	await MongoClient.connect(url, function(err, db) {
@@ -142,11 +142,11 @@ export async function insertGame(game){
 
 };
 
-export async function updateUser(game)=>{
-	await MongoClient.connect(url, function(err, db) {
+export const updateGame = async(game)=>{
+	await MongoClient.connect(url, async(err, db)=> {
 	  	if (err) throw err;
-	  	var myquery = { game_id: game._id };
-	  	var newvalues = { $set: user };
+	  	var myquery = { _id: game._id };
+	  	var newvalues = { $set: game };
 	  	await db.collection("games").updateOne(myquery, newvalues, function(error, res) {
 	    	if (error) throw error;
 	    	if(res.result.nModified === 0){
@@ -159,12 +159,12 @@ export async function updateUser(game)=>{
 	
 };
 
-export const removeGame = (game_id)=>{
+export const removeGame = async(game_id)=>{
 	return new Promise((resolve,reject)=>{
 		
 		MongoClient.connect(url, function(err, db) {
 		  	if (err) throw err;
-		  	var my_query = { game_id: _id };
+		  	var my_query = { _id: game_id };
 		  	db.collection("games").deleteMany(my_query, function(error, obj) {
 		    	if (error) throw error;
 		    	if(obj.result.n === 0){
