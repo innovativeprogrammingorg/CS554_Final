@@ -4,10 +4,6 @@
  */
 class DArray{
 
-	constructor(){
-		this.length = 0;
-	}
-
 	constructor(...args){
 		this.length = args.length;
 		for(let i = 0;i < args.length;i++){

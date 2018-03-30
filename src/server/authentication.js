@@ -1,9 +1,10 @@
 const User = require('./objects/user.js');
 const db = require('../utils/database.js');
 
-
 class Authentication{
-
+	static init(){
+		db.init();
+	}
 	static async authUser(username, password, cb){
 		try{
 			let result = await db.getUser(username);

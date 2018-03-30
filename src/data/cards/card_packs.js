@@ -1,4 +1,4 @@
-export const CARD_PACKS = [
+const CARD_PACKS = [
 	"First Expansion",
 	"Second Expansion",
 	"Third Expansion",
@@ -37,4 +37,4 @@ export const CARD_PACKS = [
 	"Reject Pack"
 ];
 
-export default CARD_PACKS;
+module.exports = CARD_PACKS;

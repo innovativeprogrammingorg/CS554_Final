@@ -1,11 +1,16 @@
-const DArray = require('DynamicArray.js');
+const DArray = require('./DynamicArray.js');
 const uuidv4 = require('uuid/v4');
-const HAND_SIZE = require('../config/constants.js').HAND_SIZE ;
+const {HAND_SIZE, NEXT_ROUND_DELAY} = require('../config/constants.js');
 const Settings = require('./Settings.js');
 const Player = require('./Player.js');
+
 /**
  * Represents the individual game
  */
+const PLAY_CARDS_STAGE = 1;
+const CARD_ZAR_CHOICE_STAGE = 2;
+const WAIT_FOR_NEXT_ROUND_STAGE = 3;
+
 class Game{
 	constructor(blackDeck=null,whiteDeck=null,settings=null,players=[]){
 		/**
@@ -40,7 +45,8 @@ class Game{
 			onPlayerWin:undefined,
 			onOutOfCards:undefined,
 			onGameOver:undefined,
-			onPlayerLeave:undefined
+			onPlayerLeave:undefined,
+			onCardZarTimeOut:undefined
 		};
 
 	}
@@ -52,12 +58,79 @@ class Game{
 		this.state.played = [];
 		this.state.cardZar = Math.floor(Math.random()*this.players.length);
 		this.state.roundStart = Math.floor(Date.now()/1000);
+		this.state.stage = PLAY_CARDS_STAGE;
+		this.state.timer = this.startTimer();
 	}
-	
-	addPlayer(name){
-		this.players.append(new Player(name));
+	startTimer(){
+		switch(this.state.stage){
+			case PLAY_CARDS_STAGE:
+			case CARD_ZAR_CHOICE_STAGE:
+				return setTimeout(this.nextStageByTimeOut,this.settings.turnDuration);
+			case WAIT_FOR_NEXT_ROUND_STAGE:
+				return setTimeout(this.nextStage,NEXT_ROUND_DELAY);
+				break;
+			default:
+				break;
+		}
+		
 	}
 
+	nextStageByTimeOut(){
+		switch(this.state.stage){
+			case PLAY_CARDS_STAGE:
+				this.callbacks.onAllUsersPlayed(this._id);
+				this.state.stage = CARD_ZAR_CHOICE_STAGE;
+				this.state.timer = this.startTimer();
+				break;
+			case CARD_ZAR_CHOICE_STAGE:
+				this.callbacks.onCardZarTimeOut(this._id);
+				this.state.stage = WAIT_FOR_NEXT_ROUND_STAGE;
+				this.state.timer = this.startTimer();
+				break;
+			
+			default:
+				console.log('Error, unexpected game stage');
+				break;
+		}
+	}
+
+	nextStage(){
+		switch(this.state.stage){
+			case PLAY_CARDS_STAGE:
+				clearTimeout(this.state.timer);
+				this.callbacks.onAllUsersPlayed(this._id);
+				this.state.stage = CARD_ZAR_CHOICE_STAGE;
+				this.state.timer = this.startTimer();
+				break;
+			case CARD_ZAR_CHOICE_STAGE:
+				clearTimeout(this.state.timer);
+				this.state.stage = WAIT_FOR_NEXT_ROUND_STAGE;
+				this.state.timer = this.startTimer();
+			case WAIT_FOR_NEXT_ROUND_STAGE:
+				this.nextRound();
+				this.state.timer = this.startTimer();
+				break;
+			default:
+				console.log('Error, unexpected game stage');
+				break;	
+		}
+	}
+
+	updateSettings(newSetting){
+		this.settings.update(newSetting);
+	}
+	
+	addPlayer(socket){
+		this.players.append(new Player(socket.request.session.username,socket.id));
+	}
+	updatePlayer(socket){
+		try{
+			this.players.lookup("name",socket.request.session.username).socket = socket;
+		}catch(err){
+			console.log('Unable to update player\'s socket: '+err);
+		}
+		
+	}
 	removePlayer(name){
 		this.players.remove(name,Player.compareByName);
 		if(this.players.length === 0){
@@ -65,6 +138,13 @@ class Game{
 		}else{
 			this.onPlayerLeave(this._id,name);
 		}
+	}
+
+	isCardZar(name){
+		if(this.state.round < 1){
+			return false;
+		}
+		return this.players[this.state.cardZar].name === name;
 	}
 
 	hasRoom(){
@@ -89,26 +169,34 @@ class Game{
 	}
 
 	playCards(name,cards){
-		if(Math.floor(Date.now()/1000) - this.state.roundStart > this.settings.turn_duration){
+		if(Math.floor(Date.now()/1000) - this.state.roundStart > this.settings.turnDuration){
 			return;
 		}
+		if(this.state.stage != PLAY_CARDS_STAGE){
+			return;
+		}
+
 		let player = this.players.lookup("name",name);
-		let played_cards = player.getCards(cards);
-		this.state.playedCards.push(played_cards);
+		let playedCards = player.getCards(cards);
+		this.state.playedCards.push(playedCards);
 		player.removeCards(cards);
 		this.state.played.push(name);
 		if(this.state.played === this.players.length - 1){
-			this.callbacks.onAllUsersPlayed(this._id);
+			this.nextStage();
 		}
-		return played_cards;
+		return playedCards;
 	}
 
 	roundWinner(cards_index){
+		clearTimeout(this.state.timer);
 		let name = this.state.played[cards_index];
 		let player = this.players.lookup("name",name);
 		player.awardPoint();
 		if(player.score >= this.settings.win_points){
 			this.callbacks.onPlayerWin(this._id,name);
+		}else{
+			this.callbacks.onRoundWon(this._id,name);
+			this.nextStage();
 		}
 	}
 
@@ -117,7 +205,7 @@ class Game{
 		for(let i = 0;i<this.played.length;i++){
 			let player = this.players.lookup("name",this.played[i]);
 			try{
-				player.giveCards(this.whiteDeck.draw(this.blackCard.blank_spaces));
+				player.giveCards(this.whiteDeck.draw(this.blackCard.blankSpaces));
 			}catch(err){
 				this.callbacks.onOutOfCards(this._id);
 				return;
@@ -127,7 +215,8 @@ class Game{
 		this.state.playedCards = [];
 		this.state.played = [];
 		this.state.cardZar = (this.state.cardZar + 1)%this.players.length;
-		this.state.roundStart = Math.floor(Date.now()/1000);
+		this.state.stage = PLAY_CARDS_STAGE;
+		this.callbacks.onNextRound(this);
 	}
 
 

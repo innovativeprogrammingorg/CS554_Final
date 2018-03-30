@@ -6,6 +6,8 @@ const GameManager = require('../../objects/GameManager.js');
  * room
  * games: send all games
  * game: new game has been created
+ * removeGame: game has been removed
+ * createdGame: user created a game successfully
  * start
  * error
  * joinedGame: redirect the user to the game
@@ -16,6 +18,11 @@ const GameManager = require('../../objects/GameManager.js');
  * played: A player played their cards for the round
  * iPlayed: The user played their cards for the round
  * allPlayed: All played have played their cards for the round
+ * winner: someone has won the game
+ * gameDraw: no one can win the game
+ * nextRound: Game is entering the next round
+ * noZarChoice: Card Zar choice timed out
+ * drawCards: when the player draws new cards
  */
 class GameHandler{
 
@@ -26,12 +33,16 @@ class GameHandler{
 			onSpaceAvailible:this.onServerHasRoom,
 			onGameStart:this.onGameStart,
 			onGameCreate:this.onGameCreate,
-
+			onGameRemoved: this.onGameRemoved,
+			onGameStartFailed:this.onGameStartFailed,
 			game:{
 				onAllUsersPlayed:this.onAllUsersPlayed,
-				onPlayerWin:undefined,
-				onOutOfCards:undefined,
-				onPlayerLeave:this.onPlayerLeft
+				onPlayerWin:this.onPlayerWin,
+				onOutOfCards:this.onGameOutOfCards,
+				onPlayerLeave:this.onPlayerLeft,
+				onRoundWon:this.onRoundWon,
+				onNextRound:this.onNextRound,
+				onCardZarTimeOut:this.CardZarTimeOut
 			}
 
 		};
@@ -50,6 +61,10 @@ class GameHandler{
 		this.io.in('lobby').emit('game',JSON.stringify(game));
 	}
 
+	async onGameRemoved(game_id){
+		this.io.in('lobby').emit('removeGame',game_id);
+	}
+
 	async onGameStart(game_id){
 		this.io.in(game_id).emit('start','Game has started!');
 	}
@@ -62,10 +77,54 @@ class GameHandler{
 		this.io.in(game_id).emit('left',username);
 	}
 
+	async onPlayerWin(game_id,winner){
+		this.io.in(game_id).emit('winner',username);
+	}
+
+	async onGameOutOfCards(game_id){
+		this.io.in(game_id).emit('gameDraw','No more cards left, game is a draw!');
+	}
+
+	async onRoundWon(game_id,username){
+		this.io.in(game_id).emit('roundWinner',username);
+	}
+
+	async onNextRound(game){
+		this.io.in(game._id).emit('nextRound',JSON.stringify(game));
+	}
+	
+	async onGameStartFailed(game_id,reason='Error'){
+		this.io.in(game_id).emit('error',reason);
+	}
+	async onCardZarTimeOut(game_id){
+		this.io.in(game_id).emit('noZarChoice','Card Zar has timed out before making a choice!');
+	}
 
 	async sendAllGames(socket){
 		let games = JSON.stringify(this.gameManager.games.toArray());
 		socket.emit('games',games);
+	}
+
+	async createGame(socket){
+		let game_id = this.gameManager.createGame(socket.request.session.username);
+		if(game_id){
+			socket.request.session.game = game_id;
+			socket.emit('createGame',game_id);
+		}
+	}
+
+	async startGame(socket){
+		let game_id = socket.request.session.game;
+		if(!game_id){
+			socket.emit('error','You are not in a game');
+			console.log('User tried to start a game without being in a game');
+			return;
+		}
+		if(!this.gameManager.isGameOwner(game_id,socket.request.session.username)){
+			socket.emit('error','Only the game owner can start the game');
+			return;
+		}
+		this.gameManager.startGame(game_id);
 	}
 
 	async joinGame(socket,game_id,password=""){
@@ -82,7 +141,7 @@ class GameHandler{
 		if(password === game.settings.password){
 			socket.request.session.game = game_id;//Auth the player for the game
 			socket.emit('joinedGame','Correct Password');
-			game.addPlayer(socket.request.session.username)
+			game.addPlayer(socket.request.session.username,socket);
 			socket.to(game_id).emit('joined',socket.request.session.username);
 		}else if(password === ""){
 			socket.emit('promptPassword','This game requires a password');
@@ -120,4 +179,23 @@ class GameHandler{
 		socket.to(game_id).emit('played',played);
 		socket.emit('iPlayed',played);
 	}
+
+	async chooseCards(socket,choice){
+		let game = this.gameManager.getGame(socket.request.session.game);
+		if(game === null){
+			socket.emit('error','Game does not exist');
+			console.log('Card Zar tried to pick cards in a game that does not exist');
+			return;
+		}
+		if(!game.isCardZar(socket.request.session.username)){
+			socket.emit('error','You are not the Card Zar!');
+			console.log('A user tried to pick cards when not the card zar!');
+			return;
+		}
+
+		game.roundWinner(choice);
+	}
 }
+
+
+module.exports = GameHandler;

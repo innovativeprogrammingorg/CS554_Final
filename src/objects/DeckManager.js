@@ -1,34 +1,42 @@
-import WhiteCard from 'WhiteCard.js';
-import BlackCard from 'BlackCard.js';
-import Deck from './Deck.js';
-import {} from '../config/directory.js';
-import * as fs from 'fs';
+const WhiteCard =  require('./WhiteCard.js');
+const BlackCard = require('./BlackCard.js');
+const Deck = require('./Deck.js');
+const fs = require('fs');
+const card_packs = require('../data/cards/card_packs.js');
+const resolve = require('path').resolve;
 
-const CARD_DIRECTORY = '../data/cards/';
+const CARD_DIRECTORY = './src/data/cards/';
 /**
  * Pre-parses the cards to prevent repetitive operations. 
  * Is an expensive object to create so at most one instance should exist per shard
  */
-class DeckManager(){
+class DeckManager{
 	constructor(){
 		this.white_ready = false;
 		this.black_ready = false;
-		this.card_packs = JSON.parse(fs.readFileSync(CARD_DIRECTORY+'card_packs.json'));
+		this.card_packs = card_packs;
 		this.white_cards = {};
 		this.black_cards = {};
 		/**TODO: Synchronize it better**/
-		fs.readFile(CARD_DIRECTORY+'white_cards.json',(err,data)=>{
+		//console.log(fs.readFileSync(CARD_DIRECTORY+'white_cards.json','utf8'));
+		fs.readFile(CARD_DIRECTORY+'white_cards.json','utf8',(err,data)=>{
 			let wc_data = JSON.parse(data);
 			for(let i = 0;i<this.card_packs.length;i++){
 				this.white_cards[this.card_packs[i]] = [];
-				for(let j = 0;j<wc_data[this.card_packs[i]].length;j++){
-					this.white_cards[this.card_packs[i]][j] = new WhiteCard(wc_data[this.card_packs[i]][j]);
+				try{
+					for(let j = 0;j<wc_data[this.card_packs[i]].length;j++){
+						this.white_cards[this.card_packs[i]][j] = new WhiteCard(wc_data[this.card_packs[i]][j]);
+					}
+				}catch(err){
+					console.log(this.card_packs[i] + " is undefined in white cards");
+					throw new Error("undefined");
 				}
+				
 			}
 			this.white_ready = true;
 
 		});
-		fs.readFile(CARD_DIRECTORY+'black_cards.json',(err,data)=>{
+		fs.readFile(CARD_DIRECTORY+'black_cards.json','utf8',(err,data)=>{
 			let bc_data = JSON.parse(data);
 			for(let i = 0;i<this.card_packs.length;i++){
 				this.black_cards[this.card_packs[i]] = [];
@@ -69,4 +77,4 @@ class DeckManager(){
 	}
 }
 
-export default DeckManager;
+module.exports = DeckManager;

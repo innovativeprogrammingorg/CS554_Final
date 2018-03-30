@@ -1,5 +1,5 @@
-
-const Auth = require('./authenication.js');
+const SocketHandler = require('./handlers/SocketHandler.js');
+const Auth = require('./authentication.js');
 
 var app = require('express')();
 var server = require('http').Server(app);
@@ -30,11 +30,12 @@ io.use(function(socket, next) {
 
 app.use(sessionMiddleware);
 
+var socketHandler =  new SocketHandler(io);
 
 /**
  * Ajax handling
  */
-
+Auth.init();
 
 app.post('/login',(req,res)=>{
 	try{
@@ -73,6 +74,12 @@ app.post('/login/guest',(req,res)=>{
 	}
 });
 
+/**
+ * Socket Handler
+ */
+
+
+
 app.listen(8989, function () {
   console.log('Assignment 4 listening on port 8989!');
-});s
+});

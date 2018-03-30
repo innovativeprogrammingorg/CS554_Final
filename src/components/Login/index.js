@@ -10,20 +10,23 @@ class Login extends Component{
 			redirect:false
 		};
 	}
-
+	redirectState(){
+		this.setState({redirect:true});
+	}
 	handleLogin(){
 		let username = document.forms.login.username.value;
 		let password = document.forms.login.password.value;
 		let xhttp = new XMLHttpRequest();
 		let login = this;
 		xhttp.onreadystatechange = ()=>{
-			if(this.readyState == 4 && this.status == 200){
-				login.setState({redirect:true});
-			}else if(this.readyState == 4 && this.status == 403){
+			if(xhttp.readyState === 4 && xhttp.status === 200){
+				login.redirectState();
+			}else if(xhttp.readyState === 4 && xhttp.status === 403){
 				alert("Incorrect username or password");
 			}
 		};
-		xhttp.open("POST","/login",true);
+		let url = window.location.protocol + "//" + window.location.hostname + ":8989/login/";
+		xhttp.open("POST",url,true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhttp.send("username="+username+"&password="+password);
 	}
@@ -32,13 +35,13 @@ class Login extends Component{
 		let xhttp = new XMLHttpRequest();
 		let login = this;
 		xhttp.onreadystatechange = ()=>{
-			if(this.readyState == 4 && this.status == 200){
+			if(xhttp.readyState === 4 && xhttp.status === 200){
 				login.setState({redirect:true});
-			}else if(this.readyState == 4 && this.status == 403){
+			}else if(xhttp.readyState === 4 && xhttp.status === 403){
 				alert("Name is already taken");
 			}
 		};
-		let url = window.location.protocol + "//" + window.location.hostname + ":8989"+"/login/";
+		let url = window.location.protocol + "//" + window.location.hostname + ":8989/login/guest/";
 		xhttp.open("POST",url,true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhttp.send("username="+guestName);

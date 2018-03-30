@@ -1,7 +1,7 @@
 const DeckManager = require('./DeckManager.js');
 const DArray = require('./DynamicArray.js');
 const Game = require('./Game.js');
-const GAME_CAPACITY = require('../config/constants.js').GAME_CAPACITY;
+const {GAME_CAPACITY} = require('../config/constants.js');
 
 /**
  * Handles game creation and capacity
@@ -32,19 +32,20 @@ class GameManager{
 		this.deckManager = new DeckManager();
 		this.games = new DArray();
 	}
-	updateGame(game_id){
+	/**
+	 * Updates the settings of a game
+	 * @param  {uuid}   game_id [description]
+	 * @param  {object} update  ex. {setting_name:new_value}
+	 * @return {boolean} whether or not the game was updated successfully
+	 */
+	updateGame(game_id,update){
 		let game = this.getGame(game_id);
+		if(game.state.round != 0){
+			return false;
+		}
 	}
 
 	createGame(owner){
-		let game = new Game();
-		game.addPlayer(owner);
-	}
-	/**
-	 * starts a game
-	 * @return {Boolean}           Whether or not a game was created successfully
-	 */
-	startGame(game_id){
 		if(this.games.length >= GAME_CAPACITY || this.full){
 			return false;
 		}
@@ -52,8 +53,33 @@ class GameManager{
 			this.callbacks.onMaxCapacity();
 			this.full = true;
 		}
+		let game = new Game();
+		game.addPlayer(owner);
+		game.callbacks = this.callbacks.game;
+		this.callbacks.onGameCreate(game);
+		return game._id;
+	}
+	/**
+	 * starts a game
+	 * @return {Boolean}           Whether or not a game was created successfully
+	 */
+	startGame(game_id){
+		let game = this.getGame(game_id);
+		if(game.players.length < 2){
+			this.callbacks.onGameStartFailed(game._id,'Not enough players');
+			return false;
+		}
+		if(game.state.round !== 0){
+			this.callbacks.onGameStartFailed(game._id,'Game has already started!');
+			return false;
+		}
+		if(game.settings.cardPacks.length < 1){
+			this.callbacks.onGameStartFailed(game._id,'No card packs have been chosen');
+			return false;
+		}
 		try{
-			
+			game.whiteDeck = this.deckManager.getWCDeck(game.settings.cardPacks);
+			game.blackDeck = this.deckManager.getBCDeck(game.settings.cardPacks);
 			game.start();
 			this.games.append(game);
 			this.callbacks.onGameStart(game._id);
@@ -70,10 +96,15 @@ class GameManager{
 			this.callbacks.onSpaceAvailible();
 			this.full = false;
 		}
+		this.callbacks.onGameRemoved(game_id);
 	}
 
 	getGame(game_id){
 		return this.games.lookup("_id",game_id);
+	}
+
+	isGameOwner(game_id,username){
+		return username === this.getGame(game_id).players[0].name
 	}
 
 

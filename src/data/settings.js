@@ -1,4 +1,4 @@
-export const GAME_SETTINGS = [	
+const GAME_SETTINGS = [	
 	{
 		display_name:"Game Name",
 		class:"gameName",
@@ -56,4 +56,4 @@ export const GAME_SETTINGS = [
 
 ];
 
-export default GAME_SETTINGS;
+module.exports = GAME_SETTINGS;

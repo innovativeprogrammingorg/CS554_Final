@@ -1,10 +1,11 @@
-const DArray = require('DynamicArray.js');
-const HAND_SIZE = require('../config/constants.js').HAND_SIZE;
+const DArray = require('./DynamicArray.js');
+const {HAND_SIZE} = require('../config/constants.js');
 
 class Player{
 
-	constructor(name){
+	constructor(name,socket){
 		this.name = name;
+		this.socket = socket;
 		this.score = 0;
 		this.hand = new DArray();
 		this.missed_turns = 0;
@@ -28,6 +29,7 @@ class Player{
 		for(let i = 0;i<args.length;i++){
 			this.hand.append(args[i]);
 		}
+		this.socket.emit('drawCards',JSON.stringify(args));
 	}
 	awardPoint(){
 		this.score++;

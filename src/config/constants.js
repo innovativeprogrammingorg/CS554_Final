@@ -13,6 +13,8 @@ const BLANK_SPACE = '______';
 
 const GAME_CAPACITY = 100;
 
+const NEXT_ROUND_DELAY = 10000; //MS
+
 
 module.exports = {
 	MONGODB_URL:MONGODB_URL,
