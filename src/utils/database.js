@@ -1,9 +1,9 @@
 
 const MONGODB_URL = require('../config/constants.js').MONGODB_URL;
-const MongoClient = require('mongodb');
+const MongoClient = require('mongodb').MongoClient;
 
-const database = "cah_clone"
-const url = MONGODB_URL+database;
+const database_name = "cah_clone"
+const url = MONGODB_URL+database_name;
 
 const collections = [
 	"users",
@@ -12,16 +12,17 @@ const collections = [
 
 const init = ()=>{
 	try{
-		MongoClient.connect(url, function(err, db) {
+		MongoClient.connect(url, function(err, database) {
+			const db = database.db(database_name);
 		  	if (err) throw err;
 
 		  	for(let i = 0;i<collections.length;i++){
 		  		db.createCollection(collections[i], function(err, res) {
 			    	if (err) throw err;
 			    	console.log("Collection created!");
-			    	db.close();
 			  	});
 		  	}
+		  	database.close();
 		});
 
 	}catch(err){
@@ -32,12 +33,14 @@ const init = ()=>{
 const getUser = async(username)=>{
 	return new Promise((resolve,reject)=>{
 		
-		MongoClient.connect(url, function(err, db) {
+		MongoClient.connect(url, function(err, database) {
+			const db = database.db(database_name);
 		  	if (err) throw err;
 		  	db.collection("users").findOne({ username: username },function(error, result) {
 			    if (error) throw error;
+			    database.close();
 			    resolve(result);
-			    db.close();
+			   	 
 			});
 		  	
 		});
@@ -47,7 +50,7 @@ const getUser = async(username)=>{
 const userExists = async(username)=>{
 	try{
 		let results = await getUser(username);
-		return results == null;
+		return results != null;
 	}catch(err){
 		throw err;
 	}
@@ -55,31 +58,35 @@ const userExists = async(username)=>{
 };	
 
 const insertUser = async(user)=>{
-	if(userExists(user.username)){
+	let existCheck = await userExists(user.username);
+	if(existCheck){
 		throw new Error("User already exists");
 	}
-	await MongoClient.connect(url, function(err, db) {
+	await MongoClient.connect(url, function(err, database) {
+		const db = database.db(database_name);
 		if (err) throw err;
 		db.collection("users").insertOne(user, function(error, res) {
 			if (error) throw error;
-		    db.close();
+		    database.close();
 	  	});
 	});
 
 };
 
 const updateUser = async(user)=>{
-	await MongoClient.connect(url, async(err, db)=> {
+	await MongoClient.connect(url, async(err, database)=> {
 	  	if (err) throw err;
+	  	const db = database.db(database_name);
 	  	var myquery = { username: user.username };
 	  	var newvalues = { $set: user };
 	  	await db.collection("users").updateOne(myquery, newvalues, function(error, res) {
 	    	if (error) throw error;
 	    	if(res.result.nModified === 0){
+	    		database.close();
 	    		throw new Error("No user exists with given username");
 	    	}
     		
-	    	db.close();
+	    	database.close();
 	  	});
 	});
 	
@@ -88,16 +95,17 @@ const updateUser = async(user)=>{
 const removeUser = async(username)=>{
 	return new Promise((resolve,reject)=>{
 		
-		MongoClient.connect(url, function(err, db) {
+		MongoClient.connect(url, function(err, database) {
 		  	if (err) throw err;
+		  	const db = database.db(database_name);
 		  	var my_query = { username: username };
 		  	db.collection("users").deleteMany(my_query, function(error, obj) {
 		    	if (error) throw error;
+		    	database.close();
 		    	if(obj.result.n === 0){
-		    		throw new Error("No tasks have been removed");
+		    		throw new Error("No users have been removed");
 		    	}
 		    	resolve(true);
-		    	db.close();
 		  	});
 		});
 	});
@@ -107,14 +115,14 @@ const removeUser = async(username)=>{
 const getGame = async(game_id)=>{
 	return new Promise((resolve,reject)=>{
 		
-		MongoClient.connect(url, function(err, db) {
+		MongoClient.connect(url, function(err, database) {
 		  	if (err) throw err;
+		  	const db = database.db(database_name);
 		  	db.collection("games").findOne({ _id: game_id },function(error, result) {
 			    if (error) throw error;
 			    resolve(result);
-			    db.close();
+			    database.close();
 			});
-		  	
 		});
 	});
 };
@@ -122,38 +130,41 @@ const getGame = async(game_id)=>{
 const gameExists = async(game_id)=>{
 	try{
 		let results = await getUser(game_id);
-		return results == null;
+		return results != null;
 	}catch(err){
 		throw err;
 	}
 };	
 
 const insertGame = async(game)=>{
-	if(await userExists(game._id)){
+	let existCheck = await gameExists(game._id)
+	if(existCheck){
 		throw new Error("Game already exists");
 	}
-	await MongoClient.connect(url, function(err, db) {
+	
+	await MongoClient.connect(url, function(err, database) {
 		if (err) throw err;
+		const db = database.db(database_name);
 		db.collection("games").insertOne(game, function(error, res) {
 			if (error) throw error;
-		    db.close();
+		    database.close();
 	  	});
 	});
 
 };
 
 const updateGame = async(game)=>{
-	await MongoClient.connect(url, async(err, db)=> {
+	await MongoClient.connect(url, async(err, database)=> {
 	  	if (err) throw err;
 	  	var myquery = { _id: game._id };
 	  	var newvalues = { $set: game };
+	  	const db = database.db(database_name);
 	  	await db.collection("games").updateOne(myquery, newvalues, function(error, res) {
 	    	if (error) throw error;
+	    	database.close();
 	    	if(res.result.nModified === 0){
 	    		throw new Error("No game exists with given id");
 	    	}
-    		
-	    	db.close();
 	  	});
 	});
 	
@@ -162,16 +173,18 @@ const updateGame = async(game)=>{
 const removeGame = async(game_id)=>{
 	return new Promise((resolve,reject)=>{
 		
-		MongoClient.connect(url, function(err, db) {
+		MongoClient.connect(url, function(err, database) {
 		  	if (err) throw err;
+		  	const db = database.db(database_name);
 		  	var my_query = { _id: game_id };
 		  	db.collection("games").deleteMany(my_query, function(error, obj) {
 		    	if (error) throw error;
+		    	database.close();
 		    	if(obj.result.n === 0){
-		    		throw new Error("No tasks have been removed");
+		    		throw new Error("No games have been removed");
 		    	}
 		    	resolve(true);
-		    	db.close();
+		    	
 		  	});
 		});
 	});

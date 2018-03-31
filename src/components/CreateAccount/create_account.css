@@ -1,0 +1,29 @@
+form.createAccount{
+	width:400px;
+	height:255px;
+	border:solid 1px #000;
+	border-radius:5px;
+	margin:auto;
+	position:absolute;
+	top:0;bottom:0;right:0;left:0;
+}
+
+h1.createAccount{
+	text-align:center;
+}
+
+p.createAccount{
+	width:203px;
+	display:block;
+	margin:5px auto;
+}
+
+#createAccountSubmit{
+	padding:2px 3px 2px 3px;
+	display:block;
+	margin:10px auto 10px auto;
+}
+
+#createAccountSubmit:hover{
+	cursor:pointer;
+}

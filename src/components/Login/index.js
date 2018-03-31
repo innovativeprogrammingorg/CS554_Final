@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom'
-import {Redirect} from 'react-router'
+import {Link} from 'react-router-dom';
+import {Redirect} from 'react-router';
 import './login.css';
 
 class Login extends Component{
@@ -19,9 +19,9 @@ class Login extends Component{
 		let xhttp = new XMLHttpRequest();
 		let login = this;
 		xhttp.onreadystatechange = ()=>{
-			if(xhttp.readyState === 4 && xhttp.status === 200){
+			if(xhttp.readyState === 4 && xhttp.status === 200 && xhttp.responseText==="VALID"){
 				login.redirectState();
-			}else if(xhttp.readyState === 4 && xhttp.status === 403){
+			}else if(xhttp.readyState === 4 && xhttp.status === 200){
 				alert("Incorrect username or password");
 			}
 		};
@@ -35,9 +35,9 @@ class Login extends Component{
 		let xhttp = new XMLHttpRequest();
 		let login = this;
 		xhttp.onreadystatechange = ()=>{
-			if(xhttp.readyState === 4 && xhttp.status === 200){
+			if(xhttp.readyState === 4 && xhttp.status === 200 && xhttp.responseText==="VALID"){
 				login.setState({redirect:true});
-			}else if(xhttp.readyState === 4 && xhttp.status === 403){
+			}else if(xhttp.readyState === 4 && xhttp.status === 200){
 				alert("Name is already taken");
 			}
 		};
@@ -49,7 +49,7 @@ class Login extends Component{
 	}
 	render(){
 		if(this.state.redirect){
-			return <Redirect to="/" />;
+			return <Redirect to="/lobby/" />;
 		}
 
 		return (
@@ -75,7 +75,7 @@ class Login extends Component{
 						<label htmlFor="guestName" className="login">Name</label>
 						<span><input type="text" name="guestName" id="guestName" className="guestName" ref={(c) => this.guest_user_name = c}/>
 						<button type="button" name="guest" className="guest_login_button"  
-									onClick={()=>{this.handleGuestLogin()}} autoComplete="guest_username">Go</button>
+									onClick={this.handleGuestLogin} autoComplete="guest_username">Go</button>
 						</span>
 					</p> 
 

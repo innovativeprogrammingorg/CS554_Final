@@ -22,12 +22,16 @@ class User{
 		});
 	}
 
-	async hash(password){
+	async hash(){
 		this.salt = await User.generateSalt();
-		await crypto.pbkdf2(password,this.salt,CONSTANTS.CRYPTO_ITERATIONS,CONSTANTS.CRYPTO_KEY_LEN,CONSTANTS.CRYPTO_ALG,(err,result)=>{
-			if(err) throw err;
-			this.password = result;
-		});
+		return new Promise((resolve,reject)=>{
+			crypto.pbkdf2(this.password,this.salt,CONSTANTS.CRYPTO_ITERATIONS,CONSTANTS.CRYPTO_KEY_LEN,CONSTANTS.CRYPTO_ALG,(err,result)=>{
+				if(err) throw err;
+				console.log("Password has been hashed!");
+				this.password = result;
+				resolve(true);
+			});
+		});	
 	}
 
 	static async generateSalt(len=CONSTANTS.CRYPTO_KEY_LEN){

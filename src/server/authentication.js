@@ -13,7 +13,16 @@ class Authentication{
 			cb(out);
 		}catch(err){
 			console.log(err);
+			cb(false);
 		}	
+	}
+
+	static async manual(){
+		try{
+		}catch(err){
+			console.log(err);
+		}
+		
 	}
 
 	static async authGuest(name,cb){
@@ -22,6 +31,31 @@ class Authentication{
 			cb(!result);
 		}catch(err){
 			console.log(err);
+			cb(false);
+		}
+	}
+
+	static async createUser(username,password,cb){
+		try{
+			let result = await db.userExists(username);
+			if(result){
+				console.log("Cannot create a user which already exists!");
+				cb(false);
+				return;
+			}
+			let user = new User(username,password);
+			user.hash().then(()=>{
+				console.log("Inserting user into db");
+				db.insertUser(user);
+				cb(true);
+			}).catch((err)=>{
+				console.log(err);
+				cb(false);
+			});
+			
+		}catch(err){
+			console.log(err);
+			cb(false);
 		}
 	}
 

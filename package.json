@@ -16,7 +16,7 @@
     "express-session": "^1.15.6",
     "fs": "0.0.1-security",
     "fs-es6": "0.0.2",
-    "grunt": "^1.0.2",
+    "grunt": "latest",
     "module": "^1.2.5",
     "mongodb": "^3.0.4",
     "npm-run-all": "^4.1.2",
@@ -32,6 +32,12 @@
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4",
     "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "grunt": "latest",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-nodeunit": "latest",
+    "grunt-contrib-uglify": "latest"
   },
   "scripts": {
     "start": "npm-run-all --parallel startReact server",
