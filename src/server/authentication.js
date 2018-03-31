@@ -12,7 +12,7 @@ class Authentication{
 			let out = await user.verify(password);
 			cb(out);
 		}catch(err){
-			console.log(err);
+			console.error(err);
 			cb(false);
 		}	
 	}
@@ -30,7 +30,7 @@ class Authentication{
 			let result = await db.userExists(name);
 			cb(!result);
 		}catch(err){
-			console.log(err);
+			console.error(err);
 			cb(false);
 		}
 	}
@@ -45,7 +45,6 @@ class Authentication{
 			}
 			let user = new User(username,password);
 			user.hash().then(()=>{
-				console.log("Inserting user into db");
 				db.insertUser(user);
 				cb(true);
 			}).catch((err)=>{
@@ -54,7 +53,7 @@ class Authentication{
 			});
 			
 		}catch(err){
-			console.log(err);
+			console.error(err);
 			cb(false);
 		}
 	}
@@ -72,7 +71,7 @@ class Authentication{
 				cb(true);
 			}
 		}catch(err){
-			console.log(err);
+			console.error(err);
 		}
 		
 	}

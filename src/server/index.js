@@ -15,7 +15,6 @@ var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
-
     next();
 }
 
@@ -38,13 +37,13 @@ io.use(function(socket, next) {
 
 app.use(sessionMiddleware);
 
-Auth.manual();
 
 
 /**
  * Ajax handling
  */
 //Auth.init();
+//Auth.manual();
 
 app.post('/login',(req,res)=>{
 	console.log("received a login request");
@@ -52,7 +51,6 @@ app.post('/login',(req,res)=>{
 		let username = req.body.username;
 		let password = req.body.password;
 		Auth.authUser(username,password,(valid)=>{
-			console.log("Finished auth user test...");
 			if(valid){
 				req.session.username = username;
 				req.session.isGuest = false;
@@ -62,7 +60,7 @@ app.post('/login',(req,res)=>{
 			}
 		});
 	}catch(err){
-		console.log(err);
+		console.error(err);
 		res.status(400).send("ERROR");
 	}
 });
@@ -80,7 +78,7 @@ app.post('/login/guest',(req,res)=>{
 			}
 		});
 	}catch(err){
-		console.log(err);
+		console.error(err);
 		res.status(400).send("ERROR");
 	}
 });
@@ -90,7 +88,6 @@ app.post('/create/',(req,res)=>{
 		let username = req.body.username;
 		let password = req.body.password;
 		Auth.createUser(username,password,(result)=>{
-			console.log("Sending response to create account request!");
 			if(result){
 				req.session.username = username;
 				req.session.isGuest = false;

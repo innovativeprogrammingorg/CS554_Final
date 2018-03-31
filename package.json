@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Final Project: Cards Against Humanity™ Online",
   "private": false,
-  "license": "CC BY-NC-SA 2.0",
+  "license": "CC-BY-NC-SA-2.0",
   "dependencies": {
     "ajv": "^6.3.0",
     "axios": "^0.18.0",
@@ -17,6 +17,7 @@
     "fs": "0.0.1-security",
     "fs-es6": "0.0.2",
     "grunt": "latest",
+    "https": "^1.0.0",
     "module": "^1.2.5",
     "mongodb": "^3.0.4",
     "npm-run-all": "^4.1.2",
