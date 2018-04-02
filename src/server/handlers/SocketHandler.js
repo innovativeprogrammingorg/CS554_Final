@@ -1,6 +1,15 @@
 const Auth = require('../authentication.js');
 const GameHandler = require('./GameHandler.js');
 
+/**
+ * +++++++++++++++++++EVENTS++++++++++++++++++++
+ * logout: The user is requesting to be logged off
+ * loggedOut: The user has been logged off
+ * joinLobby: The user enters the lobby
+ * joinGame: The user is attempting to join a game
+ * createGame: The user is attempting to create a game
+ * startGame: The user is attempting to start a game
+ */
 class socketHandler{
 	constructor(io){
 		this.io = io;
@@ -13,16 +22,24 @@ class socketHandler{
 				socket.disconnect(true);
 				return;
 			}
-			socket.on('joinLobby',(msg)=>{
+			socket.on('logout',()=>{
+				socket.request.session.game = undefined;
+				socket.request.session.username = undefined;
+				socket.emit('loggedOut','You have been logged out successfully');
+			});
+			socket.on('joinLobby',()=>{
 				this.lobby(socket);
 			});
 			socket.on('joinGame',(msg)=>{
 				this.joinGame(socket,msg);
 			});
-			socket.on('createGame',(msg)=>{
+			socket.on('createGame',()=>{
 				this.gameHandler.createGame(socket);
 			});
-			socket.on('startGame',(msg)=>{
+			socket.on('updateSetting',(msg)=>{
+				this.gameHandler.updateSettings(socket,msg);
+			});
+			socket.on('startGame',()=>{
 				this.gameHandler.startGame(socket);
 			});
 			socket.on('playCards',(msg)=>{
@@ -43,14 +60,12 @@ class socketHandler{
 	}
 
 	async joinGame(socket,data){
-		let obj = JSON.parse(data);
-		let game_id = obj.game_id;
-		let password = obj.password;
+		let game_id = data.game_id;
+		let password = data.password;
 		this.gameHandler.joinGame(socket,game_id,password);
 	}
 
-	async playCards(socket,msg){
-		let cards = JSON.parse(msg);
+	async playCards(socket,cards){
 		this.gameHandler.playCards(socket,cards);
 	}
 	async chooseCards(socket,msg){

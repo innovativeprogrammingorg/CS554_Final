@@ -12,6 +12,9 @@ class Lobby extends Component{
 			games:[],
 			full:false
 		};
+	}
+
+	componentWillMount(){
 		this.initSocket();
 	}
 
@@ -51,7 +54,7 @@ class Lobby extends Component{
 				games.push(JSON.parse(msg));
 				return {
 					games: games,
-					full:prevState.full
+					full: prevState.full
 				};
 			});
 		});

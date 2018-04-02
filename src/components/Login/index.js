@@ -10,15 +10,17 @@ class Login extends Component{
 			redirect:false
 		};
 	}
+
 	redirectState(){
 		this.setState({redirect:true});
 	}
+
 	handleLogin(){
 		let username = document.forms.login.username.value;
 		let password = document.forms.login.password.value;
 		let xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = ()=>{
-			if(xhttp.readyState === 4 && xhttp.status === 200 && xhttp.responseText==="VALID"){
+			if(xhttp.readyState === 4 && xhttp.status === 200 && xhttp.responseText === "VALID"){
 				self.redirectState();
 			}else if(xhttp.readyState === 4 && xhttp.status === 200){
 				alert("Incorrect username or password");
@@ -29,11 +31,12 @@ class Login extends Component{
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhttp.send("username="+username+"&password="+password);
 	}
+
 	handleGuestLogin(){
 		let guestName = document.forms.login.guestName.value;
 		let xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = ()=>{
-			if(xhttp.readyState === 4 && xhttp.status === 200 && xhttp.responseText==="VALID"){
+			if(xhttp.readyState === 4 && xhttp.status === 200 && xhttp.responseText === "VALID"){
 				self.setState({redirect:true});
 			}else if(xhttp.readyState === 4 && xhttp.status === 200){
 				alert("Name is already taken");
@@ -43,8 +46,8 @@ class Login extends Component{
 		xhttp.open("POST",url,true);
 		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhttp.send("username="+guestName);
-
 	}
+
 	render(){
 		if(this.state.redirect){
 			return <Redirect to="/lobby/" />;

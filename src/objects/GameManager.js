@@ -43,6 +43,7 @@ class GameManager{
 		if(game.state.round != 0){
 			return false;
 		}
+		game.updateSettings(update);
 	}
 
 	createGame(owner){

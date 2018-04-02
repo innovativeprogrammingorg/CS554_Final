@@ -90,15 +90,19 @@ class GameHandler{
 	}
 
 	async onNextRound(game){
-		this.io.in(game._id).emit('nextRound',JSON.stringify(game));
+		this.io.in(game._id).emit('nextRound',game);
 	}
 	
 	async onGameStartFailed(game_id,reason='Error'){
 		this.io.in(game_id).emit('error',reason);
 	}
-	
+
 	async onCardZarTimeOut(game_id){
 		this.io.in(game_id).emit('noZarChoice','Card Zar has timed out before making a choice!');
+	}
+
+	async onSettingUpdate(game_id){
+		this.io.in(game_id).emit('');
 	}
 
 	async sendAllGames(socket){
@@ -112,7 +116,7 @@ class GameHandler{
 			socket.request.session.game = game_id;
 			socket.emit('createGame',game_id);
 		}else{
-			socket.emit('createGame',"FAILURE");
+			socket.emit('createGame','FAILURE');
 		}
 	}
 
@@ -120,7 +124,7 @@ class GameHandler{
 		let game_id = socket.request.session.game;
 		if(!game_id){
 			socket.emit('error','You are not in a game');
-			console.log('User tried to start a game without being in a game');
+			console.error('User tried to start a game without being in a game');
 			return;
 		}
 		if(!this.gameManager.isGameOwner(game_id,socket.request.session.username)){
@@ -136,6 +140,7 @@ class GameHandler{
 			socket.emit('error','Game does not exist');
 			return;
 		}
+
 		if(!game.hasRoom()){
 			socket.emit('error','Game is full!');
 			return;
@@ -158,11 +163,19 @@ class GameHandler{
 		socket.request.session.game = null;
 		let username = socket.request.session.username;
 		if(game === null){
-			console.log("Error, user left a game which does not exist");
+			console.error("Error, user left a game which does not exist");
 			return;
 		}
 
 		game.removePlayer(username);
+	}
+
+	async updateSettings(socket,new_setting){
+		try{
+			this.gameManager.update(socket.request.session.game_id,new_setting);
+		}catch(err){
+			socket.emit('error',err);
+		}
 	}
 
 	async playCards(socket,cards){
@@ -174,12 +187,11 @@ class GameHandler{
 		}
 		let game = this.gameManager.getGame(game_id);
 		if(game === null){
-			console.log('User tried to play in a game which does not exist');
+			console.error('User tried to play in a game which does not exist');
 			socket.emit('error','Please rejoin the game. Error: Game not defined');
 			return;
 		}
-		let played = JSON.stringify(game.playCards(username,cards));
-		socket.to(game_id).emit('played',played);
+		socket.to(game_id).emit('played',game.playCards(username,cards));
 		socket.emit('iPlayed',played);
 	}
 
@@ -187,18 +199,17 @@ class GameHandler{
 		let game = this.gameManager.getGame(socket.request.session.game);
 		if(game === null){
 			socket.emit('error','Game does not exist');
-			console.log('Card Zar tried to pick cards in a game that does not exist');
+			console.error('Card Zar tried to pick cards in a game that does not exist');
 			return;
 		}
 		if(!game.isCardZar(socket.request.session.username)){
 			socket.emit('error','You are not the Card Zar!');
-			console.log('A user tried to pick cards when not the card zar!');
+			console.error('A user tried to pick cards when not the card zar!');
 			return;
 		}
 
 		game.roundWinner(choice);
 	}
 }
-
 
 module.exports = GameHandler;

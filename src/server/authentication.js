@@ -17,14 +17,6 @@ class Authentication{
 		}	
 	}
 
-	static async manual(){
-		try{
-		}catch(err){
-			console.log(err);
-		}
-		
-	}
-
 	static async authGuest(name,cb){
 		try{
 			let result = await db.userExists(name);
@@ -39,7 +31,7 @@ class Authentication{
 		try{
 			let result = await db.userExists(username);
 			if(result){
-				console.log("Cannot create a user which already exists!");
+				console.error("Cannot create a user which already exists!");
 				cb(false);
 				return;
 			}
@@ -48,7 +40,7 @@ class Authentication{
 				db.insertUser(user);
 				cb(true);
 			}).catch((err)=>{
-				console.log(err);
+				console.error(err);
 				cb(false);
 			});
 			
@@ -73,7 +65,6 @@ class Authentication{
 		}catch(err){
 			console.error(err);
 		}
-		
 	}
 }
 

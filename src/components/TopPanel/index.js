@@ -26,7 +26,6 @@ class TopPanel extends Component{
 					</nav>
 				);
 		}
-		
 	}	
 }
 
