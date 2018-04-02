@@ -29,7 +29,7 @@ const GAME_SETTINGS = [
 	{
 		display_name:"Turn Duration",
 		class:"numberSetting",
-		name:"turn_duration",
+		name:"turnDuration",
 		type:"number",
 		max:120,
 		min:0,
@@ -38,7 +38,7 @@ const GAME_SETTINGS = [
 	{
 		display_name:"Blank Cards",
 		class:"numberSetting",
-		name:"blank_cards",
+		name:"blankCards",
 		type:"number",
 		max:50,
 		min:0,

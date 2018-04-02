@@ -106,6 +106,16 @@ class GameManager{
 	isGameOwner(game_id,username){
 		return username === this.getGame(game_id).players[0].name
 	}
+	/**
+	 * Converts all games into a safe form to be sent
+	 */
+	getAllGames(){	
+		let games = [];
+		for(let i = 0;i<this.games.length;i++){
+			games.push(this.games[i].getLobbyVersion());
+		}
+		return games;
+	}
 
 
 }

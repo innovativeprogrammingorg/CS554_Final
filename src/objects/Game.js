@@ -192,7 +192,7 @@ class Game{
 		let name = this.state.played[cards_index];
 		let player = this.players.lookup("name",name);
 		player.awardPoint();
-		if(player.score >= this.settings.win_points){
+		if(player.score >= this.settings.winPoints){
 			this.callbacks.onPlayerWin(this._id,name);
 		}else{
 			this.callbacks.onRoundWon(this._id,name);
@@ -219,6 +219,20 @@ class Game{
 		this.callbacks.onNextRound(this);
 	}
 
+	getLobbyVersion(){
+		let players_out = [];
+		for(let i = 0;i<this.players.length;i++){
+			players_out.push(this.players[i]);
+		}
+		return {
+			name:this.players[0].name + "\'s Game",
+			players:players_out,
+			noPlayers:this.players.length + "/" + this.settings.maxPlayers, 
+			started: (this.state.round === 0),
+			cardPacks:this.settings.cardPacks,
+			goal:this.settings.winPoints 
+		}
+	}
 
 }
 

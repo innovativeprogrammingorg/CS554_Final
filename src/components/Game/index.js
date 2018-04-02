@@ -18,10 +18,9 @@ class Game extends Component{
 			<div className="game">
 				<div className="game_info">
 					{this.createGameHeader()}
-					<p className="game_info"><span>Players:</span>({this.props.no_players}){this.props.players}</p>
-					<p className="game_info"><span>Spectators:</span>{this.props.spectators}</p>
+					<p className="game_info"><span>Players:</span>({this.props.noPlayers}){this.props.players}</p>
 					<p className="game_info"><span>Pts to Win:</span>{this.props.goal}</p>
-					<p className="game_info"><span>Card Packs:</span>{this.props.card_packs}</p>
+					<p className="game_info"><span>Card Packs:</span>{this.props.cardPacks}</p>
 				</div>
 			</div>
 			);
@@ -30,22 +29,20 @@ class Game extends Component{
 
 Game.defaultProps = {
 	gameName:"Test Game",
-	no_players:0,
+	noPlayers:0,
 	started:false,
 	players:"None",
-	card_packs:"None",
-	goal:10,
-	spectators:""
+	cardPacks:"None",
+	goal:10
 };
 
 Game.propTypes = {
 	gameName:PropTypes.string,
-	no_players:PropTypes.number,
+	noPlayers:PropTypes.string,
 	started:PropTypes.boolean,
 	players:PropTypes.string,
-	card_packs:PropTypes.string,
-	goal:PropTypes.number,
-	spectators:PropTypes.string
+	cardPacks:PropTypes.string,
+	goal:PropTypes.number
 };
 
 export default Game;

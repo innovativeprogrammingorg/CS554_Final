@@ -12,15 +12,58 @@ class Lobby extends Component{
 			games:[],
 			full:false
 		};
+		this.initSocket();
+	}
+
+	initSocket(){
 		this.socket = io('http://localhost:8989');
+
 		this.socket.on('connect',()=>{
-			this.socket.emit('joinLobby','Joined');
+			self.socket.emit('joinLobby','Joined');
 		});
+
 		this.socket.on('full',(msg)=>{
-			this.setState({
+			self.setState({
 				full:true
-			})
+			});
 		});
+
+		this.socket.on('room',(msg)=>{
+			self.setState({
+				full:false
+			});
+		});
+
+		this.socket.on('games',(msg)=>{
+			let games = JSON.parse(msg);
+			self.setState({
+				games:games
+			});
+		});
+
+		this.socket.on('error',(msg)=>{
+			alert(msg);
+		});
+
+		this.socket.on('game',(msg)=>{
+			self.setState((prevState, props)=>{
+				let games = prevState.games;
+				games.push(JSON.parse(msg));
+				return {
+					games: games,
+					full:prevState.full
+				};
+			});
+		});
+
+		this.socket.on('createGame',(msg)=>{
+			if(msg==='FAILURE'){
+				alert('Error: Could not create a game');
+			}else{
+				this.window.location = window.location.protocol + "//" + window.location.hostname + ":3000/game/"+msg;
+			}
+		});
+		this.socket.open();
 	}
 
 	lobbyFull(){
@@ -28,20 +71,21 @@ class Lobby extends Component{
 	}
 
 	createGame(){
+		this.socket.emit('createGame','Creating a game...');
 	}
 
 	renderTopPanel(){
 		return (
-			<TopPanel location={'lobby'} createGame={this.state.full ? (this.lobbyFull : this.createGame).bind(this)}/>
+			<TopPanel location={'lobby'} createGame={(this.state.full ? this.lobbyFull : this.createGame).bind(this)}/>
 			);
 	}
 
 	renderGames(){
 		return this.state.games.map((game,i)=>{
 			return (
-				<Game gameName={game.name} no_players={game.no_players}
+				<Game gameName={game.name} noPlayers={game.noPlayers}
 					  started={game.started} players={game.players}
-					  card_packs={game.card_packs} goal={game.goal}/>
+					  cardPacks={game.cardPacks} goal={game.goal}/>
 			);
 		});
 	}
@@ -57,9 +101,5 @@ class Lobby extends Component{
 		
 	}
 }
-
-
-
-
 
 export default Lobby;

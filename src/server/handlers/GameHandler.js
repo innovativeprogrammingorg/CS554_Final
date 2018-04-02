@@ -2,18 +2,18 @@ const GameManager = require('../../objects/GameManager.js');
 
 /**
  * Events
- * full
- * room
+ * full: the server does not have room for more games
+ * room: server has room for more games
  * games: send all games
  * game: new game has been created
  * removeGame: game has been removed
  * createdGame: user created a game successfully
- * start
- * error
+ * start: game has started
+ * error: there was an error
  * joinedGame: redirect the user to the game
- * joined
+ * joined: a new player has joined the game
  * promptPassword: when the game requires a password
- * incorrectPassword
+ * incorrectPassword: when the password enter is incorrect
  * left: when player leaves the game
  * played: A player played their cards for the round
  * iPlayed: The user played their cards for the round
@@ -96,12 +96,13 @@ class GameHandler{
 	async onGameStartFailed(game_id,reason='Error'){
 		this.io.in(game_id).emit('error',reason);
 	}
+	
 	async onCardZarTimeOut(game_id){
 		this.io.in(game_id).emit('noZarChoice','Card Zar has timed out before making a choice!');
 	}
 
 	async sendAllGames(socket){
-		let games = JSON.stringify(this.gameManager.games.toArray());
+		let games = JSON.stringify(this.gameManager.getAllGames());
 		socket.emit('games',games);
 	}
 
@@ -110,6 +111,8 @@ class GameHandler{
 		if(game_id){
 			socket.request.session.game = game_id;
 			socket.emit('createGame',game_id);
+		}else{
+			socket.emit('createGame',"FAILURE");
 		}
 	}
 

@@ -2,30 +2,27 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import './toppanel.css';
 class TopPanel extends Component{
-	renderActions(){
-		
-	}
 	render(){
 		switch(this.props.location){
 			case 'game':
 				return(
 					<nav>
 						<button className="nav" onClick={this.props.startGame}>Start Game</button>
-						<button className="nav">Leave Game</button>
-						<button className="logout">Logout</button>
+						<button className="nav" onClick={this.props.leaveGame}>Leave Game</button>
+						<button className="logout" onClick={this.props.logout}>Logout</button>
 					</nav>
 					);
 			case 'lobby':
 				return(
 					<nav>
-						<button className="nav">Create Game</button>
-						<button className="logout">Logout</button>
+						<button className="nav" onClick={this.props.createGame}>Create Game</button>
+						<button className="logout" onClick={this.props.logout}>Logout</button>
 					</nav>
 					);
 			default:
 				return(
 					<nav>
-						<button className="logout">Logout</button>
+						<button className="logout" onClick={this.props.logout}>Logout</button>
 					</nav>
 				);
 		}

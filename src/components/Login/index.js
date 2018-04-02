@@ -32,7 +32,6 @@ class Login extends Component{
 	handleGuestLogin(){
 		let guestName = document.forms.login.guestName.value;
 		let xhttp = new XMLHttpRequest();
-		let login = this;
 		xhttp.onreadystatechange = ()=>{
 			if(xhttp.readyState === 4 && xhttp.status === 200 && xhttp.responseText==="VALID"){
 				self.setState({redirect:true});
