@@ -9,12 +9,20 @@ const GameHandler = require('./GameHandler.js');
  * joinGame: The user is attempting to join a game
  * createGame: The user is attempting to create a game
  * startGame: The user is attempting to start a game
+ * updateSetting:
+ * updateCardPacks: game cardpacks update
+ * playCards:
+ * chooseCards:
+ * amIOwner: whether or not the player is the owner of the current game
  */
 class socketHandler{
+
 	constructor(io){
 		this.io = io;
 		this.gameHandler = new GameHandler(io);
+		this.start();
 	}
+
 	start(){
 		io.on('connection',(socket)=>{
 			if(!socket.request.session.username){
@@ -39,6 +47,9 @@ class socketHandler{
 			socket.on('updateSetting',(msg)=>{
 				this.gameHandler.updateSettings(socket,msg);
 			});
+			socket.on('updateCardPacks',(msg)=>{
+				this.gameHandler.updateCardPacks(socket,msg);
+			});
 			socket.on('startGame',()=>{
 				this.gameHandler.startGame(socket);
 			});
@@ -48,11 +59,15 @@ class socketHandler{
 			socket.on('chooseCards',(msg)=>{
 				this.chooseCards(socket,msg);
 			});
+			socket.on('amIOwner',()=>{
+				this.gameHandler.isOwner(socket);
+			});
 			socket.on('disconnect',()=>{
 				this.disconnect(socket);
 			});
 		});
 	}
+
 	lobby(socket){
 		socket.join('lobby',()=>{
 			this.gameHandler.sendAllGames(socket);
@@ -68,6 +83,7 @@ class socketHandler{
 	async playCards(socket,cards){
 		this.gameHandler.playCards(socket,cards);
 	}
+
 	async chooseCards(socket,msg){
 		this.gameHandler.chooseCards(socket,parseInt(msg));
 	}

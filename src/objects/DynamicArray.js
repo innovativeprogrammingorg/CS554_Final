@@ -41,7 +41,11 @@ class DArray{
 		return out;
 
 	}
-	remove(prop,comp_func){
+
+	removeByValue(value){
+		this.remove(this.find2(value));
+	}
+	removeByFunc(prop,comp_func){
 		let index = -1;
 		for(let i = 0;i<this.length;i++){
 			if(comp_func(this[i],prop)){
@@ -87,6 +91,24 @@ class DArray{
 			}
 		}
 		return null;
+	}
+
+	find(property_name,value){
+		for(let i = 0;i<this.length;i++){
+			if(this[i][property_name] == value){
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	find2(value){
+		for(let i = 0;i<this.length;i++){
+			if(this[i] == value){
+				return i;
+			}
+		}
+		return -1;
 	}
 }
 

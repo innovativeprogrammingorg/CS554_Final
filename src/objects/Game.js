@@ -117,26 +117,41 @@ class Game{
 	}
 
 	updateSettings(newSetting){
-		this.settings.update(newSetting);
+		this.settings = Object.assign(this.settings,newSetting);
+		this.callbacks.onSettingUpdate(this._id,newSetting);
+	}
+	
+	updateCardPacks(cardpack){
+		this.settings.updateCardPacks(cardpack);
+		this.callbacks.onCardPacksUpdate(this._id,cardpack);
 	}
 	
 	addPlayer(socket){
 		this.players.append(new Player(socket.request.session.username,socket.id));
 	}
+
 	updatePlayer(socket){
 		try{
 			this.players.lookup("name",socket.request.session.username).socket = socket;
 		}catch(err){
-			console.log('Unable to update player\'s socket: '+err);
+			console.error('Unable to update player\'s socket: '+err);
 		}
 		
 	}
+
 	removePlayer(name){
-		this.players.remove(name,Player.compareByName);
+		let index = this.players.find("name",name);
+		if(index === -1){
+			throw new Error("Tried to remove player from game, who is not in the game");
+		}
+		this.players.remove(index);
 		if(this.players.length === 0){
-			this.onGameOver(this._id);
-		}else{
-			this.onPlayerLeave(this._id,name);
+			this.callbacks.onGameOver(this._id);
+			return;
+		}
+		this.callbacks.onPlayerLeave(this._id,name);
+		if(index === 0){
+			this.callbacks.onNewOwner(this.players[0].socket);
 		}
 	}
 

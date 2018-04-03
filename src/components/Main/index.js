@@ -4,6 +4,7 @@ import Settings from '../Settings';
 import PlayersBar from '../PlayersBar';
 import Chat from '../Chat';
 import TopPanel from '../TopPanel';
+import io from 'socket.io-client';
 
 
 class Main extends Component{

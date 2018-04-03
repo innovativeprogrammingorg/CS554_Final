@@ -1,108 +1,54 @@
 const GameManager = require('../../objects/GameManager.js');
-
+const Callbacks = require('./Callbacks.js');
 /**
- * Events
+ * +++++++++++++++++++++Events++++++++++++++++++++++
+ * 
+ * ****Lobby Events****
  * full: the server does not have room for more games
  * room: server has room for more games
  * games: send all games
  * game: new game has been created
  * removeGame: game has been removed
  * createdGame: user created a game successfully
- * start: game has started
- * error: there was an error
  * joinedGame: redirect the user to the game
- * joined: a new player has joined the game
  * promptPassword: when the game requires a password
  * incorrectPassword: when the password enter is incorrect
- * left: when player leaves the game
- * played: A player played their cards for the round
- * iPlayed: The user played their cards for the round
- * allPlayed: All played have played their cards for the round
+ * 
+ * ****Main Game Events****
+ * start: game has started
  * winner: someone has won the game
  * gameDraw: no one can win the game
+ *
+ * ****Game Events****
  * nextRound: Game is entering the next round
  * noZarChoice: Card Zar choice timed out
+ * played: A player played their cards for the round
+ * allPlayed: All played have played their cards for the round
+ * iPlayed: The user played their cards for the round
+ *
+ * ****Settings Events****
+ * updateSetting: game setting update
+ * updateCardPacks: game cardpacks update
+ * amIOwner: whether or not the player is the current owner of the game
+ * owner: The player is now the owner of the game
+ *
+ * ****Players Events****
+ * joined: a new player has joined the game
+ * left: when player leaves the game
+ *
+ * ****Player Events****
  * drawCards: when the player draws new cards
+ *
+ * ****Error Events****
+ * error: there was an error
+ * 
  */
 class GameHandler{
 
 	constructor(io){
 		this.io = io;
-		let callbacks = {
-			onMaxCapacity:this.onServerFull,
-			onSpaceAvailible:this.onServerHasRoom,
-			onGameStart:this.onGameStart,
-			onGameCreate:this.onGameCreate,
-			onGameRemoved: this.onGameRemoved,
-			onGameStartFailed:this.onGameStartFailed,
-			game:{
-				onAllUsersPlayed:this.onAllUsersPlayed,
-				onPlayerWin:this.onPlayerWin,
-				onOutOfCards:this.onGameOutOfCards,
-				onPlayerLeave:this.onPlayerLeft,
-				onRoundWon:this.onRoundWon,
-				onNextRound:this.onNextRound,
-				onCardZarTimeOut:this.CardZarTimeOut
-			}
-
-		};
-		this.gameManager = new GameManager(callbacks);
-	}
-
-	async onServerFull(){
-		this.io.in('lobby').emit('full','Lobby is full!');
-	}
-
-	async onServerHasRoom(){
-		this.io.in('lobby').emit('room','Room for more games!');
-	}
-
-	async onGameCreate(game){
-		this.io.in('lobby').emit('game',JSON.stringify(game));
-	}
-
-	async onGameRemoved(game_id){
-		this.io.in('lobby').emit('removeGame',game_id);
-	}
-
-	async onGameStart(game_id){
-		this.io.in(game_id).emit('start','Game has started!');
-	}
-
-	async onAllUsersPlayed(game_id){
-		this.io.in(game_id).emit('allPlayed','Time for the zar to choose the winner');
-	}
-
-	async onPlayerLeft(game_id,username){
-		this.io.in(game_id).emit('left',username);
-	}
-
-	async onPlayerWin(game_id,winner){
-		this.io.in(game_id).emit('winner',username);
-	}
-
-	async onGameOutOfCards(game_id){
-		this.io.in(game_id).emit('gameDraw','No more cards left, game is a draw!');
-	}
-
-	async onRoundWon(game_id,username){
-		this.io.in(game_id).emit('roundWinner',username);
-	}
-
-	async onNextRound(game){
-		this.io.in(game._id).emit('nextRound',game);
-	}
-	
-	async onGameStartFailed(game_id,reason='Error'){
-		this.io.in(game_id).emit('error',reason);
-	}
-
-	async onCardZarTimeOut(game_id){
-		this.io.in(game_id).emit('noZarChoice','Card Zar has timed out before making a choice!');
-	}
-
-	async onSettingUpdate(game_id){
-		this.io.in(game_id).emit('');
+		this.callbacks = new Callbacks(io);
+		this.gameManager = new GameManager(this.callbacks.exportCallbacks());
 	}
 
 	async sendAllGames(socket){
@@ -172,7 +118,15 @@ class GameHandler{
 
 	async updateSettings(socket,new_setting){
 		try{
-			this.gameManager.update(socket.request.session.game_id,new_setting);
+			this.gameManager.updateGame(socket.request.session.game_id,new_setting);
+		}catch(err){
+			socket.emit('error',err);
+		}
+	}
+
+	async updateCardPacks(socket,cardpack){
+		try{
+			this.gameManager.updateGameCardPacks(socket.request.session.game_id,cardpack);
 		}catch(err){
 			socket.emit('error',err);
 		}
@@ -209,6 +163,15 @@ class GameHandler{
 		}
 
 		game.roundWinner(choice);
+	}
+	async isOwner(socket){
+		try{
+			let game = this.gameManager.getGame(socket.request.session.game);
+			socket.emit('amIOwner',(game.players[0].name === socket.request.session.username));
+		}catch(err){
+			socket.emit('error',err);
+			console.error(err);
+		}
 	}
 }
 

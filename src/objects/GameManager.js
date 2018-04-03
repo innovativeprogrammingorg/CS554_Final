@@ -46,6 +46,14 @@ class GameManager{
 		game.updateSettings(update);
 	}
 
+	updateGameCardPacks(game_id,cardpack){
+		let game = this.getGame(game_id);
+		if(game.state.round != 0){
+			return false;
+		}
+		game.updateCardPacks(cardpack);
+	}
+
 	createGame(owner){
 		if(this.games.length >= GAME_CAPACITY || this.full){
 			return false;

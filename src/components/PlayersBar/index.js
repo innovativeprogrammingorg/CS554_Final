@@ -4,8 +4,37 @@ import User from '../User';
 import './playersbar.css';
 
 class PlayersBar extends Component{
+	constructor(){
+		super();
+		this.state = {
+			players:[]
+		};
+	}
+	componentWillMount(){
+		this.initSocket();
+	}
+
+	static getDerivedStateFromProps(nextProps,prevState){
+		if(!nextProps.players){
+			return null;
+		}
+		return {
+			players: nextProps.players;
+		}
+	}
+
+	initSocket(){
+		this.socket = io('http://localhost:8989');
+		this.socket.on('joined',(msg)=>{
+
+		});
+		this.socket.on('left',(msg)=>{
+
+		});
+	}
+
 	renderInternal(){
-		return this.props.players.map((player,i)=>{
+		return this.state.players.map((player,i)=>{
 			return (
 				<User key={i} username={player.username} points={player.points} />
 			);
