@@ -10,8 +10,13 @@ class PlayersBar extends Component{
 			players:[]
 		};
 	}
+
 	componentWillMount(){
 		this.initSocket();
+	}
+
+	componentWillUnmount(){
+		this.socket.close();
 	}
 
 	static getDerivedStateFromProps(nextProps,prevState){
@@ -25,12 +30,28 @@ class PlayersBar extends Component{
 
 	initSocket(){
 		this.socket = io('http://localhost:8989');
+
 		this.socket.on('joined',(msg)=>{
-
+			self.setState((prevState,props)=>{
+				let state = prevState;
+				let player = {
+					name:msg,
+					points:0
+				};
+				state.players.push(player);
+				return state;
+			});
 		});
+
 		this.socket.on('left',(msg)=>{
-
+			self.setState((prevState,props)=>{
+				return prevState.filter((player,index,arr)=>{
+					return (player.name != msg);
+				});
+			});
 		});
+
+		this.socket.open();
 	}
 
 	renderInternal(){
@@ -40,6 +61,7 @@ class PlayersBar extends Component{
 			);
 		});
 	}
+
 	render(){
 		return(
 			<div className="players_bar">

@@ -49,7 +49,7 @@ class CardPacks extends Component{
 				console.log('Change on card pack '+msg+' ACK');
 				return;
 			}
-			this.setState((prevState,props)=>{
+			self.setState((prevState,props)=>{
 				let pack_values = prevState.pack_values;
 				pack_values[msg] = !(pack_values[msg]);
 				return{
