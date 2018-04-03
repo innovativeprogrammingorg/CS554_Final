@@ -12,7 +12,6 @@ class BlackCard extends Card{
 			this.blankSpaces = blankSpaces;
 			super(text);
 		}
-	
 		
 		if(this.blankSpaces == 0){
 			this.blankSpaces = 1;

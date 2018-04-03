@@ -25,7 +25,8 @@ class Callbacks{
 				onCardPacksUpdate:this.onCardPacksUpdate,
 				onNewOwner:this.onNewOwner,
 				onNewZar:this.onNewZar,
-				onHandChanged:this.onHandChanged
+				onHandChanged:this.onHandChanged,
+				onRoundEnd:this.onRoundEnd
 			}
 		};
 
@@ -101,5 +102,9 @@ class Callbacks{
 
 	async onHandChanged(socket,cards){
 		socket.emit('updateHand',cards);
+	}
+
+	async onRoundEnd(game_id,winner){
+		this.io.in(game_id).emit('displayPlayed',winner);
 	}
 }

@@ -6,9 +6,7 @@ import 'PlayerHand.css';
 class PlayerHand extends Component{
 	constructor(){
 		super();
-		this.state = {
-			selected:[]
-		};
+		this.selected = [];
 	}
 	renderCards(){
 		return this.props.cards.map((card,i)=>{
@@ -31,7 +29,6 @@ class PlayerHand extends Component{
 PlayerHand.propTypes = {
 	cards:PropTypes.array,
 	onSelect:PropTypes.func.isRequired,
-	maxCards:PropTypes.number,
 	selectable:PropTypes.bool
 };
 export default PlayerHand;

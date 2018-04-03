@@ -125,8 +125,6 @@ class GameManager{
 		}
 		return games;
 	}
-
-
 }
 
 module.exports = GameManager;

@@ -26,6 +26,7 @@ const Callbacks = require('./Callbacks.js');
  * played: A player played their cards for the round
  * allPlayed: All played have played their cards for the round
  * iPlayed: The user played their cards for the round
+ * displayPlayed: Display all played cards
  *
  * ****Settings Events****
  * updateSetting: game setting update

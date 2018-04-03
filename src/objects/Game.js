@@ -48,7 +48,6 @@ class Game{
 			onPlayerLeave:undefined,
 			onCardZarTimeOut:undefined
 		};
-
 	}
 
 	start(){
@@ -60,6 +59,7 @@ class Game{
 		this.state.roundStart = Math.floor(Date.now()/1000);
 		this.state.stage = PLAY_CARDS_STAGE;
 		this.state.timer = this.startTimer();
+		this.state.winner = -1;
 	}
 
 	startTimer(){
@@ -68,9 +68,11 @@ class Game{
 			case CARD_ZAR_CHOICE_STAGE:
 				return setTimeout(this.nextStageByTimeOut,this.settings.turnDuration);
 			case WAIT_FOR_NEXT_ROUND_STAGE:
+				this.callbacks.onRoundEnd(this._id,this.state.winner);
 				return setTimeout(this.nextStage,NEXT_ROUND_DELAY);
 				break;
 			default:
+				console.error('Error, unexpected game stage');
 				break;
 		}
 		
@@ -88,7 +90,6 @@ class Game{
 				this.state.stage = WAIT_FOR_NEXT_ROUND_STAGE;
 				this.state.timer = this.startTimer();
 				break;
-			
 			default:
 				console.error('Error, unexpected game stage');
 				break;
@@ -174,7 +175,6 @@ class Game{
 		return this.settings.maxPlayers < this.players.length; 
 	}
 	
-
 	dealCards(){
 		for(let i = 0;i<this.players.length;i++){
 			this.players[i].give_cards(this.whiteDeck.draw(HAND_SIZE));
@@ -188,7 +188,6 @@ class Game{
 			this.callbacks.onOutOfCards(this._id);
 			this.callbacks.onGameOver(this._id);
 		}
-		
 	}
 
 	playCards(name,cards){
@@ -238,6 +237,7 @@ class Game{
 		this.drawBlackCard();
 		this.state.playedCards = [];
 		this.state.played = [];
+		this.state.winner = -1;
 		this.setZar((this.state.cardZar + 1)%this.players.length);
 		this.state.stage = PLAY_CARDS_STAGE;
 		this.callbacks.onNextRound(this);

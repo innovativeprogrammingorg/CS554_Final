@@ -43,13 +43,13 @@ class PlayedCards extends Component{
 
 	renderCards(){
 		return this.state.allCards.map((cards,i)=>{
-			let card_group = cards.map((card,i)=>{
+			let card_group = cards.map((card,j)=>{
 				return(
-					<WhiteCard text={card.text} visible={this.props.usersCards} /> 
+					<WhiteCard text={card.text} visible={this.props.usersCards === j || this.props.displayAll} /> 
 				);
 			});
 			return(
-				<div onClick={()=>{this.onSelect(i)}} id={"group"+i} className="cardGroup">{card_group}</div>
+				<div style={(this.props.winner === i)?{borderColor:'blue'}:{}} onClick={()=>{this.onSelect(i)}} id={"group"+i} className="cardGroup">{card_group}</div>
 			);	
 		});
 	}
@@ -65,7 +65,9 @@ PlayedCards.propTypes = {
 	cards: PropTypes.array,
 	usersCards: PropTypes.number,
 	onSelect: PropTypes.func.isRequired,
-	selectable:PropTypes.bool
+	selectable:PropTypes.bool,
+	displayAll:PropTypes.bool,
+	winner:PropTypes.number
 };
 
 export default PlayedCards;
