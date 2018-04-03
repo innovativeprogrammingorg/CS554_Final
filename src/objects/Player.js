@@ -22,6 +22,11 @@ class Player{
 			this.hand.remove(args[i]);
 		}
 	}
+
+	cardsNeeded(){
+		return HAND_SIZE - this.hand.length;
+	}
+
 	giveCards(args){
 		if((args.length+this.hand.length)>HAND_SIZE){
 			throw new Exception("Player given too many cards");
@@ -29,7 +34,6 @@ class Player{
 		for(let i = 0;i<args.length;i++){
 			this.hand.append(args[i]);
 		}
-		this.socket.emit('drawCards',JSON.stringify(args));
 	}
 	awardPoint(){
 		this.score++;

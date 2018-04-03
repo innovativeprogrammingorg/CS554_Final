@@ -14,6 +14,7 @@ const GameHandler = require('./GameHandler.js');
  * playCards:
  * chooseCards:
  * amIOwner: whether or not the player is the owner of the current game
+ * inGame: The user is in a game. Respond with game data for init. Calling socket will be bound to the player.
  */
 class socketHandler{
 
@@ -61,6 +62,9 @@ class socketHandler{
 			});
 			socket.on('amIOwner',()=>{
 				this.gameHandler.isOwner(socket);
+			});
+			socket.on('inGame',()=>{
+				this.gameHandler.inGame(socket);
 			});
 			socket.on('disconnect',()=>{
 				this.disconnect(socket);

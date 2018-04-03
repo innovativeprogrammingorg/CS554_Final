@@ -1,0 +1,7 @@
+div.whiteCard{
+	border:2px solid black;
+}
+
+div.whiteCard:hover{
+	cursor:pointer;
+}

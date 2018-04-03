@@ -120,7 +120,7 @@ class CardPacks extends Component{
 
 CardPacks.propTypes = {
 	cardpacks:PropTypes.array,
-	editable:PropTypes.boolean
+	editable:PropTypes.bool
 };
 
 

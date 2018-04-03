@@ -1,40 +1,56 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import WhiteCard from "../WhiteCard";
-
+import './PlayedCards.css';
 
 class PlayedCards extends Component{
-	renderCards(){
-		return this.props.cards.map((card,i)=>{
-			return(
-				<WhiteCard text={card.text} visible={this.props.usersCards} /> 
-				);
-			
-		});	
-	}
-	render(){
-		return (
-			<div className="card_group">
-				{this.renderCards()}
-			</div>
-			);
-	}
-}
-
-class PlayedCardsMain extends Component{
 	constructor(){
 		super();
 		this.state = {
-			allCards:[],
-			usersCards:0
+			cards:[],
+			usersCards:-1,
+			selectable:false,
+			choice:-1
 		};
 	}
+
+	static getDerivedStateFromProps(nextProps,prevState){
+		if(!nextProps.cards){
+			return null;
+		}
+		return Object.assign(prevState,nextProps);
+	}
+
+	onSelect(choice){
+		if(!this.state.selectable || this.state.usersCards !== -1){
+			return;
+		}
+		if(this.state.choice === -1){
+			this.setState((prevState,props)=>{
+				return Object.assign(prevState,{choice:choice});
+			});
+			document.getElementById("group"+choice).style.borderColor = "blue";
+			this.props.onSelect(choice);
+		}else{
+			this.setState((prevState,props)=>{
+				return Object.assign(prevState,{choice:-1});
+			});
+			document.getElementById("group"+choice).style.borderColor = "transparent";
+			this.props.onSelect(-1);
+		}
+		
+	}
+
 	renderCards(){
 		return this.state.allCards.map((cards,i)=>{
-			return(
-					<PlayedCards cards={cards} usersCards = {i === this.props.usersCards}/>
+			let card_group = cards.map((card,i)=>{
+				return(
+					<WhiteCard text={card.text} visible={this.props.usersCards} /> 
 				);
-			
+			});
+			return(
+				<div onClick={()=>{this.onSelect(i)}} id={"group"+i} className="cardGroup">{card_group}</div>
+			);	
 		});
 	}
 
@@ -44,15 +60,12 @@ class PlayedCardsMain extends Component{
 		);
 	}
 }
-PlayedCards.defaultProps = {
-	cards:[],
-	usersCards:false
-}
+
 PlayedCards.propTypes = {
 	cards: PropTypes.array,
-	usersCards: PropTypes.bool
+	usersCards: PropTypes.number,
+	onSelect: PropTypes.func.isRequired,
+	selectable:PropTypes.bool
 };
 
-
-
-export default PlayedCardsMain;
+export default PlayedCards;

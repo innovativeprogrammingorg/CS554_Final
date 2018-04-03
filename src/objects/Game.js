@@ -53,14 +53,15 @@ class Game{
 
 	start(){
 		this.state.round = 1;
-		this.draw_blackCard();
+		this.drawBlackCard();
 		this.state.playedCards = [];
 		this.state.played = [];
-		this.state.cardZar = Math.floor(Math.random()*this.players.length);
+		this.setZar(Math.floor(Math.random()*this.players.length));
 		this.state.roundStart = Math.floor(Date.now()/1000);
 		this.state.stage = PLAY_CARDS_STAGE;
 		this.state.timer = this.startTimer();
 	}
+
 	startTimer(){
 		switch(this.state.stage){
 			case PLAY_CARDS_STAGE:
@@ -89,7 +90,7 @@ class Game{
 				break;
 			
 			default:
-				console.log('Error, unexpected game stage');
+				console.error('Error, unexpected game stage');
 				break;
 		}
 	}
@@ -111,7 +112,7 @@ class Game{
 				this.state.timer = this.startTimer();
 				break;
 			default:
-				console.log('Error, unexpected game stage');
+				console.error('Error, unexpected game stage');
 				break;	
 		}
 	}
@@ -120,7 +121,7 @@ class Game{
 		this.settings = Object.assign(this.settings,newSetting);
 		this.callbacks.onSettingUpdate(this._id,newSetting);
 	}
-	
+
 	updateCardPacks(cardpack){
 		this.settings.updateCardPacks(cardpack);
 		this.callbacks.onCardPacksUpdate(this._id,cardpack);
@@ -132,7 +133,9 @@ class Game{
 
 	updatePlayer(socket){
 		try{
-			this.players.lookup("name",socket.request.session.username).socket = socket;
+			let player = this.players.lookup("name",socket.request.session.username);
+			player.socket = socket;
+			this.callbacks.onHandChanged(socket,player.hand);
 		}catch(err){
 			console.error('Unable to update player\'s socket: '+err);
 		}
@@ -160,6 +163,11 @@ class Game{
 			return false;
 		}
 		return this.players[this.state.cardZar].name === name;
+	}
+
+	setZar(index){
+		this.state.cardZar = index;
+		this.callbacks.onNewZar(this.players[index].socket);
 	}
 
 	hasRoom(){
@@ -220,7 +228,8 @@ class Game{
 		for(let i = 0;i<this.played.length;i++){
 			let player = this.players.lookup("name",this.played[i]);
 			try{
-				player.giveCards(this.whiteDeck.draw(this.blackCard.blankSpaces));
+				player.giveCards(this.whiteDeck.draw(player.cardsNeeded()));
+				this.callbacks.onHandChanged(player.socket,player.hand);
 			}catch(err){
 				this.callbacks.onOutOfCards(this._id);
 				return;
@@ -229,7 +238,7 @@ class Game{
 		this.drawBlackCard();
 		this.state.playedCards = [];
 		this.state.played = [];
-		this.state.cardZar = (this.state.cardZar + 1)%this.players.length;
+		this.setZar((this.state.cardZar + 1)%this.players.length);
 		this.state.stage = PLAY_CARDS_STAGE;
 		this.callbacks.onNextRound(this);
 	}
@@ -237,7 +246,7 @@ class Game{
 	getLobbyVersion(){
 		let players_out = [];
 		for(let i = 0;i<this.players.length;i++){
-			players_out.push(this.players[i]);
+			players_out.push(this.players[i].name);
 		}
 		return {
 			name:this.players[0].name + "\'s Game",
@@ -247,6 +256,16 @@ class Game{
 			cardPacks:this.settings.cardPacks,
 			goal:this.settings.winPoints 
 		}
+	}
+
+	getSafeVersion(){
+		return{
+			blackCard:this.state.blackCard,
+			min:Math.floor(this.settings.turnDuration/60),
+			sec:this.settings.turnDuration % 60,
+			round:this.state.round,
+			stage:this.state.stage
+		};
 	}
 
 }

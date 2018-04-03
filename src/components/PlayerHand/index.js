@@ -1,32 +1,37 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import WhiteCard from "../WhiteCard";
+import 'PlayerHand.css';
 
 class PlayerHand extends Component{
 	constructor(){
 		super();
 		this.state = {
-			cards:[]
+			selected:[]
 		};
 	}
-	componentWillMount(){
-
-	}
 	renderCards(){
-		return this.state.cards.map((card,i)=>{
+		return this.props.cards.map((card,i)=>{
 			return(
-					<WhiteCard text={card.text}/>
-				);
+				<WhiteCard selectable={selectable} onSelect={()=>{this.props.onSelect(i)}} text={card.text}
+						   visible={true}/>
+			);
 			
 		});
 	}
 
 	render(){
 		return(
-			<div id="player_hand">{this.renderCards()}</div>
-			);
+			<div id="playerHand">{this.renderCards()}</div>
+		);
 	}
 }
 
 
-
+PlayerHand.propTypes = {
+	cards:PropTypes.array,
+	onSelect:PropTypes.func.isRequired,
+	maxCards:PropTypes.number,
+	selectable:PropTypes.bool
+};
 export default PlayerHand;

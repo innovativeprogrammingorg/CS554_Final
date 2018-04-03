@@ -23,7 +23,9 @@ class Callbacks{
 				onCardZarTimeOut:this.CardZarTimeOut,
 				onSettingUpdate:this.onSettingUpdate,
 				onCardPacksUpdate:this.onCardPacksUpdate,
-				onNewOwner:this.onNewOwner
+				onNewOwner:this.onNewOwner,
+				onNewZar:this.onNewZar,
+				onHandChanged:this.onHandChanged
 			}
 		};
 
@@ -38,7 +40,7 @@ class Callbacks{
 	}
 
 	async onGameCreate(game){
-		this.io.in('lobby').emit('game',JSON.stringify(game));
+		this.io.in('lobby').emit('game',game);
 	}
 
 	async onGameRemoved(game_id){
@@ -46,11 +48,11 @@ class Callbacks{
 	}
 
 	async onGameStart(game_id){
-		this.io.in(game_id).emit('start','Game has started!');
+		this.io.in(game_id).emit('start');
 	}
 
 	async onAllUsersPlayed(game_id){
-		this.io.in(game_id).emit('allPlayed','Time for the zar to choose the winner');
+		this.io.in(game_id).emit('allPlayed');
 	}
 
 	async onPlayerLeft(game_id,username){
@@ -70,7 +72,7 @@ class Callbacks{
 	}
 
 	async onNextRound(game){
-		this.io.in(game._id).emit('nextRound',game);
+		this.io.in(game._id).emit('nextRound',game.getSafeVersion());
 	}
 	
 	async onGameStartFailed(game_id,reason='Error'){
@@ -91,5 +93,13 @@ class Callbacks{
 
 	async onNewOwner(socket){
 		socket.emit('owner');
+	}
+
+	async onNewZar(socket){
+		socket.emit('zar');
+	}
+
+	async onHandChanged(socket,cards){
+		socket.emit('updateHand',cards);
 	}
 }

@@ -18,9 +18,10 @@ const Callbacks = require('./Callbacks.js');
  * start: game has started
  * winner: someone has won the game
  * gameDraw: no one can win the game
- *
+ * 
  * ****Game Events****
  * nextRound: Game is entering the next round
+ * gameData: game data has been requested
  * noZarChoice: Card Zar choice timed out
  * played: A player played their cards for the round
  * allPlayed: All played have played their cards for the round
@@ -37,7 +38,8 @@ const Callbacks = require('./Callbacks.js');
  * left: when player leaves the game
  *
  * ****Player Events****
- * drawCards: when the player draws new cards
+ * updateHand: when the player's hand changes
+ * zar: when the player becomes the card zar
  *
  * ****Error Events****
  * error: there was an error
@@ -168,6 +170,17 @@ class GameHandler{
 		try{
 			let game = this.gameManager.getGame(socket.request.session.game);
 			socket.emit('amIOwner',(game.players[0].name === socket.request.session.username));
+		}catch(err){
+			socket.emit('error',err);
+			console.error(err);
+		}
+	}
+
+	async inGame(socket){
+		try{
+			let game = this.gameManager.getGame(socket.request.session.game);
+			game.updatePlayer(socket);
+			socket.emit('gameData',game.getSafeVersion());
 		}catch(err){
 			socket.emit('error',err);
 			console.error(err);

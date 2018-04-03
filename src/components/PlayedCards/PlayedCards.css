@@ -1,0 +1,7 @@
+div.cardGroup{
+	border:2px solid transparent;
+}
+
+div.cardGroup:hover{
+	cursor:pointer;
+}

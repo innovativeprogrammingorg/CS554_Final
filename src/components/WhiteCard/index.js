@@ -1,23 +1,40 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import 'WhiteCard.css';
 
 class WhiteCard extends Component{
+	constructor(){
+		super();
+		this.state = {
+			selected:false;
+		};
+	}
 	renderText(){
 		if(this.props.visible){
 			return (
-				<p className="White_Card Card_Text White">{this.props.text}</p>
+				<p className="whiteCard">{this.props.text}</p>
 			);
 		}else{
 			return (
-				<p className="White_Card Card_Text White"></p>
+				<p className="whiteCard"></p>
 			);
 		}
 		
 	}
+	onSelect(){
+		if(!this.props.selectable || !this.props.visible){
+			return;
+		}
+
+		this.props.onSelect();
+		this.setState((prevState,props)=>{
+			return {selected:!prevState.selected};
+		});
+	}
 	render(){
 		return (
-			<div className="White_Card">
+			<div style={(this.state.selected ?{borderColor:'blue'}:{borderColor:'black'}) } 
+				 className="whiteCard" onClick={this.onSelect}>
 				{this.renderText()}
 			</div>
 		);
@@ -26,7 +43,9 @@ class WhiteCard extends Component{
 
 WhiteCard.propTypes = {
   	text: PropTypes.string,
-  	visible: PropTypes.bool
+  	visible: PropTypes.bool,
+  	selectable:PropTypes.bool,
+  	onSelect:PropTypes.func
 };
 
 export default WhiteCard;
