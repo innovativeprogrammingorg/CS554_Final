@@ -75,11 +75,10 @@ class Lobby extends Component{
 	createGame(){
 		this.socket.emit('createGame','Creating a game...');
 	}
-
 	renderTopPanel(){
 		return (
 			<TopPanel location={'lobby'} createGame={(this.state.full ? this.lobbyFull : this.createGame).bind(this)}/>
-			);
+		);
 	}
 
 	renderGames(){
@@ -93,14 +92,13 @@ class Lobby extends Component{
 	}
 	render(){
 		return (
-			<div class="lobby_main">
+			<div className="lobby_main">
 				{this.renderTopPanel()}
-				<div class="games">
+				<div className="games">
 					{this.renderGames()}
 				</div>
 			</div>
 		);
-		
 	}
 }
 

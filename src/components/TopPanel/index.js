@@ -1,7 +1,11 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import io from 'socket.io-client';
 import './toppanel.css';
 class TopPanel extends Component{
+	logout(){
+		this.socket = io('http://localhost:8989');
+	}
 	render(){
 		switch(this.props.location){
 			case 'game':

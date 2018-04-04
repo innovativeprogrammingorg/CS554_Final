@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Redirect} from 'react-router'
 import './create_account.css';
 
-class CreateAccount extends Component{
+class CreateAccount extends React.Component{
 	constructor(){
 		super();
 		this.state = {
