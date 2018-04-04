@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import GameActionBar from '../GameActionBar';
 import PlayedCards from '../PlayedCards';
 import PlayerHand from '../PlayerHand';
 import io from 'socket.io-client';
-import 'GameUI.css';
+import './GameUI.css';
 
 class GameUI extends Component{
 	constructor(){
@@ -168,23 +167,23 @@ class GameUI extends Component{
 			case 1:
 				return (
 					<PlayedCards cards={this.state.game.played} usersCards= {this.state.player.ownCards} 
-								 onSelect={this.onSelectCardGroup.bind(this)}}/>
+								 onSelect={this.onSelectCardGroup.bind(this)}/>
 				);
 			case 2:
 				if(this.state.player.isZar){
 					return (
 						<PlayedCards cards={this.state.game.played} usersCards= {this.state.player.ownCards}
-									 onSelect={this.onSelectCardGroup.bind(this)}}/>
+									 onSelect={this.onSelectCardGroup.bind(this)}/>
 					);
 				}
 				return (
 					<PlayedCards cards={this.state.game.played} selectable={true} displayAll={true}
-									 onSelect={this.onSelectCardGroup.bind(this)}}/>
+									 onSelect={this.onSelectCardGroup.bind(this)}/>
 				);
 			case 3:
 				return (
 					<PlayedCards cards={this.state.game.played} displayAll={true}
-									 onSelect={this.onSelectCardGroup.bind(this)}}/>
+									 onSelect={this.onSelectCardGroup.bind(this)}/>
 				);
 			default:
 				return;

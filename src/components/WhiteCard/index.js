@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import 'WhiteCard.css';
+import './WhiteCard.css';
 
 class WhiteCard extends Component{
 	constructor(){
 		super();
 		this.state = {
-			selected:false;
+			selected:false
 		};
 	}
 	renderText(){

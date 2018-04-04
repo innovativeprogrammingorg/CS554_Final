@@ -25,7 +25,7 @@ class socketHandler{
 	}
 
 	start(){
-		io.on('connection',(socket)=>{
+		this.io.on('connection',(socket)=>{
 			if(!socket.request.session.username){
 				console.log("Disconnecting a socket for not being authenticated!");
 				socket.disconnect(true);

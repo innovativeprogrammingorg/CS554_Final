@@ -108,3 +108,5 @@ class Callbacks{
 		this.io.in(game_id).emit('displayPlayed',winner);
 	}
 }
+
+module.exports = Callbacks;

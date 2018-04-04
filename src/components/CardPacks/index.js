@@ -49,7 +49,7 @@ class CardPacks extends Component{
 				console.log('Change on card pack '+msg+' ACK');
 				return;
 			}
-			self.setState((prevState,props)=>{
+			this.setState((prevState,props)=>{
 				let pack_values = prevState.pack_values;
 				pack_values[msg] = !(pack_values[msg]);
 				return{
@@ -68,7 +68,11 @@ class CardPacks extends Component{
 			return;
 		}
 		let pack = name.replace(/(_)+/g,' ');
-		this.state.pack_values[pack] = document.forms.settings[name].checked;
+		let val = document.forms.settings[name].checked;
+		this.setState((prevState,props)=>{
+			let state = prevState;
+			state.pack_values[pack] = val;
+		});
 		this.socket.emit('updateCardPacks',pack);
 	}
 

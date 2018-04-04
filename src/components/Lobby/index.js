@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import Game from '../Game';
 import TopPanel from '../TopPanel';
-import './lobby.css';
 import io from 'socket.io-client';
-
+import './lobby.css';
 
 class Lobby extends Component{
 	constructor(){
@@ -22,24 +21,24 @@ class Lobby extends Component{
 		this.socket = io('http://localhost:8989');
 
 		this.socket.on('connect',()=>{
-			self.socket.emit('joinLobby','Joined');
+			this.socket.emit('joinLobby','Joined');
 		});
 
 		this.socket.on('full',(msg)=>{
-			self.setState({
+			this.setState({
 				full:true
 			});
 		});
 
 		this.socket.on('room',(msg)=>{
-			self.setState({
+			this.setState({
 				full:false
 			});
 		});
 
 		this.socket.on('games',(msg)=>{
 			let games = JSON.parse(msg);
-			self.setState({
+			this.setState({
 				games:games
 			});
 		});
@@ -49,7 +48,7 @@ class Lobby extends Component{
 		});
 
 		this.socket.on('game',(msg)=>{
-			self.setState((prevState, props)=>{
+			this.setState((prevState, props)=>{
 				let games = prevState.games;
 				games.push(JSON.parse(msg));
 				return {
@@ -63,7 +62,7 @@ class Lobby extends Component{
 			if(msg==='FAILURE'){
 				alert('Error: Could not create a game');
 			}else{
-				this.window.location = window.location.protocol + "//" + window.location.hostname + ":3000/game/"+msg;
+				window.location = window.location.protocol + "//" + window.location.hostname + ":3000/game/"+msg;
 			}
 		});
 		this.socket.open();

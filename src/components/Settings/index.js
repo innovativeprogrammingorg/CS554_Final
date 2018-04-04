@@ -42,18 +42,18 @@ class Settings extends Component{
 		this.socket = io('http://localhost:8989');
 		
 		this.socket.on('updateSetting',(msg)=>{
-			self.setState((prevState,props)=>{
+			this.setState((prevState,props)=>{
 				return Object.assign(prevState,msg);
 			});
 		});
 		this.socket.on('owner',()=>{
-			self.setState((prevState,props)=>{
+			this.setState((prevState,props)=>{
 				return Object.assign(prevState,{editable:true});
 			});
 		});
 		this.socket.on('amIOwner',(msg)=>{
 			if(msg){
-				self.setState((prevState,props)=>{
+				this.setState((prevState,props)=>{
 					return Object.assign(prevState,{editable:true});
 				});
 			}

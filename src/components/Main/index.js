@@ -28,7 +28,7 @@ class Main extends Component{
 		});
 
 		this.socket.on('start',()=>{
-			self.setState((prevState,props)=>({
+			this.setState((prevState,props)=>({
 				viewType:'PLAY'
 			}));
 		});

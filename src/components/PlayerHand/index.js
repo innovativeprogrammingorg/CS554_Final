@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import WhiteCard from "../WhiteCard";
-import 'PlayerHand.css';
+import './PlayerHand.css';
 
 class PlayerHand extends Component{
 	constructor(){
@@ -11,7 +11,7 @@ class PlayerHand extends Component{
 	renderCards(){
 		return this.props.cards.map((card,i)=>{
 			return(
-				<WhiteCard selectable={selectable} onSelect={()=>{this.props.onSelect(i)}} text={card.text}
+				<WhiteCard selectable={this.props.selectable} onSelect={()=>{this.props.onSelect(i)}} text={card.text}
 						   visible={true}/>
 			);
 			

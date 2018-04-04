@@ -21,7 +21,7 @@ class Login extends Component{
 		let xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = ()=>{
 			if(xhttp.readyState === 4 && xhttp.status === 200 && xhttp.responseText === "VALID"){
-				self.redirectState();
+				this.redirectState();
 			}else if(xhttp.readyState === 4 && xhttp.status === 200){
 				alert("Incorrect username or password");
 			}
@@ -37,7 +37,7 @@ class Login extends Component{
 		let xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = ()=>{
 			if(xhttp.readyState === 4 && xhttp.status === 200 && xhttp.responseText === "VALID"){
-				self.setState({redirect:true});
+				this.setState({redirect:true});
 			}else if(xhttp.readyState === 4 && xhttp.status === 200){
 				alert("Name is already taken");
 			}

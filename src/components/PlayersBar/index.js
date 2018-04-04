@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import User from '../User';
+import io from 'socket.io-client';
 import './playersbar.css';
 
 class PlayersBar extends Component{
@@ -24,7 +25,7 @@ class PlayersBar extends Component{
 			return null;
 		}
 		return {
-			players: nextProps.players;
+			players: nextProps.players
 		}
 	}
 
@@ -32,7 +33,7 @@ class PlayersBar extends Component{
 		this.socket = io('http://localhost:8989');
 
 		this.socket.on('joined',(msg)=>{
-			self.setState((prevState,props)=>{
+			this.setState((prevState,props)=>{
 				let state = prevState;
 				let player = {
 					name:msg,
@@ -44,9 +45,9 @@ class PlayersBar extends Component{
 		});
 
 		this.socket.on('left',(msg)=>{
-			self.setState((prevState,props)=>{
+			this.setState((prevState,props)=>{
 				return prevState.filter((player,index,arr)=>{
-					return (player.name != msg);
+					return (player.name !== msg);
 				});
 			});
 		});

@@ -18,7 +18,6 @@ class CreateAccount extends Component{
 			return false;
 		}
 		let xhttp = new XMLHttpRequest();
-		let container = this;
 		xhttp.onreadystatechange = ()=>{
 			if(xhttp.readyState === 4 && xhttp.status === 200 && xhttp.responseText==="VALID"){
 				alert("Success!");
