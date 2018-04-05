@@ -129,12 +129,12 @@ class Game{
 	}
 	
 	addPlayer(socket){
-		this.players.append(new Player(socket.request.session.username,socket.id));
+		this.players.append(new Player(socket.session.username,socket));
 	}
 
 	updatePlayer(socket){
 		try{
-			let player = this.players.lookup("name",socket.request.session.username);
+			let player = this.players.lookup("name",socket.session.username);
 			player.socket = socket;
 			this.callbacks.onHandChanged(socket,player.hand);
 		}catch(err){

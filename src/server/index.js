@@ -1,15 +1,17 @@
 const SocketHandler = require('./handlers/SocketHandler.js');
 const Auth = require('./authentication.js');
-
+const {SERVER_PORT, SESSION_SECRET, SESSION_COOKIE_KEY} = require('../config/constants.js');
 var app = require('express')();
-var server = require('http').Server(app);
-var io = require('socket.io')(server, {origins:'http://localhost:* localhost:*'});
+
+var server = require('http').createServer(app);
+
+var io = require('socket.io')(server);
 
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require("express-session");
 
-var RedisStore = require("connect-redis")(session);
+//var RedisStore = require("connect-redis")(session);
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
@@ -17,70 +19,47 @@ var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
-}
+};
+var sharedsession = require("express-socket.io-session");
 
-app.use(cookieParser());
-app.use( bodyParser.json()); 
+var sessionStore = new session.MemoryStore();
+
+var SessionSockets = require('session.socket.io'),
+    sessionSockets = new SessionSockets(io,sessionStore, cookieParser(SESSION_SECRET));
+
+
+app.use(allowCrossDomain);
+app.use(cookieParser(SESSION_SECRET));
+
+app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ 
   extended: true
 })); 
-app.use(allowCrossDomain);
-//app.use(session({ secret: "4wehjgwegfwkw3k23",resave: true,saveUninitialized: true}));
+
+
+app.use(session({ secret: SESSION_SECRET, store: sessionStore }));
 
 var sessionMiddleware = session({
-    store: new RedisStore({}), // XXX redis server config
-    secret: "4wehjgwegfwkw3k23",
-    cookie: false
+    key: SESSION_COOKIE_KEY,
+    secret: SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true
 });
 
-io.use(function(socket, next) {
-    sessionMiddleware(socket.request,socket.request.res, next);
-});
 
-app.use(sessionMiddleware);
+/*io.use(function(socket, next) {
+    sessionMiddleware(socket.request, socket.request.res, next);
+});*/
+/*io.use(sharedsession(sessionMiddleware, {
+    autoSave:true
+}));*/
+
 
 
 /**
  * Ajax handling
  */
 
-app.post('/login',(req,res)=>{
-	try{
-		let username = req.body.username;
-		let password = req.body.password;
-		Auth.authUser(username,password,(valid)=>{
-			if(valid){
-				req.session.username = username;
-				req.session.isGuest = false;
-				res.status(200).send("VALID");
-			}else{
-				res.status(200).send("INVALID");
-			}
-		});
-	}catch(err){
-		console.error(err);
-		res.status(400).send("ERROR");
-	}
-});
-
-app.post('/login/guest',(req,res)=>{
-	console.log("received guest request!");
-	try{
-		let guestName = req.body.username;
-		Auth.authGuest(guestName,(valid)=>{
-			if(valid){
-				req.session.username = guestName;
-				req.session.isGuest = true;
-				res.status(200).send("VALID");
-			}else{
-				res.status(200).send("INVALID");
-			}
-		});
-	}catch(err){
-		console.error(err);
-		res.status(400).send("ERROR");
-	}
-});
 
 app.post('/create/',(req,res)=>{
 	try{
@@ -90,6 +69,7 @@ app.post('/create/',(req,res)=>{
 			if(result){
 				req.session.username = username;
 				req.session.isGuest = false;
+				req.session.save();
 				res.status(200).send("VALID");
 			}else{
 				res.status(200).send("INVALID");
@@ -104,7 +84,7 @@ app.post('/create/',(req,res)=>{
 /**
  * Socket Handler
  */
-var socketHandler =  new SocketHandler(io);
+var socketHandler =  new SocketHandler(sessionSockets);
 
 
 

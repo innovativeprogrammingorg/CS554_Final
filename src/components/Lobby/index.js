@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Game from '../Game';
 import TopPanel from '../TopPanel';
-import * as actions from './actions.js';
+import io from 'socket.io-client';
 import './lobby.css';
 class Lobby extends Component{
 	constructor(){
@@ -14,30 +14,35 @@ class Lobby extends Component{
 	}
 
 	componentWillMount(){
-		this.initActions();
+		this.initSocket();
 	}
 
-	initActions(){
-		actions.lobbyFull(()=>{
+	initSocket(){
+		this.socket = io.connect('localhost:8989');
+		this.socket.on('connect',()=>{
+			console.log("connected!");
+			this.socket.emit('joinLobby','Joined');
+		});
+		this.socket.on('full',()=>{
 			this.setState((prevState,props)=>{
 				let state = prevState;
 				state.full = true;
 				return state;
 			});
 		});
-		actions.lobbyHasRoom(()=>{
+		this.socket.on('room',()=>{
 			this.setState((prevState,props)=>{
 				let state = prevState;
 				state.full = false;
 				return state;
 			});
 		});
-		actions.onReceiveGames((games)=>{
+		this.socket.on('games',(games)=>{
 			this.setState({
 				games:games
 			});
 		});
-		actions.onReceiveGame((game)=>{
+		this.socket.on('game',(game)=>{
 			this.setState((prevState, props)=>{
 				let games = prevState.games;
 				games.push(game);
@@ -47,14 +52,21 @@ class Lobby extends Component{
 				};
 			});
 		});
-		actions.onJoinLobby();	
+
+		this.socket.on('createGame',(msg)=>{
+			if(msg==='FAILURE'){
+				alert('Error: Could not create a game');
+			}else{
+				window.location = window.location.protocol + "//" + window.location.hostname + ":3000/game/"+msg;
+			}
+		});
 	}
 
 	createGame(){
 		if(this.state.full){
 			alert('The Lobby is currently full!');
 		}else{
-			actions.createGame();
+			this.socket.emit('createGame');
 		}
 		
 	}

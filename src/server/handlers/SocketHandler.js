@@ -3,7 +3,9 @@ const GameHandler = require('./GameHandler.js');
 
 /**
  * +++++++++++++++++++EVENTS++++++++++++++++++++
- * logout: The user is requesting to be logged off
+ * login: The user is trying to log in
+ * guestLogin: The user is trying to login in as a guest
+ * logout: The user is handshakeing to be logged off
  * loggedOut: The user has been logged off
  * joinLobby: The user enters the lobby
  * joinGame: The user is attempting to join a game
@@ -16,6 +18,7 @@ const GameHandler = require('./GameHandler.js');
  * amIOwner: whether or not the player is the owner of the current game
  * inGame: The user is in a game. Respond with game data for init. Calling socket will be bound to the player.
  */
+
 class socketHandler{
 
 	constructor(io){
@@ -25,18 +28,32 @@ class socketHandler{
 	}
 
 	start(){
-		this.io.on('connection',(socket)=>{
+		this.io.on('connection',(err,socket,session)=>{
 			console.log("Received a new connection");
-			if(!socket.request.session.username){
+			
+			//console.log(socket);
+
+			/*if(!socket.session || !socket.session.username){
+				
 				console.log("Disconnecting a socket for not being authenticated!");
 				socket.disconnect(true);
 				return;
-			}
+			}*/
+			console.log(session);
 			socket.on('logout',()=>{
-				socket.request.session.game = undefined;
-				socket.request.session.username = undefined;
+				session.game;
+				session.username;
+				session.save();
 				socket.emit('loggedOut','You have been logged out successfully');
 			});
+
+			socket.on('login',(cred)=>{
+				this.login(socket,session,cred);
+			});
+			socket.on('guestLogin',(name)=>{
+				this.loginGuest(socket,session,name);
+			});
+
 			socket.on('joinLobby',()=>{
 				this.lobby(socket);
 			});
@@ -94,11 +111,47 @@ class socketHandler{
 	}
 
 	async disconnect(socket){
-		if(socket.request.session.game){
+		if(socket.session.game){
 			this.gameHandler.leaveGame(socket);
 		}
 	}
 
+	async login(socket,session,msg){
+		try{
+			let username = msg.username;
+			let password = msg.password;
+			Auth.authUser(username,password,(valid)=>{
+				if(valid){
+					session.username = username;
+					session.isGuest = false;
+					session.save();
+					socket.emit('login',true);
+				}else{
+					socket.emit('login',false);
+				}
+			});
+		}catch(err){
+			console.error("Error:"+err);
+		}
+	}
+
+	async loginGuest(socket,session,guestName){
+		console.log("received guest request!");
+		try{
+			Auth.authGuest(guestName,(valid)=>{
+				if(valid){
+					session.username = guestName;
+					session.isGuest = true;
+					session.save();
+					socket.emit('guestLogin',true);
+				}else{
+					socket.emit('guestLogin',false);
+				}
+			});
+		}catch(err){
+			console.log("Error:"+err);
+		}
+	}
 }
 
 module.exports = socketHandler;

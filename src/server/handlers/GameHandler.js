@@ -21,7 +21,7 @@ const Callbacks = require('./Callbacks.js');
  * 
  * ****Game Events****
  * nextRound: Game is entering the next round
- * gameData: game data has been requested
+ * gameData: game data has been handshakeed
  * noZarChoice: Card Zar choice timed out
  * played: A player played their cards for the round
  * allPlayed: All played have played their cards for the round
@@ -55,14 +55,14 @@ class GameHandler{
 	}
 
 	async sendAllGames(socket){
-		let games = JSON.stringify(this.gameManager.getAllGames());
-		socket.emit('games',games);
+		socket.emit('games',this.gameManager.getAllGames());
 	}
 
 	async createGame(socket){
-		let game_id = this.gameManager.createGame(socket.request.session.username);
+		let game_id = this.gameManager.createGame(socket.session.username);
 		if(game_id){
-			socket.request.session.game = game_id;
+			socket.session.game = game_id;
+			socket.session.save();
 			socket.emit('createGame',game_id);
 		}else{
 			socket.emit('createGame','FAILURE');
@@ -70,13 +70,13 @@ class GameHandler{
 	}
 
 	async startGame(socket){
-		let game_id = socket.request.session.game;
+		let game_id = socket.session.game;
 		if(!game_id){
 			socket.emit('error','You are not in a game');
 			console.error('User tried to start a game without being in a game');
 			return;
 		}
-		if(!this.gameManager.isGameOwner(game_id,socket.request.session.username)){
+		if(!this.gameManager.isGameOwner(game_id,socket.session.username)){
 			socket.emit('error','Only the game owner can start the game');
 			return;
 		}
@@ -96,10 +96,11 @@ class GameHandler{
 		}
 
 		if(password === game.settings.password){
-			socket.request.session.game = game_id;//Auth the player for the game
+			socket.session.game = game_id;//Auth the player for the game
+			socket.session.save();
 			socket.emit('joinedGame','Correct Password');
-			game.addPlayer(socket.request.session.username,socket);
-			socket.to(game_id).emit('joined',socket.request.session.username);
+			game.addPlayer(socket.session.username,socket);
+			socket.to(game_id).emit('joined',socket.session.username);
 		}else if(password === ""){
 			socket.emit('promptPassword','This game requires a password');
 		}else{
@@ -108,9 +109,9 @@ class GameHandler{
 	}
 
 	async leaveGame(socket){
-		let game = this.gameManager.getGame(socket.request.session.game);
-		socket.request.session.game = null;
-		let username = socket.request.session.username;
+		let game = this.gameManager.getGame(socket.session.game);
+		socket.session.game = null;
+		let username = socket.session.username;
 		if(game === null){
 			console.error("Error, user left a game which does not exist");
 			return;
@@ -121,7 +122,7 @@ class GameHandler{
 
 	async updateSettings(socket,new_setting){
 		try{
-			this.gameManager.updateGame(socket.request.session.game_id,new_setting);
+			this.gameManager.updateGame(socket.session.game_id,new_setting);
 		}catch(err){
 			socket.emit('error',err);
 		}
@@ -129,15 +130,15 @@ class GameHandler{
 
 	async updateCardPacks(socket,cardpack){
 		try{
-			this.gameManager.updateGameCardPacks(socket.request.session.game_id,cardpack);
+			this.gameManager.updateGameCardPacks(socket.session.game_id,cardpack);
 		}catch(err){
 			socket.emit('error',err);
 		}
 	}
 
 	async playCards(socket,cards){
-		let game_id = socket.request.session.game;
-		let username = socket.request.session.username;
+		let game_id = socket.session.game;
+		let username = socket.session.username;
 		if(game_id == null){
 			socket.emit('error','You are not in a game!');
 			return;
@@ -153,13 +154,13 @@ class GameHandler{
 	}
 
 	async chooseCards(socket,choice){
-		let game = this.gameManager.getGame(socket.request.session.game);
+		let game = this.gameManager.getGame(socket.session.game);
 		if(game === null){
 			socket.emit('error','Game does not exist');
 			console.error('Card Zar tried to pick cards in a game that does not exist');
 			return;
 		}
-		if(!game.isCardZar(socket.request.session.username)){
+		if(!game.isCardZar(socket.session.username)){
 			socket.emit('error','You are not the Card Zar!');
 			console.error('A user tried to pick cards when not the card zar!');
 			return;
@@ -169,8 +170,8 @@ class GameHandler{
 	}
 	async isOwner(socket){
 		try{
-			let game = this.gameManager.getGame(socket.request.session.game);
-			socket.emit('amIOwner',(game.players[0].name === socket.request.session.username));
+			let game = this.gameManager.getGame(socket.session.game);
+			socket.emit('amIOwner',(game.players[0].name === socket.session.username));
 		}catch(err){
 			socket.emit('error',err);
 			console.error(err);
@@ -179,9 +180,9 @@ class GameHandler{
 
 	async inGame(socket){
 		try{
-			let game = this.gameManager.getGame(socket.request.session.game);
+			let game = this.gameManager.getGame(socket.session.game);
 			game.updatePlayer(socket);
-			socket.join(socket.request.session.game);
+			socket.join(socket.session.game);
 			socket.emit('gameData',game.getSafeVersion());
 		}catch(err){
 			socket.emit('error',err);
