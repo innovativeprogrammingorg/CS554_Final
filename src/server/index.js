@@ -3,7 +3,7 @@ const Auth = require('./authentication.js');
 
 var app = require('express')();
 var server = require('http').Server(app);
-var io = require('socket.io')(server);
+var io = require('socket.io')(server, {origins:'http://localhost:* localhost:*'});
 
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -13,7 +13,8 @@ var RedisStore = require("connect-redis")(session);
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header("Access-Control-Allow-Credentials", 'true');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
 }
@@ -29,24 +30,21 @@ app.use(allowCrossDomain);
 var sessionMiddleware = session({
     store: new RedisStore({}), // XXX redis server config
     secret: "4wehjgwegfwkw3k23",
+    cookie: false
 });
 
 io.use(function(socket, next) {
-    sessionMiddleware(socket.request, socket.request.res, next);
+    sessionMiddleware(socket.request,socket.request.res, next);
 });
 
 app.use(sessionMiddleware);
 
 
-
 /**
  * Ajax handling
  */
-//Auth.init();
-//Auth.manual();
 
 app.post('/login',(req,res)=>{
-	console.log("received a login request");
 	try{
 		let username = req.body.username;
 		let password = req.body.password;
@@ -66,11 +64,12 @@ app.post('/login',(req,res)=>{
 });
 
 app.post('/login/guest',(req,res)=>{
+	console.log("received guest request!");
 	try{
 		let guestName = req.body.username;
 		Auth.authGuest(guestName,(valid)=>{
 			if(valid){
-				req.session.username = guest_name;
+				req.session.username = guestName;
 				req.session.isGuest = true;
 				res.status(200).send("VALID");
 			}else{
@@ -108,6 +107,7 @@ app.post('/create/',(req,res)=>{
 var socketHandler =  new SocketHandler(io);
 
 
-app.listen(8989, function () {
-  console.log('Assignment 4 listening on port 8989!');
+
+server.listen(8989, function () {
+  console.log('Final Project listening on port 8989!');
 });

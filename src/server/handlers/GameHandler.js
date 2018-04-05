@@ -181,6 +181,7 @@ class GameHandler{
 		try{
 			let game = this.gameManager.getGame(socket.request.session.game);
 			game.updatePlayer(socket);
+			socket.join(socket.request.session.game);
 			socket.emit('gameData',game.getSafeVersion());
 		}catch(err){
 			socket.emit('error',err);

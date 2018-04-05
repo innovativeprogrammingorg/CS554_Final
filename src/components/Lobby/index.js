@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import Game from '../Game';
 import TopPanel from '../TopPanel';
-import io from 'socket.io-client';
+import * as actions from './actions.js';
 import './lobby.css';
-
 class Lobby extends Component{
 	constructor(){
 		super();
@@ -11,73 +10,57 @@ class Lobby extends Component{
 			games:[],
 			full:false
 		};
+		
 	}
 
 	componentWillMount(){
-		this.initSocket();
+		this.initActions();
 	}
 
-	initSocket(){
-		this.socket = io('http://localhost:8989');
-
-		this.socket.on('connect',()=>{
-			this.socket.emit('joinLobby','Joined');
-		});
-
-		this.socket.on('full',(msg)=>{
-			this.setState({
-				full:true
+	initActions(){
+		actions.lobbyFull(()=>{
+			this.setState((prevState,props)=>{
+				let state = prevState;
+				state.full = true;
+				return state;
 			});
 		});
-
-		this.socket.on('room',(msg)=>{
-			this.setState({
-				full:false
+		actions.lobbyHasRoom(()=>{
+			this.setState((prevState,props)=>{
+				let state = prevState;
+				state.full = false;
+				return state;
 			});
 		});
-
-		this.socket.on('games',(msg)=>{
-			let games = JSON.parse(msg);
+		actions.onReceiveGames((games)=>{
 			this.setState({
 				games:games
 			});
 		});
-
-		this.socket.on('error',(msg)=>{
-			alert(msg);
-		});
-
-		this.socket.on('game',(msg)=>{
+		actions.onReceiveGame((game)=>{
 			this.setState((prevState, props)=>{
 				let games = prevState.games;
-				games.push(JSON.parse(msg));
+				games.push(game);
 				return {
 					games: games,
 					full: prevState.full
 				};
 			});
 		});
-
-		this.socket.on('createGame',(msg)=>{
-			if(msg==='FAILURE'){
-				alert('Error: Could not create a game');
-			}else{
-				window.location = window.location.protocol + "//" + window.location.hostname + ":3000/game/"+msg;
-			}
-		});
-		this.socket.open();
-	}
-
-	lobbyFull(){
-		alert('The Lobby is currently full!');
+		actions.onJoinLobby();	
 	}
 
 	createGame(){
-		this.socket.emit('createGame','Creating a game...');
+		if(this.state.full){
+			alert('The Lobby is currently full!');
+		}else{
+			actions.createGame();
+		}
+		
 	}
 	renderTopPanel(){
 		return (
-			<TopPanel location={'lobby'} createGame={(this.state.full ? this.lobbyFull : this.createGame).bind(this)}/>
+			<TopPanel location={'lobby'} createGame={this.createGame.bind(this)}/>
 		);
 	}
 

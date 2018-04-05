@@ -1,27 +1,15 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import {Redirect} from 'react-router';
 import './login.css';
 
 class Login extends Component{
-	constructor(){
-		super();
-		this.state = {
-			redirect:false
-		};
-	}
-
-	redirectState(){
-		this.setState({redirect:true});
-	}
-
 	handleLogin(){
 		let username = document.forms.login.username.value;
 		let password = document.forms.login.password.value;
 		let xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = ()=>{
 			if(xhttp.readyState === 4 && xhttp.status === 200 && xhttp.responseText === "VALID"){
-				this.redirectState();
+				window.location = '/lobby';
 			}else if(xhttp.readyState === 4 && xhttp.status === 200){
 				alert("Incorrect username or password");
 			}
@@ -37,7 +25,7 @@ class Login extends Component{
 		let xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = ()=>{
 			if(xhttp.readyState === 4 && xhttp.status === 200 && xhttp.responseText === "VALID"){
-				this.setState({redirect:true});
+				window.location = '/lobby';
 			}else if(xhttp.readyState === 4 && xhttp.status === 200){
 				alert("Name is already taken");
 			}
@@ -49,9 +37,6 @@ class Login extends Component{
 	}
 
 	render(){
-		if(this.state.redirect){
-			return <Redirect to="/lobby/" />;
-		}
 
 		return (
 			<div>
