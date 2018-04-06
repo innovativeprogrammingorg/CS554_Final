@@ -10,8 +10,8 @@ var io = require('socket.io')(server);
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require("express-session");
+var methodOverride = require('method-override')
 
-//var RedisStore = require("connect-redis")(session);
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
@@ -20,24 +20,19 @@ var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
 };
+
 var sharedsession = require("express-socket.io-session");
 
-var sessionStore = new session.MemoryStore();
-
-var SessionSockets = require('session.socket.io'),
-    sessionSockets = new SessionSockets(io,sessionStore, cookieParser(SESSION_SECRET));
+var redisClient = redis.createClient();
+var RedisStore = require('connect-redis')(session);
+var redisStore = new RedisStore({ client: redisClient });
 
 
 app.use(allowCrossDomain);
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(SESSION_SECRET));
-
-app.use(bodyParser.json()); 
-app.use(bodyParser.urlencoded({ 
-  extended: true
-})); 
-
-
-app.use(session({ secret: SESSION_SECRET, store: sessionStore }));
 
 var sessionMiddleware = session({
     key: SESSION_COOKIE_KEY,
@@ -46,19 +41,13 @@ var sessionMiddleware = session({
     saveUninitialized: true
 });
 
+app.use(sessionMiddleware);
 
-/*io.use(function(socket, next) {
-    sessionMiddleware(socket.request, socket.request.res, next);
-});*/
-/*io.use(sharedsession(sessionMiddleware, {
+io.use(sharedsession(sessionMiddleware, {
     autoSave:true
-}));*/
+}));
 
 
-
-/**
- * Ajax handling
- */
 
 
 app.post('/create/',(req,res)=>{
@@ -84,10 +73,10 @@ app.post('/create/',(req,res)=>{
 /**
  * Socket Handler
  */
-var socketHandler =  new SocketHandler(sessionSockets);
+var socketHandler =  new SocketHandler(io);
 
 
 
-server.listen(8989, function () {
+server.listen(SERVER_PORT, function () {
   console.log('Final Project listening on port 8989!');
 });

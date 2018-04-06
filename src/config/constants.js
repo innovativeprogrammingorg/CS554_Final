@@ -19,7 +19,7 @@ const SERVER_PORT = 8989;
 
 const SESSION_SECRET = "4wehjgwegfwkw3k23";
 
-const SESSION_COOKIE_KEY = "connect.sid";
+const SESSION_COOKIE_KEY = "cah.sid";
 
 
 

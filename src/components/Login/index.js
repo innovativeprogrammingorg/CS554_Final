@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import io from 'socket.io-client';
+import Cookie from '../../utils/cookie.js';
 import './login.css';
 
 class Login extends Component{
@@ -20,8 +21,10 @@ class Login extends Component{
 			}else{
 				alert("Name is already taken");
 			}
-		})
+		});
+		Cookie.setCookie('cah.sid',Cookie.makeid());
 	}
+
 	handleLogin(){
 		this.socket.emit('login',{
 			username:document.forms.login.username.value,
