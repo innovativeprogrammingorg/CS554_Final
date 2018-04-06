@@ -1,20 +1,35 @@
 /**
- * A simulated dynamic array which contains methods for array manulation which are more 
- * relevant to this game
+ * An array wrapper which 
  */
 class DArray{
 
 	constructor(...args){
-		this.length = args.length;
+		this.data = [];
 		for(let i = 0;i < args.length;i++){
-			this[i] = args[i];
+			this.data[i] = args[i];
 		}
 	}
-	/**
-	 * Gives this object array-like functionality
-	 */
-	[Symbol.iterator](){
-		return Object.keys(this).map(key=>this[key]).values();
+	
+	at(index){
+		return this.data[index];
+	}
+
+	move(index1,index2){
+		this.data[index2] = this.data[index1];
+	}
+
+	swap(index1,index2){
+		let val = this.data[index2];
+		this.move(index1,index2);
+		this.data[index1] = val;
+	}
+
+	update(index,val){
+		this.data[index] = val;
+	}
+
+	length(){
+		return this.data.length;
 	}
 
 	/**
@@ -26,18 +41,18 @@ class DArray{
 		if(typeof index != 'number'){
 			throw new Exception('InvalidArgumentException');
 		}
-		if(index >= length){
+		if(index >= this.length()){
 			throw new Exception('ArrayOverflowException');
 		}
 		if(index < 0 ){
 			throw new Exception('ArrayUnderflowException');
 		}
 
-		let out = this[index];
-		this.length--;
-		for(let i = index;i < this.length;i++){
-			this[i] = this[i+1];
+		let out = this.at(index);
+		for(let i = index;i < this.length();i++){
+			this.move(i+1,i);
 		}
+		this.data.pop();
 		return out;
 
 	}
@@ -45,9 +60,10 @@ class DArray{
 	removeByValue(value){
 		this.remove(this.find2(value));
 	}
+	
 	removeByFunc(prop,comp_func){
 		let index = -1;
-		for(let i = 0;i<this.length;i++){
+		for(let i = 0;i<this.length();i++){
 			if(comp_func(this[i],prop)){
 				index = i;
 				break;
@@ -59,8 +75,8 @@ class DArray{
 	}
 	removeByProperty(prop,attribute){
 		let index = -1;
-		for(let i = 0;i<this.length;i++){
-			if(this[i][property_name] == value){
+		for(let i = 0;i<this.length();i++){
+			if(this.data[i][property_name] == value){
 				index = i;
 				break;
 			}
@@ -72,30 +88,25 @@ class DArray{
 	}
 
 	append(obj){
-		this[this.length] = obj;
-		this.length++;
+		this.data.push(obj);
 	}
 
 	toArray(){
-		let out = [];
-		for(let i = 0;i<this.length;i++){
-			out.push(this[i]);
-		}
-		return out;
+		return this.data;
 	}
 
 	lookup(property_name,value){
-		for(let i = 0;i<this.length;i++){
-			if(this[i][property_name] == value){
-				return this[i];
+		for(let i = 0;i<this.length();i++){
+			if(this.data[i][property_name] == value){
+				return this.data[i];
 			}
 		}
 		return null;
 	}
 
 	find(property_name,value){
-		for(let i = 0;i<this.length;i++){
-			if(this[i][property_name] == value){
+		for(let i = 0;i<this.length();i++){
+			if(this.data[i][property_name] == value){
 				return i;
 			}
 		}
@@ -103,13 +114,15 @@ class DArray{
 	}
 
 	find2(value){
-		for(let i = 0;i<this.length;i++){
-			if(this[i] == value){
+		for(let i = 0;i<this.length();i++){
+			if(this.data[i] == value){
 				return i;
 			}
 		}
 		return -1;
 	}
 }
+
+
 
 module.exports = DArray;

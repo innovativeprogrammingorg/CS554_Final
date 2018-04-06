@@ -63,7 +63,10 @@ class Settings extends Component{
 
 	settingChanged(setting){
 		let value = document.forms.settings[setting].value;
-		this.setting_values[setting] = value;
+		this.setState((prevState,props)=>{
+			let state = prevState;
+			state.setting_values[setting] = value;
+		});
 		let out = {};
 		out[setting] = value;
 		this.socket.emit('updateSetting',out);
@@ -78,7 +81,7 @@ class Settings extends Component{
 							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
 							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name}
 								   max={setting.max} min={setting.min} defaultValue={setting.default} 
-								   disabled={this.state.editable} onChange={()=>{this.settingChanged(setting.name)}}/>  
+								   disabled={!this.state.editable} onChange={()=>{this.settingChanged.bind(this)(setting.name)}}/>  
 						</div>
 						);
 				case "password":
@@ -87,7 +90,7 @@ class Settings extends Component{
 							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
 							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name}
 								   maxLength={setting.max} minLength={setting.min} defaultValue={setting.default} 
-								   autoComplete="off" disabled={this.state.editable} 
+								   autoComplete="off" disabled={!this.state.editable} 
 								   onChange={()=>{this.settingChanged(setting.name)}} />  
 						</div>
 						);
@@ -97,7 +100,7 @@ class Settings extends Component{
 							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
 							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name}
 								   maxLength={setting.max} minLength={setting.min} defaultValue={setting.default} 
-								   disabled={this.state.editable} onChange={()=>{this.settingChanged(setting.name)}} />  
+								   disabled={!this.state.editable} onChange={()=>{this.settingChanged(setting.name)}} />  
 						</div>
 						);
 				default:
@@ -105,7 +108,7 @@ class Settings extends Component{
 						<div key={i} className="setting">
 							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
 							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name} 
-								   defaultValue={setting.default} disabled={this.state.editable} 
+								   defaultValue={setting.default} disabled={!this.state.editable} 
 								   onChange={()=>{this.settingChanged(setting.name)}} />  
 						</div>
 					);
@@ -115,7 +118,7 @@ class Settings extends Component{
 
 	render(){
 		return(
-			<form className="settings">
+			<form className="settings" name="settings">
 				{this.renderSettings()}
 				<CardPacks editable={this.state.editable} cardpacks={this.state.settings.cardPacks}/>
 			</form>

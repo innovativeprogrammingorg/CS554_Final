@@ -21,7 +21,7 @@ class CreateAccount extends React.Component{
 		xhttp.onreadystatechange = ()=>{
 			if(xhttp.readyState === 4 && xhttp.status === 200 && xhttp.responseText==="VALID"){
 				alert("Success!");
-				window.location = '/lobby';
+				window.location = '/';
 			}else if(xhttp.readyState === 4 && xhttp.status === 200){
 				alert("Username is already taken");
 			}

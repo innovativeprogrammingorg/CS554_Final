@@ -9,8 +9,10 @@ const GameHandler = require('./GameHandler.js');
  * loggedOut: The user has been logged off
  * joinLobby: The user enters the lobby
  * joinGame: The user is attempting to join a game
+ * joinedGame: The user has just join a game
  * createGame: The user is attempting to create a game
  * startGame: The user is attempting to start a game
+ * getPlayers: Request for the players in the current game
  * updateSetting:
  * updateCardPacks: game cardpacks update
  * playCards:
@@ -23,15 +25,15 @@ class socketHandler{
 
 	constructor(io){
 		this.io = io;
-		this.gameHandler = new GameHandler(io);
+		this.gameHandler = new GameHandler(this.io.of('/'));
 		this.start();
 	}
 
 	start(){
 		this.io.on('connection',(socket)=>{
-			console.log("Received a new connection");
+			//console.log("Received a new connection");
 			
-			console.log(socket.handshake);
+			//console.log(socket.handshake.session);
 
 			/*if(!socket.session || !socket.session.username){
 				
@@ -62,6 +64,14 @@ class socketHandler{
 			socket.on('joinGame',(msg)=>{
 				this.joinGame(socket,msg);
 			});
+
+			socket.on('joinedGame',()=>{
+				this.gameHandler.joinedGame(socket);
+			});
+			socket.on('getPlayers',()=>{
+				this.gameHandler.getPlayers(socket);
+			});
+
 			socket.on('createGame',()=>{
 				this.gameHandler.createGame(socket);
 			});
@@ -74,11 +84,11 @@ class socketHandler{
 			socket.on('startGame',()=>{
 				this.gameHandler.startGame(socket);
 			});
-			socket.on('playCards',(msg)=>{
-				this.playCards(socket,msg);
+			socket.on('playCards',(cards)=>{
+				this.gameHandler.playCards(socket,cards);
 			});
-			socket.on('chooseCards',(msg)=>{
-				this.chooseCards(socket,msg);
+			socket.on('chooseCards',(choice)=>{
+				this.gameHandler.chooseCards(socket,choice);
 			});
 			socket.on('amIOwner',()=>{
 				this.gameHandler.isOwner(socket);
@@ -87,7 +97,6 @@ class socketHandler{
 				this.gameHandler.inGame(socket);
 			});
 			socket.on('disconnect',()=>{
-				this.disconnect(socket);
 			});
 		});
 	}
@@ -102,20 +111,6 @@ class socketHandler{
 		let game_id = data.game_id;
 		let password = data.password;
 		this.gameHandler.joinGame(socket,game_id,password);
-	}
-
-	async playCards(socket,cards){
-		this.gameHandler.playCards(socket,cards);
-	}
-
-	async chooseCards(socket,msg){
-		this.gameHandler.chooseCards(socket,parseInt(msg));
-	}
-
-	async disconnect(socket){
-		if(socket.session.game){
-			this.gameHandler.leaveGame(socket);
-		}
 	}
 
 	async login(socket,msg){

@@ -4,3 +4,6 @@ form.settings{
 	height:40vh;
 	
 }
+div.setting input{
+	margin-bottom:5px;
+}

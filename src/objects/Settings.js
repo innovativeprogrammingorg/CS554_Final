@@ -9,17 +9,13 @@ class Settings{
 		}
 		this.cardPacks = new DArray();
 	}
-
-	[Symbol.iterator](){
-		return Object.keys(this).map(key=>this[key]).values();
-	}
 	
 	updateCardPacks(cardpack){
-		let index = this['cardPacks'].find2(cardpack);
+		let index = this.cardPacks.find2(cardpack);
 		if(index === -1){
 			this.cardPacks.append(cardpack);
 		}else{
-			this.cardPacks.removeByValue(cardpack);
+			this.cardPacks.remove(index);
 		}
 	}
 

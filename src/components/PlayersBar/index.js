@@ -21,16 +21,26 @@ class PlayersBar extends Component{
 	}
 
 	static getDerivedStateFromProps(nextProps,prevState){
-		if(!nextProps.players){
+		if(!nextProps.players ){
 			return null;
 		}
 		return {
 			players: nextProps.players
-		}
+		};
 	}
 
 	initSocket(){
-		this.socket = io('http://localhost:8989');
+		this.socket = io.connect('http://localhost:8989');
+		this.socket.on('connect',()=>{
+			this.socket.emit('getPlayers');
+		});
+		this.socket.on('players',(players)=>{
+			this.setState((prevState,props)=>{
+				let state = prevState;
+				state.players = players;
+				return state;
+			});
+		});
 
 		this.socket.on('joined',(msg)=>{
 			this.setState((prevState,props)=>{

@@ -44,9 +44,6 @@ class Deck{
 		return out;
 	}
 
-
 }
-
-
 
 module.exports = Deck;

@@ -69,9 +69,11 @@ class CardPacks extends Component{
 		}
 		let pack = name.replace(/(_)+/g,' ');
 		let val = document.forms.settings[name].checked;
+		console.log("Called onchange for "+name);
 		this.setState((prevState,props)=>{
 			let state = prevState;
 			state.pack_values[pack] = val;
+			return state;
 		});
 		this.socket.emit('updateCardPacks',pack);
 	}
@@ -88,8 +90,8 @@ class CardPacks extends Component{
 	renderExternalCPInput(){
 		return (
 			<div className="external_card_pack">
-				<input type="url" name="external_card_pack" id="external_card_pack" disabled={this.props.editable} />
-				<input type="button" name="submit_external" id="submit_external" value="Add Pack" disabled={this.props.editable} 
+				<input type="url" name="external_card_pack" id="external_card_pack" disabled={!this.props.editable} />
+				<input type="button" name="submit_external" id="submit_external" value="Add Pack" disabled={!this.props.editable} 
 					   onClick={this.onAddExternal}/>
 			</div>
 		);
@@ -100,7 +102,7 @@ class CardPacks extends Component{
 			let name = pack.replace(/\s+/g,'_');
 			return (
 				<p key={i} className="card_pack">
-					<input type="checkbox" name={name} id={name} checked={this.state.pack_values[pack]} disabled={this.props.editable}
+					<input type="checkbox" name={name} id={name} checked={this.state.pack_values[pack]} disabled={!this.props.editable}
 						onChange={()=>{this.onChange(name)}}
 					/>
 					<label className="card_pack" htmlFor={name}>{pack}</label>

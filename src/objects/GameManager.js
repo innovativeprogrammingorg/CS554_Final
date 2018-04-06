@@ -48,6 +48,7 @@ class GameManager{
 
 	updateGameCardPacks(game_id,cardpack){
 		let game = this.getGame(game_id);
+		
 		if(game.state.round != 0){
 			return false;
 		}
@@ -65,7 +66,8 @@ class GameManager{
 		let game = new Game();
 		game.addPlayer(owner);
 		game.callbacks = this.callbacks.game;
-		this.callbacks.onGameCreate(game);
+		this.callbacks.onGameCreate(game.getSafeVersion());
+		this.games.append(game);
 		return game._id;
 	}
 	/**
@@ -113,15 +115,21 @@ class GameManager{
 	}
 
 	isGameOwner(game_id,username){
-		return username === this.getGame(game_id).players[0].name
+		try{
+			return username === this.getGame(game_id).players.at(0).name;
+		}catch(err){
+			console.log(err);
+			return false;
+		}
+		
 	}
 	/**
 	 * Converts all games into a safe form to be sent
 	 */
 	getAllGames(){	
 		let games = [];
-		for(let i = 0;i<this.games.length;i++){
-			games.push(this.games[i].getLobbyVersion());
+		for(let i = 0;i<this.games.length();i++){
+			games.push(this.games.at(i).getLobbyVersion());
 		}
 		return games;
 	}

@@ -7,26 +7,26 @@ class Callbacks{
 
 	exportCallbacks(){
 		return {
-			onMaxCapacity:this.onServerFull,
-			onSpaceAvailible:this.onServerHasRoom,
-			onGameStart:this.onGameStart,
-			onGameCreate:this.onGameCreate,
-			onGameRemoved: this.onGameRemoved,
-			onGameStartFailed:this.onGameStartFailed,
+			onMaxCapacity:this.onServerFull.bind(this),
+			onSpaceAvailible:this.onServerHasRoom.bind(this),
+			onGameStart:this.onGameStart.bind(this),
+			onGameCreate:this.onGameCreate.bind(this),
+			onGameRemoved: this.onGameRemoved.bind(this),
+			onGameStartFailed:this.onGameStartFailed.bind(this),
 			game:{
-				onAllUsersPlayed:this.onAllUsersPlayed,
-				onPlayerWin:this.onPlayerWin,
-				onOutOfCards:this.onGameOutOfCards,
-				onPlayerLeave:this.onPlayerLeft,
-				onRoundWon:this.onRoundWon,
-				onNextRound:this.onNextRound,
-				onCardZarTimeOut:this.CardZarTimeOut,
-				onSettingUpdate:this.onSettingUpdate,
-				onCardPacksUpdate:this.onCardPacksUpdate,
-				onNewOwner:this.onNewOwner,
-				onNewZar:this.onNewZar,
-				onHandChanged:this.onHandChanged,
-				onRoundEnd:this.onRoundEnd
+				onAllUsersPlayed:this.onAllUsersPlayed.bind(this),
+				onPlayerWin:this.onPlayerWin.bind(this),
+				onOutOfCards:this.onGameOutOfCards.bind(this),
+				onPlayerLeave:this.onPlayerLeft.bind(this),
+				onRoundWon:this.onRoundWon.bind(this),
+				onNextRound:this.onNextRound.bind(this),
+				onCardZarTimeOut:this.onCardZarTimeOut.bind(this),
+				onSettingUpdate:this.onSettingUpdate.bind(this),
+				onCardPacksUpdate:this.onCardPacksUpdate.bind(this),
+				onNewOwner:this.onNewOwner.bind(this),
+				onNewZar:this.onNewZar.bind(this),
+				onHandChanged:this.onHandChanged.bind(this),
+				onRoundEnd:this.onRoundEnd.bind(this)
 			}
 		};
 
@@ -41,7 +41,12 @@ class Callbacks{
 	}
 
 	async onGameCreate(game){
-		this.io.in('lobby').emit('game',game);
+		try{
+			this.io.in('lobby').emit('game',game);
+		}catch(err){
+			console.error(err);
+		}
+		
 	}
 
 	async onGameRemoved(game_id){

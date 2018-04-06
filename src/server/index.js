@@ -50,7 +50,6 @@ io.use((socket,next)=>{
 	var parseCookie = cookieParser(SESSION_SECRET);
 	parseCookie(socket.handshake,null,()=>{
 		let sessionID = socket.handshake.cookies['cah.sid'];
-		console.log(typeof sessionID);
 		redisStore.load(sessionID, function (err, session) {
 			if(err){
 				next();
@@ -75,9 +74,6 @@ app.post('/create/',(req,res)=>{
 		let password = req.body.password;
 		Auth.createUser(username,password,(result)=>{
 			if(result){
-				req.session.username = username;
-				req.session.isGuest = false;
-				req.session.save();
 				res.status(200).send("VALID");
 			}else{
 				res.status(200).send("INVALID");

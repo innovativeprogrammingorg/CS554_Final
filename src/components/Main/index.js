@@ -11,7 +11,8 @@ class Main extends Component{
 	constructor(){
 		super();
 		this.state = {
-			viewType:'SETTINGS'
+			viewType:'SETTINGS',
+			name:'Some Game'
 		};
 	}
 
@@ -34,10 +35,6 @@ class Main extends Component{
 		});
 	}
 
-	logout(){
-		this.socket.emit('logout','Logout!');
-	}
-
 	renderGameArea(){
 		switch(this.state.viewType){
 			case 'SETTINGS':
@@ -56,8 +53,8 @@ class Main extends Component{
 	render(){
 		return (
 			<div>
-				<TopPanel location='game' startGame={this.startGame.bind(this)} logout={this.logout.bind(this)}/>
-				<h1>{this.props.match.params.id}</h1>
+				<TopPanel location='game' startGame={this.startGame.bind(this)}/>
+				<h1>{this.state.name}</h1>
 				{this.renderGameArea()}
 				<PlayersBar/>
 				<Chat/>

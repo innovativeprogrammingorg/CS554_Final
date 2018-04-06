@@ -37,6 +37,7 @@ const Callbacks = require('./Callbacks.js');
  * ****Players Events****
  * joined: a new player has joined the game
  * left: when player leaves the game
+ * players: send all the players in the game
  *
  * ****Player Events****
  * updateHand: when the player's hand changes
@@ -50,7 +51,7 @@ class GameHandler{
 
 	constructor(io){
 		this.io = io;
-		this.callbacks = new Callbacks(io);
+		this.callbacks = new Callbacks(this.io);
 		this.gameManager = new GameManager(this.callbacks.exportCallbacks());
 	}
 
@@ -59,10 +60,10 @@ class GameHandler{
 	}
 
 	async createGame(socket){
-		let game_id = this.gameManager.createGame(socket.session.username);
+		let game_id = this.gameManager.createGame(socket);
 		if(game_id){
-			socket.session.game = game_id;
-			socket.session.save();
+			socket.handshake.session.game = game_id;
+			socket.handshake.session.save();
 			socket.emit('createGame',game_id);
 		}else{
 			socket.emit('createGame','FAILURE');
@@ -70,13 +71,13 @@ class GameHandler{
 	}
 
 	async startGame(socket){
-		let game_id = socket.session.game;
+		let game_id = socket.handshake.session.game;
 		if(!game_id){
 			socket.emit('error','You are not in a game');
-			console.error('User tried to start a game without being in a game');
+			console.log('User tried to start a game without being in a game');
 			return;
 		}
-		if(!this.gameManager.isGameOwner(game_id,socket.session.username)){
+		if(!this.gameManager.isGameOwner(game_id,socket.handshake.session.username)){
 			socket.emit('error','Only the game owner can start the game');
 			return;
 		}
@@ -96,11 +97,11 @@ class GameHandler{
 		}
 
 		if(password === game.settings.password){
-			socket.session.game = game_id;//Auth the player for the game
-			socket.session.save();
+			socket.handshake.session.game = game_id;//Auth the player for the game
+			socket.handshake.session.save();
 			socket.emit('joinedGame','Correct Password');
-			game.addPlayer(socket.session.username,socket);
-			socket.to(game_id).emit('joined',socket.session.username);
+			game.addPlayer(socket);
+			socket.to(game_id).emit('joined',socket.handshake.session.username);
 		}else if(password === ""){
 			socket.emit('promptPassword','This game requires a password');
 		}else{
@@ -109,9 +110,10 @@ class GameHandler{
 	}
 
 	async leaveGame(socket){
-		let game = this.gameManager.getGame(socket.session.game);
-		socket.session.game = null;
-		let username = socket.session.username;
+		let game = this.gameManager.getGame(socket.handshake.session.game);
+		delete socket.handshake.session.game;
+		socket.handshake.session.save();
+		let username = socket.handshake.session.username;
 		if(game === null){
 			console.error("Error, user left a game which does not exist");
 			return;
@@ -122,7 +124,7 @@ class GameHandler{
 
 	async updateSettings(socket,new_setting){
 		try{
-			this.gameManager.updateGame(socket.session.game_id,new_setting);
+			this.gameManager.updateGame(socket.handshake.session.game,new_setting);
 		}catch(err){
 			socket.emit('error',err);
 		}
@@ -130,15 +132,15 @@ class GameHandler{
 
 	async updateCardPacks(socket,cardpack){
 		try{
-			this.gameManager.updateGameCardPacks(socket.session.game_id,cardpack);
+			this.gameManager.updateGameCardPacks(socket.handshake.session.game,cardpack);
 		}catch(err){
 			socket.emit('error',err);
 		}
 	}
 
 	async playCards(socket,cards){
-		let game_id = socket.session.game;
-		let username = socket.session.username;
+		let game_id = socket.handshake.session.game;
+		let username = socket.handshake.session.username;
 		if(game_id == null){
 			socket.emit('error','You are not in a game!');
 			return;
@@ -154,13 +156,13 @@ class GameHandler{
 	}
 
 	async chooseCards(socket,choice){
-		let game = this.gameManager.getGame(socket.session.game);
+		let game = this.gameManager.getGame(socket.handshake.session.game);
 		if(game === null){
 			socket.emit('error','Game does not exist');
 			console.error('Card Zar tried to pick cards in a game that does not exist');
 			return;
 		}
-		if(!game.isCardZar(socket.session.username)){
+		if(!game.isCardZar(socket.handshake.session.username)){
 			socket.emit('error','You are not the Card Zar!');
 			console.error('A user tried to pick cards when not the card zar!');
 			return;
@@ -169,10 +171,12 @@ class GameHandler{
 		game.roundWinner(choice);
 	}
 	async isOwner(socket){
+		console.log("Checking if "+socket.handshake.session.username+" is the owner");
 		try{
-			let game = this.gameManager.getGame(socket.session.game);
-			socket.emit('amIOwner',(game.players[0].name === socket.session.username));
+			let game = this.gameManager.getGame(socket.handshake.session.game);
+			socket.emit('amIOwner',(game.players.at(0).name === socket.handshake.session.username));
 		}catch(err){
+			console.log(this.gameManager.games.data);
 			socket.emit('error',err);
 			console.error(err);
 		}
@@ -180,10 +184,29 @@ class GameHandler{
 
 	async inGame(socket){
 		try{
-			let game = this.gameManager.getGame(socket.session.game);
+			let game = this.gameManager.getGame(socket.handshake.session.game);
 			game.updatePlayer(socket);
-			socket.join(socket.session.game);
+			socket.join(socket.handshake.session.game);
 			socket.emit('gameData',game.getSafeVersion());
+		}catch(err){
+			socket.emit('error',err);
+			console.error(err);
+		}
+	}
+
+	async getPlayers(socket){
+		try{
+			let game = this.gameManager.getGame(socket.handshake.session.game);
+			socket.emit('players',game.getPlayersSafe());
+		}catch(err){
+			socket.emit('error',err);
+			console.error(err);
+		}
+	}
+
+	async joinedGame(socket){
+		try{
+			let game = this.gameManager.getGame(socket.handshake.session.game);
 		}catch(err){
 			socket.emit('error',err);
 			console.error(err);

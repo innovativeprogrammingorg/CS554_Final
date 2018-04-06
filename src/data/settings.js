@@ -1,13 +1,5 @@
 const GAME_SETTINGS = [	
-	{
-		display_name:"Game Name",
-		class:"gameName",
-		name:"gameName",
-		type:"text",
-		max:60,
-		min:3,
-		default:""
-	},
+
 	{	
 		display_name:"Max Players",
 		class:"numberSetting",

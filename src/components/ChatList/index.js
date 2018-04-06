@@ -4,8 +4,20 @@ import './chatlist.css';
 
 
 class ChatList extends Component{
+	constructor(){
+		super();
+		this.state = {
+			history:[]
+		};
+	}
+	static getDerivedStateFromProps(nextProps,prevState){
+		if(nextProps.history === null){
+			return null;
+		}
+		return nextProps;
+	}
 	renderMessages(){
-		return this.props.history.map((msg,i) =>{
+		return this.state.history.map((msg,i) =>{
 	        return (
 	          	<div className="message" >
 	          		<p className="message"><span className="username">{msg.user}</span>: {msg.message}</p>
@@ -23,7 +35,6 @@ class ChatList extends Component{
 }
 
 ChatList.propTypes = {
-  	user: PropTypes.string,
   	history: PropTypes.array
 };
 

@@ -124,17 +124,19 @@ class Game{
 	}
 
 	updateCardPacks(cardpack){
+		console.log("Received: "+cardpack);
 		this.settings.updateCardPacks(cardpack);
+		console.log(this.settings);
 		this.callbacks.onCardPacksUpdate(this._id,cardpack);
 	}
 	
 	addPlayer(socket){
-		this.players.append(new Player(socket.session.username,socket));
+		this.players.append(new Player(socket.handshake.session.username,socket));
 	}
 
 	updatePlayer(socket){
 		try{
-			let player = this.players.lookup("name",socket.session.username);
+			let player = this.players.lookup("name",socket.handshake.session.username);
 			player.socket = socket;
 			this.callbacks.onHandChanged(socket,player.hand);
 		}catch(err){
@@ -155,7 +157,7 @@ class Game{
 		}
 		this.callbacks.onPlayerLeave(this._id,name);
 		if(index === 0){
-			this.callbacks.onNewOwner(this.players[0].socket);
+			this.callbacks.onNewOwner(this.players.at(0).socket);
 		}
 	}
 
@@ -163,12 +165,12 @@ class Game{
 		if(this.state.round < 1){
 			return false;
 		}
-		return this.players[this.state.cardZar].name === name;
+		return this.players.at(this.state.cardZar).name === name;
 	}
 
 	setZar(index){
 		this.state.cardZar = index;
-		this.callbacks.onNewZar(this.players[index].socket);
+		this.callbacks.onNewZar(this.players.at(index).socket);
 	}
 
 	hasRoom(){
@@ -177,7 +179,7 @@ class Game{
 	
 	dealCards(){
 		for(let i = 0;i<this.players.length;i++){
-			this.players[i].give_cards(this.whiteDeck.draw(HAND_SIZE));
+			this.players.at(i).give_cards(this.whiteDeck.draw(HAND_SIZE));
 		}
 	}
 
@@ -243,10 +245,22 @@ class Game{
 		this.callbacks.onNextRound(this);
 	}
 
+	getPlayersSafe(){
+		let players_out = [];
+		for(let i = 0;i<this.players.length();i++){
+			let player = this.players.at(i);
+			players_out.push({
+				username:player.name,
+				points:player.score
+			});
+		}
+		return players_out;
+	}
+
 	getLobbyVersion(){
 		let players_out = [];
-		for(let i = 0;i<this.players.length;i++){
-			players_out.push(this.players[i].name);
+		for(let i = 0;i<this.players.length();i++){
+			players_out.push(this.players.at(i).name);
 		}
 		return {
 			name:this.players[0].name + "\'s Game",
@@ -265,6 +279,16 @@ class Game{
 			sec:this.settings.turnDuration % 60,
 			round:this.state.round,
 			stage:this.state.stage
+		};
+	}
+	getFullSafeVersion(){
+		return{
+			blackCard:this.state.blackCard,
+			min:Math.floor(this.settings.turnDuration/60),
+			sec:this.settings.turnDuration % 60,
+			round:this.state.round,
+			stage:this.state.stage,
+			settings:this.settings
 		};
 	}
 
