@@ -3,6 +3,7 @@ import Game from '../Game';
 import TopPanel from '../TopPanel';
 import io from 'socket.io-client';
 import './lobby.css';
+
 class Lobby extends Component{
 	constructor(){
 		super();
@@ -10,7 +11,6 @@ class Lobby extends Component{
 			games:[],
 			full:false
 		};
-		
 	}
 
 	componentWillMount(){
@@ -21,8 +21,13 @@ class Lobby extends Component{
 		this.socket = io.connect('localhost:8989');
 		this.socket.on('connect',()=>{
 			console.log("connected!");
+			//this.socket.emit('session',Cookie.getCookie('cah.sid'));
 			this.socket.emit('joinLobby','Joined');
+			
 		});
+		this.socket.on('session',()=>{
+			
+		})
 		this.socket.on('full',()=>{
 			this.setState((prevState,props)=>{
 				let state = prevState;

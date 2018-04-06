@@ -1,19 +1,17 @@
 const SocketHandler = require('./handlers/SocketHandler.js');
 const Auth = require('./authentication.js');
 const {SERVER_PORT, SESSION_SECRET, SESSION_COOKIE_KEY} = require('../config/constants.js');
-var app = require('express')();
 
-var server = require('http').createServer(app);
+var app = require('express')(),
+	server = require('http').createServer(app),
+	io = require('socket.io')(server);
 
-var io = require('socket.io')(server);
+var cookieParser = require('cookie-parser'),
+	bodyParser = require('body-parser'),
+	session = require("express-session");
+	redis = require('redis');
 
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var session = require("express-session");
-var methodOverride = require('method-override')
-
-
-var allowCrossDomain = function(req, res, next) {
+const allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.header("Access-Control-Allow-Credentials", 'true');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE');
@@ -23,18 +21,18 @@ var allowCrossDomain = function(req, res, next) {
 
 var sharedsession = require("express-socket.io-session");
 
-var redisClient = redis.createClient();
-var RedisStore = require('connect-redis')(session);
-var redisStore = new RedisStore({ client: redisClient });
+var redisClient = redis.createClient(),
+	RedisStore = require('connect-redis')(session),
+	redisStore = new RedisStore({ client: redisClient });
 
 
 app.use(allowCrossDomain);
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(SESSION_SECRET));
 
 var sessionMiddleware = session({
+	store:redisStore,
     key: SESSION_COOKIE_KEY,
     secret: SESSION_SECRET,
     resave: true,
@@ -47,6 +45,27 @@ io.use(sharedsession(sessionMiddleware, {
     autoSave:true
 }));
 
+
+io.use((socket,next)=>{
+	var parseCookie = cookieParser(SESSION_SECRET);
+	parseCookie(socket.handshake,null,()=>{
+		let sessionID = socket.handshake.cookies['cah.sid'];
+		console.log(typeof sessionID);
+		redisStore.load(sessionID, function (err, session) {
+			if(err){
+				next();
+			}
+			socket.handshake.sessionID = sessionID;
+			if(session){
+				  socket.handshake.session = session;
+
+			}
+            //console.log("SESSION ID IS "+sessionID);
+			next();
+        });	
+	});
+	
+});
 
 
 
@@ -78,5 +97,5 @@ var socketHandler =  new SocketHandler(io);
 
 
 server.listen(SERVER_PORT, function () {
-  console.log('Final Project listening on port 8989!');
+  console.log('Final Project listening on port '+SERVER_PORT);
 });

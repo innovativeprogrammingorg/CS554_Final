@@ -28,10 +28,10 @@ class socketHandler{
 	}
 
 	start(){
-		this.io.on('connection',(err,socket,session)=>{
+		this.io.on('connection',(socket)=>{
 			console.log("Received a new connection");
 			
-			//console.log(socket);
+			console.log(socket.handshake);
 
 			/*if(!socket.session || !socket.session.username){
 				
@@ -39,19 +39,21 @@ class socketHandler{
 				socket.disconnect(true);
 				return;
 			}*/
-			console.log(session);
 			socket.on('logout',()=>{
-				session.game;
-				session.username;
-				session.save();
+				delete socket.handshake.session.game;
+				delete socket.handshake.session.username;
+				socket.handshake.session.save();
 				socket.emit('loggedOut','You have been logged out successfully');
 			});
 
 			socket.on('login',(cred)=>{
-				this.login(socket,session,cred);
+				this.login(socket,cred);
 			});
 			socket.on('guestLogin',(name)=>{
-				this.loginGuest(socket,session,name);
+				this.loginGuest(socket,name);
+			});
+			socket.on('init',()=>{
+				socket.emit('session',socket.handshake.sessionID);
 			});
 
 			socket.on('joinLobby',()=>{
@@ -116,15 +118,15 @@ class socketHandler{
 		}
 	}
 
-	async login(socket,session,msg){
+	async login(socket,msg){
 		try{
 			let username = msg.username;
 			let password = msg.password;
 			Auth.authUser(username,password,(valid)=>{
 				if(valid){
-					session.username = username;
-					session.isGuest = false;
-					session.save();
+					socket.handshake.session.username = username;
+					socket.handshake.session.isGuest = false;
+					socket.handshake.session.save();
 					socket.emit('login',true);
 				}else{
 					socket.emit('login',false);
@@ -135,14 +137,14 @@ class socketHandler{
 		}
 	}
 
-	async loginGuest(socket,session,guestName){
+	async loginGuest(socket,guestName){
 		console.log("received guest request!");
 		try{
 			Auth.authGuest(guestName,(valid)=>{
 				if(valid){
-					session.username = guestName;
-					session.isGuest = true;
-					session.save();
+					socket.handshake.session.username = guestName;
+					socket.handshake.session.isGuest = true;
+					socket.handshake.session.save();
 					socket.emit('guestLogin',true);
 				}else{
 					socket.emit('guestLogin',false);

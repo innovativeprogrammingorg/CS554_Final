@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import io from 'socket.io-client';
-import Cookie from '../../utils/cookie.js';
+import * as Cookie from '../../utils/cookie.js';
 import './login.css';
 
 class Login extends Component{
@@ -22,7 +22,14 @@ class Login extends Component{
 				alert("Name is already taken");
 			}
 		});
-		Cookie.setCookie('cah.sid',Cookie.makeid());
+		this.socket.on('connect',()=>{
+			console.log('init');
+			this.socket.emit('init');
+		});
+		this.socket.on('session',(msg)=>{
+			console.log('changing session cookie!');
+			Cookie.setCookie('cah.sid',msg);
+		});
 	}
 
 	handleLogin(){
