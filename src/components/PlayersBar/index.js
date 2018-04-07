@@ -57,9 +57,11 @@ class PlayersBar extends Component{
 
 		this.socket.on('left',(msg)=>{
 			this.setState((prevState,props)=>{
-				return prevState.filter((player,index,arr)=>{
+				let state = prevState;
+				state.players = prevState.filter((player,index,arr)=>{
 					return (player.name !== msg);
 				});
+				return state;
 			});
 		});
 

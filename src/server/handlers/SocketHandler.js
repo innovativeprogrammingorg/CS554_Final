@@ -11,8 +11,10 @@ const GameHandler = require('./GameHandler.js');
  * joinGame: The user is attempting to join a game
  * joinedGame: The user has just join a game
  * createGame: The user is attempting to create a game
+ * leaveGame: The user is leaving the game
  * startGame: The user is attempting to start a game
  * getPlayers: Request for the players in the current game
+ * getSettings: Request for the settings in the current game
  * updateSetting:
  * updateCardPacks: game cardpacks update
  * playCards:
@@ -49,7 +51,7 @@ class socketHandler{
 				delete socket.handshake.session.game;
 				delete socket.handshake.session.username;
 				socket.handshake.session.save();
-				socket.emit('loggedOut','You have been logged out successfully');
+				socket.emit('loggedOut');
 			});
 
 			socket.on('login',(cred)=>{
@@ -70,11 +72,19 @@ class socketHandler{
 				this.joinGame(socket,msg);
 			});
 
+			socket.on('leaveGame',()=>{
+				this.gameHandler.leaveGame(socket);
+				
+			});
+
 			socket.on('joinedGame',()=>{
 				this.gameHandler.joinedGame(socket);
 			});
 			socket.on('getPlayers',()=>{
 				this.gameHandler.getPlayers(socket);
+			});
+			socket.on('getSettings',()=>{
+				this.gameHandler.getSettings(socket);
 			});
 
 			socket.on('createGame',()=>{

@@ -18,6 +18,7 @@ const Callbacks = require('./Callbacks.js');
  * start: game has started
  * winner: someone has won the game
  * gameDraw: no one can win the game
+ * leftGame: the user has left the game
  * 
  * ****Game Events****
  * nextRound: Game is entering the next round
@@ -79,6 +80,7 @@ class GameHandler{
 		}
 		if(!this.gameManager.isGameOwner(game_id,socket.handshake.session.username)){
 			socket.emit('error','Only the game owner can start the game');
+			console.log('Only the game owner can start the game');
 			return;
 		}
 		this.gameManager.startGame(game_id);
@@ -125,6 +127,7 @@ class GameHandler{
 		}
 
 		game.removePlayer(username);
+		socket.emit('leftGame');
 	}
 
 	async updateSettings(socket,new_setting){
@@ -212,6 +215,17 @@ class GameHandler{
 	async joinedGame(socket){
 		try{
 			let game = this.gameManager.getGame(socket.handshake.session.game);
+			
+		}catch(err){
+			socket.emit('error',err);
+			console.error(err);
+		}
+	}
+
+	async getSettings(socket){
+		try{
+			let game = this.gameManager.getGame(socket.handshake.session.game);
+			socket.emit('updateSetting',game.settings);
 			
 		}catch(err){
 			socket.emit('error',err);

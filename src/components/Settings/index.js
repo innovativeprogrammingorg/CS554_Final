@@ -12,7 +12,7 @@ class Settings extends React.Component{
 		super();
 		this.state = {
 			settings:GAME_SETTINGS,
-			setting_values:{
+			settingValues:{
 				cardPacks:null
 			},
 			editable:false
@@ -31,7 +31,7 @@ class Settings extends React.Component{
 	static getDerivedStateFromProps(nextProps,prevState){
 		let state = prevState
 		if(nextProps.settings){
-			state.setting_values = Object.assign(state.setting_values,nextProps.settings);
+			state.settingValues = Object.assign(state.settingValues,nextProps.settings);
 		}
 		state.editable = nextProps.editable;
 		
@@ -40,14 +40,24 @@ class Settings extends React.Component{
 
 	initSocket(){
 		this.socket = io('http://localhost:8989');
+
+		this.socket.on('connect',()=>{
+			console.log('getting settings');
+			this.socket.emit('getSettings');
+		});
 		
 		this.socket.on('updateSetting',(msg)=>{
 			this.setState((prevState,props)=>{
-				return Object.assign(prevState,msg);
+				console.log(msg);
+				let state = prevState;
+				state.settingValues = Object.assign(state.settingValues,msg);
+				console.log(state);
+				return state;
 			});
 		});
 		this.socket.on('owner',()=>{
 			this.setState((prevState,props)=>{
+
 				return Object.assign(prevState,{editable:true});
 			});
 		});
@@ -65,22 +75,29 @@ class Settings extends React.Component{
 		let value = document.forms.settings[setting].value;
 		this.setState((prevState,props)=>{
 			let state = prevState;
-			state.setting_values[setting] = value;
+			state.settingValues[setting] = value;
 		});
 		let out = {};
 		out[setting] = value;
 		this.socket.emit('updateSetting',out);
 	}
+	getValue(name,defaultV){
+		if(this.state.settingValues[name]){
+			return this.state.settingValues[name];
+		}
+		return defaultV;
+	}
 
 	renderSettings(){
 		return this.state.settings.map((setting,i) =>{
+			console.log(this.state.settingValues[setting.name]);
 			switch(setting.type){
 				case "number":
 					return (
 						<div key={i} className="setting">
 							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
 							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name}
-								   max={setting.max} min={setting.min} defaultValue={setting.default} 
+								   max={setting.max} min={setting.min} value={this.getValue(setting.name,setting.default)} 
 								   disabled={!this.state.editable} onChange={()=>{this.settingChanged.bind(this)(setting.name)}}/>  
 						</div>
 						);
@@ -89,7 +106,7 @@ class Settings extends React.Component{
 						<div key={i} className="setting">
 							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
 							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name}
-								   maxLength={setting.max} minLength={setting.min} defaultValue={setting.default} 
+								   maxLength={setting.max} minLength={setting.min} value={this.getValue(setting.name,setting.default)} 
 								   autoComplete="off" disabled={!this.state.editable} 
 								   onChange={()=>{this.settingChanged(setting.name)}} />  
 						</div>
@@ -99,7 +116,7 @@ class Settings extends React.Component{
 						<div key={i} className="setting">
 							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
 							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name}
-								   maxLength={setting.max} minLength={setting.min} defaultValue={setting.default} 
+								   maxLength={setting.max} minLength={setting.min} value={this.getValue(setting.name,setting.default)}  
 								   disabled={!this.state.editable} onChange={()=>{this.settingChanged(setting.name)}} />  
 						</div>
 						);
@@ -108,7 +125,7 @@ class Settings extends React.Component{
 						<div key={i} className="setting">
 							<label className={setting.class} htmlFor={setting.name}> {setting.display_name} </label>
 							<input className={setting.class} type={setting.type} name={setting.name} id={setting.name} 
-								   defaultValue={setting.default} disabled={!this.state.editable} 
+								   value={this.getValue(setting.name,setting.default)} disabled={!this.state.editable} 
 								   onChange={()=>{this.settingChanged(setting.name)}} />  
 						</div>
 					);
@@ -116,11 +133,18 @@ class Settings extends React.Component{
 	    });
 	}
 
+	getCardPacks(){
+		if(this.state.settingValues.cardPacks){
+			return this.state.settingValues.cardPacks.data;
+		}
+		return [];
+	}
+
 	render(){
 		return(
 			<form className="settings" name="settings">
 				{this.renderSettings()}
-				<CardPacks editable={this.state.editable} cardpacks={this.state.settings.cardPacks}/>
+				<CardPacks editable={this.state.editable} cardpacks={this.getCardPacks()}/>
 			</form>
 		);
 	}

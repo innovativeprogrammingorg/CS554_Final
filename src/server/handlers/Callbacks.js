@@ -17,7 +17,7 @@ class Callbacks{
 				onAllUsersPlayed:this.onAllUsersPlayed.bind(this),
 				onPlayerWin:this.onPlayerWin.bind(this),
 				onOutOfCards:this.onGameOutOfCards.bind(this),
-				onPlayerLeave:this.onPlayerLeft.bind(this),
+				onPlayerLeave:this.onPlayerLeave.bind(this),
 				onRoundWon:this.onRoundWon.bind(this),
 				onNextRound:this.onNextRound.bind(this),
 				onCardZarTimeOut:this.onCardZarTimeOut.bind(this),
@@ -41,12 +41,7 @@ class Callbacks{
 	}
 
 	async onGameCreate(game){
-		try{
-			this.io.in('lobby').emit('game',game);
-		}catch(err){
-			console.error(err);
-		}
-		
+		this.io.in('lobby').emit('game',game);
 	}
 
 	async onGameRemoved(game_id){
@@ -54,6 +49,7 @@ class Callbacks{
 	}
 
 	async onGameStart(game_id){
+		console.log("Starting game "+game_id);
 		this.io.in(game_id).emit('start');
 	}
 
@@ -61,7 +57,7 @@ class Callbacks{
 		this.io.in(game_id).emit('allPlayed');
 	}
 
-	async onPlayerLeft(game_id,username){
+	async onPlayerLeave(game_id,username){
 		this.io.in(game_id).emit('left',username);
 	}
 
@@ -82,6 +78,7 @@ class Callbacks{
 	}
 	
 	async onGameStartFailed(game_id,reason='Error'){
+		console.error("Game couldn't start because "+reason);
 		this.io.in(game_id).emit('error',reason);
 	}
 
@@ -89,8 +86,8 @@ class Callbacks{
 		this.io.in(game_id).emit('noZarChoice','Card Zar has timed out before making a choice!');
 	}
 
-	async onSettingUpdate(game_id,setting){
-		this.io.in(game_id).emit('updateSetting',setting);
+	async onSettingUpdate(game_id,settings){
+		this.io.in(game_id).emit('updateSetting',settings);
 	}
 
 	async onCardPacksUpdate(game_id,cardpack,cardPacks){

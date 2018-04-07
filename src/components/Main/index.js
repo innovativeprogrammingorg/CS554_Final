@@ -22,11 +22,6 @@ class Main extends React.Component{
 
 	initSocket(){
 		this.socket = io('http://localhost:8989');
-		
-		this.socket.on('loggedOut',(msg)=>{
-			alert(msg);
-			window.location = '/'; 
-		});
 
 		this.socket.on('start',()=>{
 			this.setState((prevState,props)=>({
@@ -46,7 +41,9 @@ class Main extends React.Component{
 		}
 	}
 
+
 	startGame(){
+		console.log("Called start game");
 		this.socket.emit('startGame');
 	}
 

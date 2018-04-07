@@ -9,12 +9,12 @@ class CardPacks extends Component{
 	constructor(){
 		super();
 		this.state = {
-			pack_values:{},
+			packValues:{},
 			packs:[]
 		};
 		for(let i = 0; i < CARD_PACKS.length;i++){
 			this.state.packs.push(CARD_PACKS[i]); 
-			this.state.pack_values[CARD_PACKS[i]] = false; 
+			this.state.packValues[CARD_PACKS[i]] = false; 
 		}
 	}
 
@@ -27,15 +27,15 @@ class CardPacks extends Component{
 	}
 
 	static getDerivedStateFromProps(nextProps,prevState){
-		if(! nextProps.cardpacks){
+		if(!nextProps.cardpacks){
 			return null;
 		}
 		let state = prevState;
 		for(let i = 0;i<state.packs.length;i++){
-			state.pack_values[state.packs[i]] = false;
+			state.packValues[state.packs[i]] = false;
 		}
 		for(let i = 0;i<nextProps.cardpacks.length;i++){
-			state.pack_values[nextProps.cardpacks[i]] = true;
+			state.packValues.data[nextProps.cardpacks[i]] = true;
 		}
 		return state;
 		
@@ -50,10 +50,10 @@ class CardPacks extends Component{
 				return;
 			}
 			this.setState((prevState,props)=>{
-				let pack_values = prevState.pack_values;
-				pack_values[msg] = !(pack_values[msg]);
+				let packValues = prevState.packValues;
+				packValues[msg] = !(packValues[msg]);
 				return{
-					pack_values:pack_values,
+					packValues:packValues,
 					packs:prevState.packs
 				};
 			});
@@ -72,7 +72,7 @@ class CardPacks extends Component{
 		console.log("Called onchange for "+name);
 		this.setState((prevState,props)=>{
 			let state = prevState;
-			state.pack_values[pack] = val;
+			state.packValues[pack] = val;
 			return state;
 		});
 		this.socket.emit('updateCardPacks',pack);
@@ -102,7 +102,7 @@ class CardPacks extends Component{
 			let name = pack.replace(/\s+/g,'_');
 			return (
 				<p key={i} className="card_pack">
-					<input type="checkbox" name={name} id={name} checked={this.state.pack_values[pack]} disabled={!this.props.editable}
+					<input type="checkbox" name={name} id={name} checked={this.state.packValues[pack]} disabled={!this.props.editable}
 						onChange={()=>{this.onChange(name)}}
 					/>
 					<label className="card_pack" htmlFor={name}>{pack}</label>

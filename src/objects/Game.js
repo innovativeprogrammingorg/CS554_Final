@@ -120,11 +120,10 @@ class Game{
 
 	updateSettings(newSetting){
 		this.settings = Object.assign(this.settings,newSetting);
-		this.callbacks.onSettingUpdate(this._id,newSetting);
+		this.callbacks.onSettingUpdate(this._id,this.settings);
 	}
 
 	updateCardPacks(cardpack){
-		console.log("Received: "+cardpack);
 		this.settings.updateCardPacks(cardpack);
 		console.log(this.settings);
 		this.callbacks.onCardPacksUpdate(this._id,cardpack,this.settings.cardPacks);

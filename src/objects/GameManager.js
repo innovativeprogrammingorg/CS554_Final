@@ -96,6 +96,7 @@ class GameManager{
 			this.callbacks.onGameStart(game._id);
 			return true;
 		}catch(err){
+			console.error(err);
 			return false;
 		}
 		

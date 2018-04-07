@@ -1,17 +1,30 @@
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import io from 'socket.io-client';
 import './toppanel.css';
-class TopPanel extends Component{
-	logout(){
-		this.socket = io('http://localhost:8989');
+
+class TopPanel extends React.Component{
+
+	componentWillMount(){
+		this.initSocket();
+	}
+	initSocket(){
+		this.socket = io.connect('http://localhost:8989');
 		this.socket.open();
+		this.socket.on('leftGame',()=>{
+			window.location = '/lobby';
+		});
 		this.socket.on('loggedOut',()=>{
 			console.log("Logged out!");
 			window.location = '/';
 		});
-		this.socket.emit('logout');
+	}
 
+	logout(){
+		this.socket.emit('logout');
+	}
+	leaveGame(){
+		this.socket.emit('leaveGame');
 	}
 	render(){
 		switch(this.props.location){
@@ -19,7 +32,7 @@ class TopPanel extends Component{
 				return(
 					<nav>
 						<button className="nav" onClick={this.props.startGame}>Start Game</button>
-						<button className="nav" onClick={this.props.leaveGame}>Leave Game</button>
+						<button className="nav" onClick={this.leaveGame.bind(this)}>Leave Game</button>
 						<button className="logout" onClick={this.logout.bind(this)}>Logout</button>
 					</nav>
 					);
@@ -47,8 +60,7 @@ TopPanel.defaultProps = {
 TopPanel.propTypes = {
 	location:PropTypes.string,
 	startGame:PropTypes.func,
-	createGame:PropTypes.func,
-	leaveGame:PropTypes.func
+	createGame:PropTypes.func
 };
 
 export default TopPanel;
