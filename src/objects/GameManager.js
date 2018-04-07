@@ -48,7 +48,7 @@ class GameManager{
 
 	updateGameCardPacks(game_id,cardpack){
 		let game = this.getGame(game_id);
-		
+
 		if(game.state.round != 0){
 			return false;
 		}
@@ -66,7 +66,7 @@ class GameManager{
 		let game = new Game();
 		game.addPlayer(owner);
 		game.callbacks = this.callbacks.game;
-		this.callbacks.onGameCreate(game.getSafeVersion());
+		this.callbacks.onGameCreate(game.getLobbyVersion());
 		this.games.append(game);
 		return game._id;
 	}

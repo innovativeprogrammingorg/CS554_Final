@@ -85,27 +85,32 @@ class GameHandler{
 	}
 
 	async joinGame(socket,game_id,password=""){
-		let game = this.gameManager.getGame(game_id);
-		if(game === null){
-			socket.emit('error','Game does not exist');
-			return;
-		}
+		try{
+			let game = this.gameManager.getGame(game_id);
+			if(game === null){
+				socket.emit('error','Game does not exist');
+				return;
+			}
 
-		if(!game.hasRoom()){
-			socket.emit('error','Game is full!');
-			return;
-		}
+			if(!game.hasRoom()){
+				socket.emit('error','Game is full!');
+				return;
+			}
 
-		if(password === game.settings.password){
-			socket.handshake.session.game = game_id;//Auth the player for the game
-			socket.handshake.session.save();
-			socket.emit('joinedGame','Correct Password');
-			game.addPlayer(socket);
-			socket.to(game_id).emit('joined',socket.handshake.session.username);
-		}else if(password === ""){
-			socket.emit('promptPassword','This game requires a password');
-		}else{
-			socket.emit('incorrectPassword','Incorrect Password!');
+			if(password === game.settings.password){
+				socket.handshake.session.game = game_id;//Auth the player for the game
+				socket.handshake.session.save();
+				socket.emit('joinedGame');
+				game.addPlayer(socket);
+				socket.to(game_id).emit('joined',socket.handshake.session.username);
+			}else if(password === ""){
+				socket.emit('promptPassword');
+			}else{
+				socket.emit('incorrectPassword');
+			}
+		}catch(err){
+			console.error(err);
+			socket.emit('error',err);
 		}
 	}
 
@@ -207,6 +212,7 @@ class GameHandler{
 	async joinedGame(socket){
 		try{
 			let game = this.gameManager.getGame(socket.handshake.session.game);
+			
 		}catch(err){
 			socket.emit('error',err);
 			console.error(err);

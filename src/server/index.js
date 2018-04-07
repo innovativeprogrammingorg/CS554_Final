@@ -10,6 +10,7 @@ var cookieParser = require('cookie-parser'),
 	bodyParser = require('body-parser'),
 	session = require("express-session");
 	redis = require('redis');
+var Session = require('../deps/session');
 
 const allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
@@ -31,6 +32,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(SESSION_SECRET));
 
+
+redisStore.generate = (req,sessionID)=>{
+    req.session = new Session(req);
+ };
+
 var sessionMiddleware = session({
 	store:redisStore,
     key: SESSION_COOKIE_KEY,
@@ -50,6 +56,10 @@ io.use((socket,next)=>{
 	var parseCookie = cookieParser(SESSION_SECRET);
 	parseCookie(socket.handshake,null,()=>{
 		let sessionID = socket.handshake.cookies['cah.sid'];
+		if(!sessionID){
+			next();
+		}
+		//console.log(redisStore);
 		redisStore.load(sessionID, function (err, session) {
 			if(err){
 				next();
@@ -58,6 +68,9 @@ io.use((socket,next)=>{
 			if(session){
 				  socket.handshake.session = session;
 
+			}else{
+				redisStore.generate(socket.handshake);
+				console.log("ERROR SESSION DOES NOT EXIST!");
 			}
             //console.log("SESSION ID IS "+sessionID);
 			next();

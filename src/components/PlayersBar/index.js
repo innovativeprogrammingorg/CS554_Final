@@ -43,10 +43,11 @@ class PlayersBar extends Component{
 		});
 
 		this.socket.on('joined',(msg)=>{
+			console.log('A player has joined the game');
 			this.setState((prevState,props)=>{
 				let state = prevState;
 				let player = {
-					name:msg,
+					username:msg,
 					points:0
 				};
 				state.players.push(player);

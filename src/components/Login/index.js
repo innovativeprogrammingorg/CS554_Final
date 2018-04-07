@@ -27,8 +27,14 @@ class Login extends Component{
 			this.socket.emit('init');
 		});
 		this.socket.on('session',(msg)=>{
-			console.log('changing session cookie!');
-			Cookie.setCookie('cah.sid',msg);
+			console.log('changing session cookie, received: '+msg);
+			if(msg === null || msg ==='null'){
+				//Cookie.setCookie('cah.sid',Cookie.makeid());
+				//window.location.reload();
+			}else{
+				Cookie.setCookie('cah.sid',msg);
+			}
+			
 		});
 	}
 
@@ -54,11 +60,11 @@ class Login extends Component{
 						<h2 className="login">Please Login</h2>
 						<p className="login">
 							<label htmlFor="username" className="login">Username</label>
-							<input type="text" name="username" id="username" className="login" ref={(c) => this.username = c} autoComplete="username"/>
+							<input type="text" name="username" id="username" className="login" autoComplete="username"/>
 						</p>
 						<p className="login">
 							<label htmlFor="password" className="login">Password</label>
-							<input type="password" name="password" id="password" className="login" ref={(c) => this.password = c} autoComplete="passwords" />
+							<input type="password" name="password" id="password" className="login" autoComplete="passwords" />
 						</p>
 						<button type="button" name="login" className="login" onClick={this.handleLogin.bind(this)} >Login </button>
 					</div>
@@ -66,7 +72,7 @@ class Login extends Component{
 					<h2 className="login">Continue as a guest</h2>
 					<p className="guestName">
 						<label htmlFor="guestName" className="login">Name</label>
-						<span><input type="text" name="guestName" id="guestName" className="guestName" ref={(c) => this.guest_user_name = c}/>
+						<span><input type="text" name="guestName" id="guestName" className="guestName" />
 						<button type="button" name="guest" className="guest_login_button"  
 									onClick={this.handleGuestLogin.bind(this)} autoComplete="guest_username">Go</button>
 						</span>

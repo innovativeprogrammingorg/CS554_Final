@@ -127,7 +127,7 @@ class Game{
 		console.log("Received: "+cardpack);
 		this.settings.updateCardPacks(cardpack);
 		console.log(this.settings);
-		this.callbacks.onCardPacksUpdate(this._id,cardpack);
+		this.callbacks.onCardPacksUpdate(this._id,cardpack,this.settings.cardPacks);
 	}
 	
 	addPlayer(socket){
@@ -174,7 +174,7 @@ class Game{
 	}
 
 	hasRoom(){
-		return this.settings.maxPlayers < this.players.length; 
+		return this.settings.maxPlayers > this.players.length(); 
 	}
 	
 	dealCards(){
@@ -263,9 +263,10 @@ class Game{
 			players_out.push(this.players.at(i).name);
 		}
 		return {
-			name:this.players[0].name + "\'s Game",
+			_id:this._id,
+			name:this.players.at(0).name + "\'s Game",
 			players:players_out,
-			noPlayers:this.players.length + "/" + this.settings.maxPlayers, 
+			noPlayers:this.players.length() + "/" + this.settings.maxPlayers, 
 			started: (this.state.round === 0),
 			cardPacks:this.settings.cardPacks,
 			goal:this.settings.winPoints 

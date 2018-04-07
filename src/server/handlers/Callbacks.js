@@ -93,8 +93,13 @@ class Callbacks{
 		this.io.in(game_id).emit('updateSetting',setting);
 	}
 
-	async onCardPacksUpdate(game_id,cardpack){
+	async onCardPacksUpdate(game_id,cardpack,cardPacks){
 		this.io.in(game_id).emit('updateCardPacks',cardpack);
+
+		this.io.in('lobby').emit('updateCardPacks',{
+			id:game_id,
+			cardPacks:cardPacks
+		});
 	}
 
 	async onNewOwner(socket){

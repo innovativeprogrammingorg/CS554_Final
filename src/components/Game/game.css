@@ -1,0 +1,38 @@
+ span.gameName{
+	margin-right:10px;
+	font-size:20px;
+}
+
+h1.game{
+	font-size:15px;
+	
+}
+
+div.game{
+	border:1px solid black;
+	width:400px;
+	height:200px;
+}
+
+div.gameInfo{
+	width:290px;
+	height:200px;
+	float:left;
+	padding-left:10px;
+	overflow: hidden
+}
+
+p.gameInfo span{
+	font-weight:bold;
+}
+
+button.game{
+	float:right;
+	width:100px;
+	height:200px;
+	font-size:20px;
+}
+
+button.game:hover{
+	cursor:pointer;
+}

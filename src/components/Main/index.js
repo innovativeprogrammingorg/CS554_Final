@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import GameUI from '../GameUI';
 import Settings from '../Settings';
 import PlayersBar from '../PlayersBar';
@@ -7,7 +7,7 @@ import TopPanel from '../TopPanel';
 import io from 'socket.io-client';
 
 
-class Main extends Component{
+class Main extends React.Component{
 	constructor(){
 		super();
 		this.state = {

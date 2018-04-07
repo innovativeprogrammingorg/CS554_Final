@@ -1,0 +1,8 @@
+div.games{
+	width:100%;
+	height:100%;
+	overflow-y: auto;
+    column-count: auto;
+    column-gap:20px;
+}
+

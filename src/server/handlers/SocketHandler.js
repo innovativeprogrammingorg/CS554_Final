@@ -41,6 +41,10 @@ class socketHandler{
 				socket.disconnect(true);
 				return;
 			}*/
+			//console.log(socket.handshake);
+			if(socket.handshake.session && socket.handshake.session.game){
+				socket.join(socket.handshake.session.game);
+			}
 			socket.on('logout',()=>{
 				delete socket.handshake.session.game;
 				delete socket.handshake.session.username;
@@ -55,6 +59,7 @@ class socketHandler{
 				this.loginGuest(socket,name);
 			});
 			socket.on('init',()=>{
+				
 				socket.emit('session',socket.handshake.sessionID);
 			});
 
@@ -108,6 +113,7 @@ class socketHandler{
 	}
 
 	async joinGame(socket,data){
+		console.log("Received:"+data);
 		let game_id = data.game_id;
 		let password = data.password;
 		this.gameHandler.joinGame(socket,game_id,password);

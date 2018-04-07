@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import CardPacks from '../CardPacks';
 import * as GAME_SETTINGS from '../../data/settings.js';
@@ -6,7 +6,7 @@ import io from 'socket.io-client';
 import './settings.css';
 
 
-class Settings extends Component{
+class Settings extends React.Component{
 
 	constructor(){
 		super();
