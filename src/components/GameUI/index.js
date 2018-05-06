@@ -12,13 +12,16 @@ class GameUI extends Component{
 		this.selection = -1;//Zar
 		this.state = {
 			game:{
-				round:0,
-				min:0,
-				sec:0,
+				round:-1,
+				min:-1,
+				sec:-1,
 				played:[],
 				stage:0,
 				roundWinner:-1,
-				blackCard:null
+				blackCard:{
+					blankSpaces:1,
+					text:"Black Card"
+				}
 			},
 			player:{
 				cards:[],
@@ -29,22 +32,19 @@ class GameUI extends Component{
 		};
 	}
 
-	componentWillMount(){
+	componentDidMount(){
 		this.initSocket();
-		this.socket.emit('inGame');
 	}
 
 	componentWillUnmount(){
 		this.socket.close();
 	}
 
-	static getDerivedStateFromProps(nextProps,prevState){
-		return nextProps;
-	}
-
 	initSocket(){
 		this.socket = io('http://localhost:8989');
-
+		this.socket.on('connect',()=>{
+			this.socket.emit('inGame');
+		});
 		this.socket.on('nextRound',(game)=>{
 			this.setState((prevState,props)=>{
 				return Object.assign(prevState,{game:game});
@@ -52,8 +52,12 @@ class GameUI extends Component{
 		});
 
 		this.socket.on('gameData',(game)=>{
+			/*console.log('Received game data');
+			console.log(game);*/
 			this.setState((prevState,props)=>{
-				return Object.assign(prevState,{game:game});
+				let state = prevState;
+				state.game = game;
+				return state;
 			});
 		});
 
@@ -87,8 +91,10 @@ class GameUI extends Component{
 		});
 		this.socket.on('updateHand',(cards)=>{
 			this.setState((prevState,props)=>{
+				console.log("updateHand has been called");
+				console.log(cards);
 				let state = prevState;
-				state.player.cards = cards;
+				state.player.cards = cards.data;
 				return state;
 			});
 		});
@@ -191,14 +197,14 @@ class GameUI extends Component{
 	}
 	render(){
 		return(
-			<div className="game">
-				<div className="game_top_bar">
-					<span className="game_top_bar" id="Round">{this.state.round}</span>
-					<span className="game_top_bar" id="Time">{this.state.min}:{this.state.sec}</span>
+			<div className="gameUI">
+				<div className="gameTopBar">
+					<span className="gameTopBar" id="Round">Round:{this.state.game.round}&emsp;&emsp;</span>
+					<span className="gameTopBar" id="Time">Time:&nbsp;{this.state.game.min}:{this.state.game.sec}</span>
 				</div>
-				<GameActionBar blackCard={this.state.blackCard.text} onConfirmSelection={this.onConfirm.bind(this)} />
+				<GameActionBar blackCard={this.state.game.blackCard.text} onConfirmSelection={this.onConfirm.bind(this)} />
 				{this.renderPlayedCards()}
-				<PlayerHand cards={this.state.player.cards} onSelect={this.onSelectCard.bind(this)} selectable={!this.state.player.isZar}/>
+				<PlayerHand cards={this.state.player.cards ? this.state.player.cards : []} onSelect={this.onSelectCard.bind(this)} selectable={!this.state.player.isZar}/>
 			</div>
 		);
 	}

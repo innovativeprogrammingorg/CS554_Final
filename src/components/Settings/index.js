@@ -19,9 +19,9 @@ class Settings extends React.Component{
 		};
 	}
 
-	componentWillMount(){
+	componentDidMount(){
 		this.initSocket();
-		this.socket.emit('amIOwner');
+		
 	}
 
 	componentWillUnmount(){
@@ -44,6 +44,7 @@ class Settings extends React.Component{
 		this.socket.on('connect',()=>{
 			console.log('getting settings');
 			this.socket.emit('getSettings');
+			this.socket.emit('amIOwner');
 		});
 		
 		this.socket.on('updateSetting',(msg)=>{
@@ -90,7 +91,7 @@ class Settings extends React.Component{
 
 	renderSettings(){
 		return this.state.settings.map((setting,i) =>{
-			console.log(this.state.settingValues[setting.name]);
+			//console.log(this.state.settingValues[setting.name]);
 			switch(setting.type){
 				case "number":
 					return (

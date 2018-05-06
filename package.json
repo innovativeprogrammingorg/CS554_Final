@@ -18,7 +18,6 @@
     "express-socket.io-session": "^1.3.3",
     "fs": "0.0.1-security",
     "fs-es6": "0.0.2",
-    "grunt": "latest",
     "https": "^1.0.0",
     "module": "^1.2.5",
     "mongodb": "^3.0.4",
@@ -26,8 +25,8 @@
     "path": "^0.12.7",
     "pbkdf2": "^3.0.14",
     "random-number-csprng": "^1.0.2",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.1",
@@ -38,7 +37,7 @@
     "uuid": "^3.2.1"
   },
   "devDependencies": {
-    "grunt": "latest",
+    "grunt": "^1.0.2",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-nodeunit": "latest",
     "grunt-contrib-uglify": "latest"

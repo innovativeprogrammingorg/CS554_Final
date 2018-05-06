@@ -4,18 +4,22 @@ import WhiteCard from "../WhiteCard";
 import './PlayerHand.css';
 
 class PlayerHand extends Component{
-	constructor(){
-		super();
-		this.selected = [];
-	}
+
 	renderCards(){
-		return this.props.cards.map((card,i)=>{
-			return(
-				<WhiteCard selectable={this.props.selectable} onSelect={()=>{this.props.onSelect(i)}} text={card.text}
-						   visible={true}/>
-			);
-			
-		});
+		console.log(this.props);
+		try{
+			return this.props.cards.map((card,i)=>{
+				return(
+					<WhiteCard selectable={this.props.selectable} onSelect={()=>{this.props.onSelect(i)}} text={card.text}
+							   visible={true}/>
+				);
+				
+			});
+		}catch(err){
+			console.log(err);
+		}
+		return;
+		
 	}
 
 	render(){
@@ -25,6 +29,9 @@ class PlayerHand extends Component{
 	}
 }
 
+PlayerHand.defaultProps = {
+	cards:[]
+};
 
 PlayerHand.propTypes = {
 	cards:PropTypes.array,

@@ -12,7 +12,7 @@ class PlayersBar extends Component{
 		};
 	}
 
-	componentWillMount(){
+	componentDidMount(){
 		this.initSocket();
 	}
 

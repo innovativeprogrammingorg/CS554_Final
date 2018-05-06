@@ -1,0 +1,11 @@
+div.gameActionBar{
+	width:200px;
+	margin-left:10px;
+	margin-bottom:5px;
+}
+
+div.gameActionBar button{
+	display:block;
+	margin:auto;
+	margin-top:5px;
+}

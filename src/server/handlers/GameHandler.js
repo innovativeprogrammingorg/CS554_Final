@@ -218,7 +218,7 @@ class GameHandler{
 			
 		}catch(err){
 			socket.emit('error',err);
-			console.error(err);
+			console.log(err);
 		}
 	}
 
@@ -229,7 +229,19 @@ class GameHandler{
 			
 		}catch(err){
 			socket.emit('error',err);
-			console.error(err);
+			console.log(err);
+		}
+	}
+
+	async isStarted(socket){
+		try{
+			let game = this.gameManager.getGame(socket.handshake.session.game);
+			if(game.state.round != 0){
+				socket.emit('start');
+			}
+		}catch(err){
+			socket.emit('error',err);
+			console.log(err);
 		}
 	}
 }

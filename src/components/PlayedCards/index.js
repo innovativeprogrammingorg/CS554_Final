@@ -42,7 +42,7 @@ class PlayedCards extends Component{
 	}
 
 	renderCards(){
-		return this.state.allCards.map((cards,i)=>{
+		return this.state.cards.map((cards,i)=>{
 			let card_group = cards.map((card,j)=>{
 				return(
 					<WhiteCard text={card.text} visible={this.props.usersCards === j || this.props.displayAll} /> 

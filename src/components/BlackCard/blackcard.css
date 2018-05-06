@@ -1,0 +1,12 @@
+
+div.BlackCard{
+	background-color:#000;
+	color:#FFF;
+	width:200px;
+	height:250px;
+	border-radius:5px;
+}
+
+div.BlackCard p{
+	padding:10%;
+}

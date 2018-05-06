@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 export const makeid = ()=>{
   	var text = "";
   	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -6,7 +7,8 @@ export const makeid = ()=>{
     	text += possible.charAt(Math.floor(Math.random() * possible.length));
 
   	return text;
-}
+};
+
 export const getCookie = (cname)=>{
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -21,16 +23,16 @@ export const getCookie = (cname)=>{
         }
     }
     return "";
-}
+};
 
 export const setCookie = (cname, cvalue)=>{
     document.cookie = cname + "=" + cvalue + ";path=/";
-}
+};
 
 export const checkCookie = () => {
     return "" !== getCookie("cah.sid");
     
-}
+};
 
 export const sendCookie = (socket=null)=>{
 	if(socket === null){
@@ -38,6 +40,4 @@ export const sendCookie = (socket=null)=>{
 	}else{
 		
 	}
-}
-
-
+};

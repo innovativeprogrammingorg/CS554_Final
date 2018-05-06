@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 const CONSTANTS = require('../../config/constants.js');
 
 const crypto = require('crypto');

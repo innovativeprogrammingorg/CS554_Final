@@ -89,8 +89,10 @@ class GameManager{
 			return false;
 		}
 		try{
-			game.whiteDeck = this.deckManager.getWCDeck(game.settings.cardPacks);
-			game.blackDeck = this.deckManager.getBCDeck(game.settings.cardPacks);
+			game.whiteDeck = this.deckManager.getWCDeck(game.settings.cardPacks.data);
+			game.blackDeck = this.deckManager.getBCDeck(game.settings.cardPacks.data);
+			/*console.log(game.whiteDeck);
+			console.log(game.blackDeck);*/
 			game.start();
 			this.games.append(game);
 			this.callbacks.onGameStart(game._id);

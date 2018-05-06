@@ -19,10 +19,12 @@ class Main extends React.Component{
 	componentWillMount(){
 		this.initSocket();
 	}
-
+	
 	initSocket(){
 		this.socket = io('http://localhost:8989');
-
+		this.socket.on('connect',()=>{
+			this.socket.emit('isStarted');
+		});
 		this.socket.on('start',()=>{
 			this.setState((prevState,props)=>({
 				viewType:'PLAY'

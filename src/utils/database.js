@@ -1,4 +1,4 @@
-
+/*jshint esversion: 6 */
 const MONGODB_URL = require('../config/constants.js').MONGODB_URL;
 const MongoClient = require('mongodb').MongoClient;
 

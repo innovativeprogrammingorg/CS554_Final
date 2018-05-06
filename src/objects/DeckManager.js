@@ -2,7 +2,7 @@ const WhiteCard =  require('./WhiteCard.js');
 const BlackCard = require('./BlackCard.js');
 const Deck = require('./Deck.js');
 const fs = require('fs');
-const card_packs = require('../data/cards/card_packs.js');
+const cardPacks = require('../data/cards/card_packs.js');
 const resolve = require('path').resolve;
 
 const CARD_DIRECTORY = './src/data/cards/';
@@ -12,52 +12,55 @@ const CARD_DIRECTORY = './src/data/cards/';
  */
 class DeckManager{
 	constructor(){
-		this.white_ready = false;
-		this.black_ready = false;
-		this.card_packs = card_packs;
-		this.white_cards = {};
-		this.black_cards = {};
+		this.whiteReady = false;
+		this.blackReady = false;
+		this.cardPacks = cardPacks;
+		this.whiteCards = {};
+		this.blackCards = {};
 		/**TODO: Synchronize it better**/
-		//console.log(fs.readFileSync(CARD_DIRECTORY+'white_cards.json','utf8'));
+		//console.log(fs.readFileSync(CARD_DIRECTORY+'whiteCards.json','utf8'));
 		fs.readFile(CARD_DIRECTORY+'white_cards.json','utf8',(err,data)=>{
-			let wc_data = JSON.parse(data);
-			for(let i = 0;i<this.card_packs.length;i++){
-				this.white_cards[this.card_packs[i]] = [];
+			let wcData = JSON.parse(data);
+			for(let i = 0;i<this.cardPacks.length;i++){
+				this.whiteCards[this.cardPacks[i]] = [];
 				try{
-					for(let j = 0;j<wc_data[this.card_packs[i]].length;j++){
-						this.white_cards[this.card_packs[i]][j] = new WhiteCard(wc_data[this.card_packs[i]][j]);
+					for(let j = 0;j<wcData[this.cardPacks[i]].length;j++){
+						this.whiteCards[this.cardPacks[i]][j] = new WhiteCard(wcData[this.cardPacks[i]][j]);
 					}
 				}catch(err){
-					console.log(this.card_packs[i] + " is undefined in white cards");
+					console.log(this.cardPacks[i] + " is undefined in white cards");
 					throw new Error("undefined");
 				}
-				
+				/*console.log("White Cards are ready:");
+				console.log(this.whiteCards);*/
 			}
-			this.white_ready = true;
+			this.whiteReady = true;
 
 		});
 		fs.readFile(CARD_DIRECTORY+'black_cards.json','utf8',(err,data)=>{
-			let bc_data = JSON.parse(data);
-			for(let i = 0;i<this.card_packs.length;i++){
-				this.black_cards[this.card_packs[i]] = [];
-				for(let j = 0;j<bc_data[this.card_packs[i]].length;j++){
-					this.black_cards[this.card_packs[i]][j] = new BlackCard(bc_data[this.card_packs[i]][j]);
+			let bcData = JSON.parse(data);
+			for(let i = 0;i<this.cardPacks.length;i++){
+				this.blackCards[this.cardPacks[i]] = [];
+				for(let j = 0;j<bcData[this.cardPacks[i]].length;j++){
+					this.blackCards[this.cardPacks[i]][j] = new BlackCard(bcData[this.cardPacks[i]][j]);
 				}
 			}
-			this.black_ready = true;
+			/*console.log("Black Cards are ready:");
+			console.log(this.blackCards);*/
+			this.blackReady = true;
 		});
 	}
 
 	ready(){
-		return this.white_ready && this.black_ready;
+		return this.whiteReady && this.blackReady;
 	}
 
 	getWCDeck(packs){
 		let deck = new Deck();
 		for(let i = 0; i < packs.length;i++){
 			/**Warning: Potential break point**/
-			for(let j = 0;j<this.white_cards[packs[i]].length;j++){
-				deck.add(this.white_cards[packs[i]][j].clone());
+			for(let j = 0;j<this.whiteCards[packs[i]].length;j++){
+				deck.add(this.whiteCards[packs[i]][j].clone());
 			}
 		}
 		deck.shuffle();
@@ -68,8 +71,8 @@ class DeckManager{
 		let deck = new Deck();
 		for(let i = 0; i < packs.length;i++){
 			/**Warning: Potential break point**/
-			for(let j = 0;j<this.black_cards[packs[i]].length;j++){
-				deck.add(this.black_cards[packs[i]][j].clone());
+			for(let j = 0;j<this.blackCards[packs[i]].length;j++){
+				deck.add(this.blackCards[packs[i]][j].clone());
 			}
 		}
 		deck.shuffle();

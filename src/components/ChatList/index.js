@@ -34,6 +34,10 @@ class ChatList extends Component{
 	}
 }
 
+ChatList.defaultProps = {
+	history: []
+};
+
 ChatList.propTypes = {
   	history: PropTypes.array
 };

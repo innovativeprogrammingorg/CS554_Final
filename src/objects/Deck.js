@@ -25,7 +25,7 @@ class Deck{
 		}
 		mapper.sort(d_sorter);
 		for(let i = 0;i<this.cards.length;i++){
-			deck.push(cards[mapper[i].index]);
+			deck.push(this.cards[mapper[i].index]);
 		}
 		this.cards = deck;
 	}

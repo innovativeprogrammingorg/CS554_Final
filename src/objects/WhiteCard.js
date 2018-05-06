@@ -1,9 +1,7 @@
-const Card = require('./Card.js');
 
-
-class WhiteCard extends Card{
+class WhiteCard{
 	constructor(text){
-		super(text);
+		this.text = text;
 	}
 
 	clone(){

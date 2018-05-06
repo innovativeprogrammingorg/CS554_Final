@@ -1,4 +1,5 @@
 const CARD_PACKS = [
+	"Main Game",
 	"First Expansion",
 	"Second Expansion",
 	"Third Expansion",

@@ -18,7 +18,7 @@ class CardPacks extends Component{
 		}
 	}
 
-	componentWillMount(){
+	componentDidMount(){
 		this.initSocket();
 	}
 
@@ -27,15 +27,24 @@ class CardPacks extends Component{
 	}
 
 	static getDerivedStateFromProps(nextProps,prevState){
+		console.log("getDerivedStateFromProps called in CardPacks");
+
 		if(!nextProps.cardpacks){
 			return null;
 		}
 		let state = prevState;
+		if(!state || !state.packs){
+			for(let i = 0; i < CARD_PACKS.length;i++){
+				state.packs.push(CARD_PACKS[i]); 
+				state.packValues[CARD_PACKS[i]] = false; 
+			}
+		}
+		
 		for(let i = 0;i<state.packs.length;i++){
 			state.packValues[state.packs[i]] = false;
 		}
 		for(let i = 0;i<nextProps.cardpacks.length;i++){
-			state.packValues.data[nextProps.cardpacks[i]] = true;
+			state.packValues[nextProps.cardpacks[i]] = true;
 		}
 		return state;
 		
