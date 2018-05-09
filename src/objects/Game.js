@@ -52,6 +52,7 @@ class Game{
 	}
 
 	start(){
+		console.log("Game.start");
 		this.state.round = 1;
 		this.drawBlackCard();
 		this.state.playedCards = [];
@@ -61,22 +62,21 @@ class Game{
 		this.state.stage = PLAY_CARDS_STAGE;
 		this.state.timer = this.startTimer();
 		this.state.winner = -1;
+		for(let i = 0;i<this.players.length();i++){
+			let player = this.players.at(i);
+			player.giveCards(this.whiteDeck.draw(player.cardsNeeded()));
+		}
 	}
 
 	startTimer(){
+		console.log("Game.startTimer");
 		switch(this.state.stage){
 			case PLAY_CARDS_STAGE:
 			case CARD_ZAR_CHOICE_STAGE:
-				return setTimeout(
-					()=>{
-						this.nextStageByTimeOut.bind(this);
-					},this.settings.turnDuration * 1000);
+				return setTimeout(this.nextStageByTimeOut.bind(this),this.settings.turnDuration * 1000);
 			case WAIT_FOR_NEXT_ROUND_STAGE:
 				this.callbacks.onRoundEnd(this._id,this.state.winner);
-				return setTimeout(
-					()=>{
-						this.nextStage.bind(this);
-					},NEXT_ROUND_DELAY);
+				return setTimeout(this.nextStage.bind(this),NEXT_ROUND_DELAY);
 				break;
 			default:
 				console.error('Error, unexpected game stage');
@@ -86,6 +86,7 @@ class Game{
 	}
 
 	nextStageByTimeOut(){
+		console.log("Game.nextStageByTimeOut");
 		switch(this.state.stage){
 			case PLAY_CARDS_STAGE:
 				this.callbacks.onAllUsersPlayed(this._id);
@@ -104,6 +105,7 @@ class Game{
 	}
 
 	nextStage(){
+		console.log("Game.nextStage");
 		switch(this.state.stage){
 			case PLAY_CARDS_STAGE:
 				clearTimeout(this.state.timer);
@@ -126,21 +128,25 @@ class Game{
 	}
 
 	updateSettings(newSetting){
+		console.log("Game.updateSettings");
 		this.settings = Object.assign(this.settings,newSetting);
 		this.callbacks.onSettingUpdate(this._id,this.settings);
 	}
 
 	updateCardPacks(cardpack){
+		console.log("Game.updateCardPacks");
 		this.settings.updateCardPacks(cardpack);
 		//console.log(this.settings);
 		this.callbacks.onCardPacksUpdate(this._id,cardpack,this.settings.cardPacks);
 	}
 	
 	addPlayer(socket){
+		console.log("Game.addPlayer");
 		this.players.append(new Player(socket.handshake.session.username,socket));
 	}
 
 	updatePlayer(socket){
+		console.log("Game.updatePlayer");
 		try{
 			let player = this.players.lookup("name",socket.handshake.session.username);
 			player.socket = socket;
@@ -155,6 +161,7 @@ class Game{
 	}
 
 	removePlayer(name){
+		console.log("Game.removePlayer");
 		let index = this.players.find("name",name);
 		if(index === -1){
 			throw new Error("Tried to remove player from game, who is not in the game");
@@ -171,6 +178,7 @@ class Game{
 	}
 
 	isCardZar(name){
+		console.log("Game.isCardZar");
 		if(this.state.round < 1){
 			return false;
 		}
@@ -178,22 +186,26 @@ class Game{
 	}
 
 	setZar(index){
+		console.log("Game.setZar");
 		this.state.cardZar = index;
 		console.log("Player at "+index+" is zar");
 		this.callbacks.onNewZar(this.players.at(index).socket);
 	}
 
 	hasRoom(){
+		console.log("Game.hasRoom");
 		return this.settings.maxPlayers > this.players.length(); 
 	}
 	
 	dealCards(){
+		console.log("Game.dealCards");
 		for(let i = 0;i<this.players.length;i++){
-			this.players.at(i).give_cards(this.whiteDeck.draw(HAND_SIZE));
+			this.players.at(i).giveCards(this.whiteDeck.draw(HAND_SIZE));
 		}
 	}
 
 	drawBlackCard(){
+		console.log("Game.drawBlackCard");
 		try{
 			this.state.blackCard = this.blackDeck.draw();
 		}catch(err){
@@ -203,6 +215,7 @@ class Game{
 	}
 
 	playCards(name,cards){
+		console.log("Game.playCards");
 		if(Math.floor(Date.now()/1000) - this.state.roundStart > this.settings.turnDuration){
 			return;
 		}
@@ -223,6 +236,7 @@ class Game{
 	}
 
 	roundWinner(cards_index){
+		console.log("Game.roundWinner");
 		clearTimeout(this.state.timer);
 		let name = this.state.played[cards_index];
 		let player = this.players.lookup("name",name);
@@ -236,6 +250,7 @@ class Game{
 	}
 
 	nextRound(){
+		console.log("Game.nextRound");
 		this.state.round++;
 		for(let i = 0;i<this.state.played.length;i++){
 			let player = this.players.lookup("name",this.state.played[i]);

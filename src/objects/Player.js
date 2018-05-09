@@ -24,7 +24,7 @@ class Player{
 	}
 
 	cardsNeeded(){
-		return HAND_SIZE - this.hand.length;
+		return HAND_SIZE - this.hand.length();
 	}
 
 	giveCards(args){

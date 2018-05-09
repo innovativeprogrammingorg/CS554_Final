@@ -8,8 +8,6 @@ import './GameUI.css';
 class GameUI extends Component{
 	constructor(){
 		super();
-		this.selected = [];//Player
-		this.selection = -1;//Zar
 		this.state = {
 			game:{
 				round:-1,
@@ -28,12 +26,34 @@ class GameUI extends Component{
 				isZar:false,
 				played:false,
 				ownCards:-1
-			}
+			},
+			selected:[],//player
+			selection:-1//zar
 		};
+	}
+
+	updateTime(){
+		this.setState((prevState,props)=>{
+			let state = prevState;
+			if(state.game.sec <= 0){
+				if(state.game.min > 0){
+					state.game.sec = 59;
+					state.game.min--;
+				}
+			}else{
+				state.game.sec--;
+			}
+			return state;
+		});
+		if(this.state.game.min > 0 || this.state.game.sec > 0){
+			setTimeout(this.updateTime.bind(this),1000);
+		}
+		
 	}
 
 	componentDidMount(){
 		this.initSocket();
+		setTimeout(this.updateTime.bind(this),1000);
 	}
 
 	componentWillUnmount(){
@@ -119,19 +139,32 @@ class GameUI extends Component{
 			return;
 		}
 
-		if(this.selected.length === 0){
-			this.selected.push(index);
-			return;
-		}
-
-		if(this.selected.includes(index)){
-			this.selected = this.selected.filter((val,i,arr)=>{
-				return val !== index;
+		if(this.state.selected.length === 0){
+			this.setState((prevState,props)=>{
+				let state = prevState;
+				state.selected.push(index);
+				return state;
 			});
 			return;
 		}
-		if(this.selected.length < this.state.game.blackCard.blankSpaces){
-			this.selected.push(index);
+
+		if(this.state.selected.includes(index)){
+			this.setState((prevState,props)=>{
+				let state = prevState;
+				state.selected = state.selected.filter((val,i,arr)=>{
+					return val !== index;
+				});
+				return state;
+			});
+			
+			return;
+		}
+		if(this.state.selected.length < this.state.game.blackCard.blankSpaces){
+			this.setState((prevState,props)=>{
+				let state = prevState;
+				state.selected.push(index);
+				return state;
+			});
 		}else{
 			alert('Cannot Select any more cards at once!');
 		}
@@ -141,10 +174,18 @@ class GameUI extends Component{
 		if(!this.state.player.isZar){
 			return;
 		}
-		if(index === this.selection){
-			this.selection = -1;
+		if(index === this.state.selection){
+			this.setState((prevState,props)=>{
+				let state = prevState;
+				state.selection = -1;
+				return state;
+			});
 		}else{
-			this.selection = index;
+			this.setState((prevState,props)=>{
+				let state = prevState;
+				state.selection = index;
+				return state;
+			});
 		}
 	}
 
@@ -154,18 +195,18 @@ class GameUI extends Component{
 				alert('Select a card first!');
 				return;
 			}
-			this.socket.emit('chooseCards',this.selection);
+			this.socket.emit('chooseCards',this.state.selection);
 			this.setState((prevState,props)=>{
 				let state = prevState;
 				state.player.isZar = false;
 				return state;
 			});
 		}else{
-			if(this.selected.length !== this.state.blackCard.blankSpaces){
+			if(this.state.selected.length !== this.state.game.blackCard.blankSpaces){
 				alert('Select more cards!');
 				return;
 			}
-			this.socket.emit('playCards',this.selected);
+			this.socket.emit('playCards',this.state.selected);
 		}
 	}
 	renderPlayedCards(){
@@ -200,7 +241,8 @@ class GameUI extends Component{
 			<div className="gameUI">
 				<div className="gameTopBar">
 					<span className="gameTopBar" id="Round">Round:{this.state.game.round}&emsp;&emsp;</span>
-					<span className="gameTopBar" id="Time">Time:&nbsp;{this.state.game.min}:{this.state.game.sec}</span>
+					<span className="gameTopBar" id="Time">
+							Time:&nbsp;{this.state.game.min}:{this.state.game.sec > 9 ? this.state.game.sec : "0" + this.state.game.sec }</span>
 				</div>
 				<GameActionBar blackCard={this.state.game.blackCard.text} onConfirmSelection={this.onConfirm.bind(this)} />
 				{this.renderPlayedCards()}

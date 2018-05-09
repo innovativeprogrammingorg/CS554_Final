@@ -1,7 +1,20 @@
 div.whiteCard{
 	border:2px solid black;
+	background-color:#FFF;
+	color:#000;
+	width:9vw;
+	height:11vw;
+	border-radius:5px;
+	margin-left:5px;
+	float:left;
+}
+
+div.whiteCard p{
+	padding:10%;
+	word-wrap: break-word;
 }
 
 div.whiteCard:hover{
 	cursor:pointer;
+	border:2px solid blue;
 }

@@ -34,7 +34,7 @@ class WhiteCard extends Component{
 	render(){
 		return (
 			<div style={(this.state.selected ?{borderColor:'blue'}:{borderColor:'black'}) } 
-				 className="whiteCard" onClick={this.onSelect}>
+				 className="whiteCard" onClick={this.onSelect.bind(this)}>
 				{this.renderText()}
 			</div>
 		);

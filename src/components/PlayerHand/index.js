@@ -4,7 +4,12 @@ import WhiteCard from "../WhiteCard";
 import './PlayerHand.css';
 
 class PlayerHand extends Component{
-
+	renderHand(){
+		if(this.props.isZar === true){
+			return (<h1 className="overlay">You are the card zar</h1>);
+		}
+		return this.renderCards();
+	}
 	renderCards(){
 		console.log(this.props);
 		try{
@@ -24,7 +29,7 @@ class PlayerHand extends Component{
 
 	render(){
 		return(
-			<div id="playerHand">{this.renderCards()}</div>
+			<div id="playerHand">{this.renderHand()}</div>
 		);
 	}
 }
@@ -36,6 +41,7 @@ PlayerHand.defaultProps = {
 PlayerHand.propTypes = {
 	cards:PropTypes.array,
 	onSelect:PropTypes.func.isRequired,
-	selectable:PropTypes.bool
+	selectable:PropTypes.bool,
+	isZar:PropTypes.bool
 };
 export default PlayerHand;
