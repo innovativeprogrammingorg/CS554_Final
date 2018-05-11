@@ -239,6 +239,7 @@ class Game{
 	
 	addPlayer(socket){
 		this.players.append(new Player(socket.handshake.session.username,socket));
+		this.callbacks.onPlayerChange(this.getLobbyVersion());
 	}
 
 	updatePlayer(socket){
@@ -262,11 +263,12 @@ class Game{
 			throw new Error("Tried to remove player from game, who is not in the game");
 		}
 		this.players.remove(index);
-		if(this.players.length() < 2){
+		if( (this.players.length() < 2 && this.state.round >= 1) || (this.players.length() < 1)){
 			this.callbacks.onGameOver(this._id);
 			return;
 		}
 		this.callbacks.onPlayerLeave(this._id,name);
+		this.callbacks.onPlayerChange(this.getLobbyVersion());
 		if(index === 0){
 			this.callbacks.onNewOwner(this.players.at(0).socket);
 		}
@@ -275,7 +277,7 @@ class Game{
 	/*Functions for exporting the game state with only safe/needed data*/
 
 	isCardZar(name){
-		return this.state.round >= 1 && this.players.at(this.state.cardZar).name === name;
+		return this.state.round >= 1 && (this.players.at(this.state.cardZar).name === name);
 	}
 
 	hasRoom(){

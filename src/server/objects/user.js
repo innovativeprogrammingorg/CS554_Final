@@ -17,7 +17,7 @@ class User{
 		return new Promise((resolve,reject)=>{
 			crypto.pbkdf2(password,this.salt,CONSTANTS.CRYPTO_ITERATIONS,CONSTANTS.CRYPTO_KEY_LEN,CONSTANTS.CRYPTO_ALG,(err,result)=>{
 				if (err) throw err;
-				resolve(this.password === result);
+				resolve(this.password.compare(result) === 0);
 				
 			});
 		});

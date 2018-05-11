@@ -56,6 +56,21 @@ class Lobby extends Component{
 				return state;
 			});
 		});
+		this.socket.on('updatePlayers',(game)=>{
+			this.setState((prevState,props)=>{
+				let state = prevState;
+				for(let i = 0;i < state.games.length;i++){
+					if(state.games[i]._id === game._id){
+						state.games[i].name = game.name;
+						state.games[i].players = game.players;
+						state.games[i].noPlayers = game.noPlayers;
+						break;
+					}
+
+				}
+				return state;
+			});
+		});
 		this.socket.on('game',(game)=>{
 			console.log(game);
 			this.setState((prevState, props)=>{

@@ -27,6 +27,7 @@ class Callbacks{
 				onNewZar:this.onNewZar.bind(this),
 				onHandChanged:this.onHandChanged.bind(this),
 				onRoundEnd:this.onRoundEnd.bind(this),
+				onPlayerChange:this.onPlayerChange.bind(this),
 				chat:{
 					onNewMessage:this.onNewMessage.bind(this)
 				}
@@ -60,12 +61,18 @@ class Callbacks{
 		console.log("onGameStart");
 	}
 
+	async onPlayerChange(game){
+		console.log("onPlayerChange");
+		this.io.in('lobby').emit('updatePlayers',game);
+	}
+
 	async onAllUsersPlayed(gameId){
 		this.io.in(gameId).emit('allPlayed');
 		console.log("onAllUsersPlayed");
 	}
 
 	async onPlayerLeave(gameId,username){
+		console.log(username +" has left game "+ gameId);
 		this.io.in(gameId).emit('left',username);
 		console.log("onPlayerLeave");
 	}

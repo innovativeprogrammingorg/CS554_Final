@@ -254,7 +254,10 @@ class GameHandler{
 	async getZar(socket){
 		try{
 			let game = this.gameManager.getGame(socket.handshake.session.game);
-			socket.emit('onNewZar',game.state.cardZar);
+			if(game.state.round > 0){
+				socket.emit('onNewZar',game.state.cardZar);
+			}
+			
 		}catch(err){
 			socket.emit('error',err);
 			console.log(err);

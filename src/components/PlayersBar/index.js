@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import User from '../User';
 import io from 'socket.io-client';
 import './playersbar.css';
@@ -19,15 +18,6 @@ class PlayersBar extends Component{
 
 	componentWillUnmount(){
 		this.socket.close();
-	}
-
-	static getDerivedStateFromProps(nextProps,prevState){
-		if(!nextProps.players ){
-			return null;
-		}
-		return {
-			players: nextProps.players
-		};
 	}
 
 	setZar(zar){
@@ -84,7 +74,7 @@ class PlayersBar extends Component{
 		this.socket.on('left',(msg)=>{
 			this.setState((prevState,props)=>{
 				let state = prevState;
-				state.players = prevState.players.filter((player,index,arr)=>{
+				state.players = prevState.players.filter((player)=>{
 					return (player.name !== msg);
 				});
 				return state;
@@ -111,9 +101,5 @@ class PlayersBar extends Component{
 			);
 	}
 }
-
-PlayersBar.propTypes = {
-	players: PropTypes.array  	
-};
 
 export default PlayersBar;

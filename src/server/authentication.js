@@ -8,11 +8,12 @@ class Authentication{
 	static async authUser(username, password, cb){
 		try{
 			let result = await db.getUser(username);
-			let user = new User(result.username,result.password,result.salt);
+			let user = new User(result.username,result.password.buffer,result.salt);
 			let out = await user.verify(password);
 			cb(out);
 		}catch(err){
-			console.error(err);
+			console.log("auth error")
+			console.log(err);
 			cb(false);
 		}	
 	}
@@ -22,7 +23,7 @@ class Authentication{
 			let result = await db.userExists(name);
 			cb(!result);
 		}catch(err){
-			console.error(err);
+			console.log(err);
 			cb(false);
 		}
 	}
@@ -31,7 +32,7 @@ class Authentication{
 		try{
 			let result = await db.userExists(username);
 			if(result){
-				console.error("Cannot create a user which already exists!");
+				console.log("Cannot create a user which already exists!");
 				cb(false);
 				return;
 			}
@@ -40,12 +41,12 @@ class Authentication{
 				db.insertUser(user);
 				cb(true);
 			}).catch((err)=>{
-				console.error(err);
+				console.log(err);
 				cb(false);
 			});
 			
 		}catch(err){
-			console.error(err);
+			console.log(err);
 			cb(false);
 		}
 	}
@@ -63,7 +64,7 @@ class Authentication{
 				cb(true);
 			}
 		}catch(err){
-			console.error(err);
+			console.log(err);
 		}
 	}
 }
