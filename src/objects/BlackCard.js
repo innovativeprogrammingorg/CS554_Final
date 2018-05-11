@@ -9,7 +9,7 @@ class BlackCard{
 				this.blankSpaces = 1;
 			}else{
 				while(formatedText.includes("<$blank_space/>")){
-					formatedText.replace("<$blank_space/>",BLANK_SPACE);
+					formatedText = formatedText.replace("<$blank_space/>",BLANK_SPACE);
 					this.blankSpaces++;
 				}
 			}
