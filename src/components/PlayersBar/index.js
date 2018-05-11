@@ -72,10 +72,11 @@ class PlayersBar extends Component{
 		});
 
 		this.socket.on('left',(msg)=>{
+			console.log(msg+' has left the game');
 			this.setState((prevState,props)=>{
 				let state = prevState;
 				state.players = prevState.players.filter((player)=>{
-					return (player.name !== msg);
+					return (player.username !== msg);
 				});
 				return state;
 			});
