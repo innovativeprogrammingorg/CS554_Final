@@ -1,7 +1,6 @@
 const GAME_SETTINGS = require('../data/settings.js');
 const DArray = require('./DynamicArray.js');
 
-
 class Settings{
 	constructor(){
 		for(let i = 0;i<GAME_SETTINGS.length;i++){
@@ -18,7 +17,6 @@ class Settings{
 			this.cardPacks.remove(index);
 		}
 	}
-
 }
 
 module.exports = Settings;

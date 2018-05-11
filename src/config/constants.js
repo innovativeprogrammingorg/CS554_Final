@@ -13,7 +13,7 @@ const BLANK_SPACE = '______';
 
 const GAME_CAPACITY = 100;
 
-const NEXT_ROUND_DELAY = 10000; 
+const NEXT_ROUND_DELAY = 10000; //10 seconds
 
 const SERVER_PORT = 8989;
 

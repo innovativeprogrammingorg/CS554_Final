@@ -30,6 +30,9 @@ class Main extends React.Component{
 				viewType:'PLAY'
 			}));
 		});
+		this.socket.on('noGame',()=>{
+			window.location = window.location.protocol + "//" + window.location.hostname + ":3000/lobby";
+		});
 	}
 
 	renderGameArea(){

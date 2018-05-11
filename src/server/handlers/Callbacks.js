@@ -29,7 +29,6 @@ class Callbacks{
 				onRoundEnd:this.onRoundEnd.bind(this)
 			}
 		};
-
 	}
 
 	async onServerFull(){
@@ -47,39 +46,39 @@ class Callbacks{
 		console.log("onGameCreate");
 	}	
 
-	async onGameRemoved(game_id){
-		this.io.in('lobby').emit('removeGame',game_id);
+	async onGameRemoved(gameId){
+		this.io.in('lobby').emit('removeGame',gameId);
 		console.log("onGameRemoved");
 	}
 
-	async onGameStart(game_id){
-		console.log("Starting game "+game_id);
-		this.io.in(game_id).emit('start');
+	async onGameStart(gameId){
+		console.log("Starting game "+gameId);
+		this.io.in(gameId).emit('start');
 		console.log("onGameStart");
 	}
 
-	async onAllUsersPlayed(game_id){
-		this.io.in(game_id).emit('allPlayed');
+	async onAllUsersPlayed(gameId){
+		this.io.in(gameId).emit('allPlayed');
 		console.log("onAllUsersPlayed");
 	}
 
-	async onPlayerLeave(game_id,username){
-		this.io.in(game_id).emit('left',username);
+	async onPlayerLeave(gameId,username){
+		this.io.in(gameId).emit('left',username);
 		console.log("onPlayerLeave");
 	}
 
-	async onPlayerWin(game_id,winner){
-		this.io.in(game_id).emit('winner',username);
+	async onPlayerWin(gameId,winner){
+		this.io.in(gameId).emit('winner',username);
 		console.log("onPlayerWin");
 	}
 
-	async onGameOutOfCards(game_id){
-		this.io.in(game_id).emit('gameDraw','No more cards left, game is a draw!');
+	async onGameOutOfCards(gameId){
+		this.io.in(gameId).emit('gameDraw','No more cards left, game is a draw!');
 		console.log("onGameOutOfCards");
 	}
 
-	async onRoundWon(game_id,username){
-		this.io.in(game_id).emit('roundWinner',username);
+	async onRoundWon(gameId,username){
+		this.io.in(gameId).emit('roundWinner',username);
 		console.log("onRoundWon");
 	}
 
@@ -88,27 +87,27 @@ class Callbacks{
 		console.log("onNextRound");
 	}
 	
-	async onGameStartFailed(game_id,reason='Error'){
+	async onGameStartFailed(gameId,reason='Error'){
 		console.error("Game couldn't start because "+reason);
-		this.io.in(game_id).emit('error',reason);
+		this.io.in(gameId).emit('error',reason);
 		console.log("onGameStartFailed");
 	}
 
-	async onCardZarTimeOut(game_id){
-		this.io.in(game_id).emit('noZarChoice','Card Zar has timed out before making a choice!');
+	async onCardZarTimeOut(gameId){
+		this.io.in(gameId).emit('noZarChoice','Card Zar has timed out before making a choice!');
 		console.log("onCardZarTimeOut");
 	}
 
-	async onSettingUpdate(game_id,settings){
-		this.io.in(game_id).emit('updateSetting',settings);
+	async onSettingUpdate(gameId,settings){
+		this.io.in(gameId).emit('updateSetting',settings);
 		console.log("onSettingUpdate");
 	}
 
-	async onCardPacksUpdate(game_id,cardpack,cardPacks){
-		this.io.in(game_id).emit('updateCardPacks',cardpack);
+	async onCardPacksUpdate(gameId,cardpack,cardPacks){
+		this.io.in(gameId).emit('updateCardPacks',cardpack);
 
 		this.io.in('lobby').emit('updateCardPacks',{
-			id:game_id,
+			id:gameId,
 			cardPacks:cardPacks
 		});
 		console.log("onCardPacksUpdate");
@@ -119,8 +118,10 @@ class Callbacks{
 		console.log("onNewOwner");
 	}
 
-	async onNewZar(socket){
-		socket.emit('zar');
+	async onNewZar(socket,gameId,cardZar){
+		socket.emit('zar',gameId);
+		this.io.in(gameId).emit('onNewZar',cardZar);
+		socket.in(gameId).emit('noZar');
 		console.log("onNewZar");
 	}
 
@@ -129,8 +130,8 @@ class Callbacks{
 		console.log("onHandChanged");
 	}
 
-	async onRoundEnd(game_id,winner){
-		this.io.in(game_id).emit('displayPlayed',winner);
+	async onRoundEnd(gameId,winner){
+		this.io.in(gameId).emit('displayPlayed',winner);
 		console.log("onRoundEnd");
 	}
 }

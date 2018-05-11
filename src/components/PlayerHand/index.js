@@ -11,14 +11,13 @@ class PlayerHand extends Component{
 		return this.renderCards();
 	}
 	renderCards(){
-		console.log(this.props);
+		//console.log(this.props);
 		try{
 			return this.props.cards.map((card,i)=>{
 				return(
-					<WhiteCard selectable={this.props.selectable} onSelect={()=>{this.props.onSelect(i)}} text={card.text}
+					<WhiteCard key={i} selectable={this.props.selectable} onSelect={()=>{this.props.onSelect(i)}} text={card.text}
 							   visible={true}/>
 				);
-				
 			});
 		}catch(err){
 			console.log(err);

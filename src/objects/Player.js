@@ -10,13 +10,15 @@ class Player{
 		this.hand = new DArray();
 		this.missed_turns = 0;
 	}
+
 	getCards(args){
 		let out = [];
-		for(let i = 0;i<args.length;i++){
-			out.push[this.hand[args[i]]];
+		for(let i = 0;i < args.length;i++){
+			out.push(this.hand.at(args[i]));
 		}
 		return out;
 	}
+	
 	removeCards(args){
 		for(let i = 0;i<args.length;i++){
 			this.hand.remove(args[i]);

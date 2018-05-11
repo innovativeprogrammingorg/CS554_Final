@@ -1,3 +1,10 @@
 div.gameTopBar{
 	text-align: center;
 }
+
+div.gameBoard{
+	width:100vw;
+	height:400px;
+	background-color:#DDD;
+	position:relative;
+}

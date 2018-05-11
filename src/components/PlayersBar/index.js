@@ -8,7 +8,8 @@ class PlayersBar extends Component{
 	constructor(){
 		super();
 		this.state = {
-			players:[]
+			players:[],
+			cardZar:-1
 		};
 	}
 
@@ -29,10 +30,19 @@ class PlayersBar extends Component{
 		};
 	}
 
+	setZar(zar){
+		this.setState((prevState,props)=>{
+			let state = prevState;
+			state.cardZar = zar;
+			return state;
+		});
+	}
+
 	initSocket(){
 		this.socket = io.connect('http://localhost:8989');
 		this.socket.on('connect',()=>{
 			this.socket.emit('getPlayers');
+			this.socket.emit('getZar');
 		});
 		this.socket.on('players',(players)=>{
 			this.setState((prevState,props)=>{
@@ -40,6 +50,10 @@ class PlayersBar extends Component{
 				state.players = players;
 				return state;
 			});
+		});
+
+		this.socket.on('onNewZar',(zar)=>{
+			this.setZar(zar);
 		});
 
 		this.socket.on('joined',(msg)=>{
@@ -58,7 +72,7 @@ class PlayersBar extends Component{
 		this.socket.on('left',(msg)=>{
 			this.setState((prevState,props)=>{
 				let state = prevState;
-				state.players = prevState.filter((player,index,arr)=>{
+				state.players = prevState.players.filter((player,index,arr)=>{
 					return (player.name !== msg);
 				});
 				return state;
@@ -71,7 +85,7 @@ class PlayersBar extends Component{
 	renderInternal(){
 		return this.state.players.map((player,i)=>{
 			return (
-				<User key={i} username={player.username} points={player.points} />
+				<User key={i} username={player.username} points={player.points} zar={i === this.state.cardZar }/>
 			);
 		});
 	}
@@ -85,7 +99,6 @@ class PlayersBar extends Component{
 			);
 	}
 }
-
 
 PlayersBar.propTypes = {
 	players: PropTypes.array  	

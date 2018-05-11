@@ -1,5 +1,5 @@
 /**
- * An array wrapper which 
+ * An array wrapper with additional functionality built in 
  */
 class DArray{
 
@@ -73,7 +73,7 @@ class DArray{
 			this.remove(index);
 		}
 	}
-	removeByProperty(prop,attribute){
+	removeByProperty(property_name,value){
 		let index = -1;
 		for(let i = 0;i<this.length();i++){
 			if(this.data[i][property_name] == value){
@@ -96,7 +96,7 @@ class DArray{
 	}
 
 	lookup(property_name,value){
-		for(let i = 0;i<this.length();i++){
+		for(let i = 0;i<this.data.length;i++){
 			if(this.data[i][property_name] == value){
 				return this.data[i];
 			}
@@ -105,7 +105,7 @@ class DArray{
 	}
 
 	find(property_name,value){
-		for(let i = 0;i<this.length();i++){
+		for(let i = 0;i<this.data.length;i++){
 			if(this.data[i][property_name] == value){
 				return i;
 			}
@@ -114,7 +114,7 @@ class DArray{
 	}
 
 	find2(value){
-		for(let i = 0;i<this.length();i++){
+		for(let i = 0;i<this.data.length;i++){
 			if(this.data[i] == value){
 				return i;
 			}

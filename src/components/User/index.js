@@ -3,12 +3,19 @@ import PropTypes from 'prop-types';
 import './user.css';
 
 class User extends Component{
+	renderZar(){
+		if(this.props.zar){
+			return (<p className="userName" > <span>Card Zar</span> {this.props.username}</p>);
+		}
+		return (<p className="userName" > {this.props.username}</p>);
+	}
 	render(){
 		/**TODO change look for owner**/
 		return (
 			<div className="user">
-				<p className="user_name" > {this.props.username}</p>
-				<p className="user_points">Score {this.props.points}</p>
+				{this.renderZar()}
+				
+				<p className="userPoints">Score {this.props.points}</p>
 			</div>
 			);
 	}
@@ -16,7 +23,8 @@ class User extends Component{
 
 User.propTypes = {
   	username: PropTypes.string,
-  	points: PropTypes.number
+  	points: PropTypes.number,
+  	zar: PropTypes.bool
 };
 
 export default User;

@@ -28,6 +28,7 @@ const Callbacks = require('./Callbacks.js');
  * allPlayed: All played have played their cards for the round
  * iPlayed: The user played their cards for the round
  * displayPlayed: Display all played cards
+ * noGame: The game does not exist
  *
  * ****Settings Events****
  * updateSetting: game setting update
@@ -159,7 +160,8 @@ class GameHandler{
 			socket.emit('error','Please rejoin the game. Error: Game not defined');
 			return;
 		}
-		socket.to(game_id).emit('played',game.playCards(username,cards));
+		let played = game.playCards(username,cards);
+		socket.to(game_id).emit('played',played);
 		socket.emit('iPlayed',played);
 	}
 
@@ -236,9 +238,36 @@ class GameHandler{
 	async isStarted(socket){
 		try{
 			let game = this.gameManager.getGame(socket.handshake.session.game);
+			if(game ===null){
+				socket.emit('noGame');
+				return;
+			}
 			if(game.state.round != 0){
 				socket.emit('start');
 			}
+		}catch(err){
+			socket.emit('error',err);
+			console.log(err);
+		}
+	}
+
+	async getZar(socket){
+		try{
+			let game = this.gameManager.getGame(socket.handshake.session.game);
+			socket.emit('onNewZar',game.state.cardZar);
+		}catch(err){
+			socket.emit('error',err);
+			console.log(err);
+		}
+	}
+
+	async isZar(socket){
+		try{
+			let game = this.gameManager.getGame(socket.handshake.session.game);
+			if(game.isCardZar(socket.handshake.session.username)){
+				socket.emit('zar');
+			}
+
 		}catch(err){
 			socket.emit('error',err);
 			console.log(err);

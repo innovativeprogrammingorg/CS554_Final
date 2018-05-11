@@ -19,7 +19,6 @@ class WhiteCard extends Component{
 				<p className="whiteCard"></p>
 			);
 		}
-		
 	}
 	onSelect(){
 		if(!this.props.selectable || !this.props.visible){
@@ -34,7 +33,7 @@ class WhiteCard extends Component{
 	render(){
 		return (
 			<div style={(this.state.selected ?{borderColor:'blue'}:{borderColor:'black'}) } 
-				 className="whiteCard" onClick={this.onSelect.bind(this)}>
+				 className={this.props.selectable ? "whiteCardSelectable whiteCard" : "whiteCard" } onClick={this.onSelect.bind(this)}>
 				{this.renderText()}
 			</div>
 		);

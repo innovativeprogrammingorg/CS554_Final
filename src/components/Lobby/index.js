@@ -95,6 +95,16 @@ class Lobby extends Component{
 		this.socket.on('joinedGame',()=>{
 			window.location = "/game/"+this.state.toJoin;
 		});
+
+		this.socket.on('removeGame',(game_id)=>{
+			this.setState((prevState,props)=>{
+				let state = prevState;
+				state.games = state.games.filter((game)=>{
+					return game._id !== game_id;
+				});
+				return state;
+			});
+		});
 	}
 
 	createGame(){

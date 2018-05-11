@@ -5,3 +5,13 @@ div.cardGroup{
 div.cardGroup:hover{
 	cursor:pointer;
 }
+
+#playedCards{
+	width:60vw;
+	height:383px;
+	padding-top:17px;
+	border-left: 1px solid #000;
+	position:absolute;
+	left:230px;
+	
+}

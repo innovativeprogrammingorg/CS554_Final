@@ -27,7 +27,7 @@ class CardPacks extends Component{
 	}
 
 	static getDerivedStateFromProps(nextProps,prevState){
-		console.log("getDerivedStateFromProps called in CardPacks");
+		//console.log("getDerivedStateFromProps called in CardPacks");
 
 		if(!nextProps.cardpacks){
 			return null;
@@ -55,7 +55,7 @@ class CardPacks extends Component{
 
 		this.socket.on('updateCardPacks',(msg)=>{
 			if(this.props.editable){
-				console.log('Change on card pack '+msg+' ACK');
+				//console.log('Change on card pack '+msg+' ACK');
 				return;
 			}
 			this.setState((prevState,props)=>{
@@ -78,7 +78,7 @@ class CardPacks extends Component{
 		}
 		let pack = name.replace(/(_)+/g,' ');
 		let val = document.forms.settings[name].checked;
-		console.log("Called onchange for "+name);
+		//console.log("Called onchange for "+name);
 		this.setState((prevState,props)=>{
 			let state = prevState;
 			state.packValues[pack] = val;

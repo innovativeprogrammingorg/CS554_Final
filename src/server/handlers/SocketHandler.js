@@ -15,11 +15,13 @@ const GameHandler = require('./GameHandler.js');
  * startGame: The user is attempting to start a game
  * getPlayers: Request for the players in the current game
  * getSettings: Request for the settings in the current game
+ * getZar: Request for the current cardzar
  * updateSetting:
  * updateCardPacks: game cardpacks update
  * playCards:
  * chooseCards:
  * amIOwner: whether or not the player is the owner of the current game
+ * amIZar: Am I the card zar?
  * inGame: The user is in a game. Respond with game data for init. Calling socket will be bound to the player.
  * isStarted: Is the game started?
  */
@@ -106,6 +108,9 @@ class socketHandler{
 			socket.on('chooseCards',(choice)=>{
 				this.gameHandler.chooseCards(socket,choice);
 			});
+			socket.on('amIZar',()=>{
+				this.gameHandler.isZar(socket);
+			});
 			socket.on('amIOwner',()=>{
 				this.gameHandler.isOwner(socket);
 			});
@@ -114,6 +119,9 @@ class socketHandler{
 			});
 			socket.on('isStarted',()=>{
 				this.gameHandler.isStarted(socket);
+			});
+			socket.on('getZar',()=>{
+				this.gameHandler.getZar(socket);
 			});
 			socket.on('disconnect',()=>{
 			});

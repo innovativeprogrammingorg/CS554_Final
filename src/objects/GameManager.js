@@ -28,7 +28,7 @@ class GameManager{
 	constructor(callbacks){
 		this.full = false;
 		this.callbacks = callbacks;
-		this.callbacks.game.onGameOver = this.removeGame;
+		this.callbacks.game.onGameOver = this.removeGame.bind(this);
 		this.deckManager = new DeckManager();
 		this.games = new DArray();
 	}

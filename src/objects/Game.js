@@ -1,6 +1,6 @@
 const DArray = require('./DynamicArray.js');
 const uuidv4 = require('uuid/v4');
-const {HAND_SIZE, NEXT_ROUND_DELAY} = require('../config/constants.js');
+const {NEXT_ROUND_DELAY} = require('../config/constants.js');
 const Settings = require('./Settings.js');
 const Player = require('./Player.js');
 
@@ -22,7 +22,6 @@ class Game{
 		this.settings = (settings===null)? new Settings() : settings;
 		this.players = new DArray();
 		this.winner = undefined;
-
 		for(let i = 0;i < players.length;i++){
 			this.players.append(players[i]);
 		}
@@ -33,21 +32,10 @@ class Game{
 			round:0,
 			roundStart:0,
 			blackCard:null,
-			playedCards:{},
+			playedCards:[],
 			played: [],
 			cardZar:-1,
 			stage:1
-		};
-		/**
-		 * Defines the callbacks for in game events
-		 */
-		this.callbacks = {
-			onAllUsersPlayed:undefined,
-			onPlayerWin:undefined,
-			onOutOfCards:undefined,
-			onGameOver:undefined,
-			onPlayerLeave:undefined,
-			onCardZarTimeOut:undefined
 		};
 	}
 
@@ -62,10 +50,7 @@ class Game{
 		this.state.stage = PLAY_CARDS_STAGE;
 		this.state.timer = this.startTimer();
 		this.state.winner = -1;
-		for(let i = 0;i<this.players.length();i++){
-			let player = this.players.at(i);
-			player.giveCards(this.whiteDeck.draw(player.cardsNeeded()));
-		}
+		this.dealCards();
 	}
 
 	startTimer(){
@@ -74,6 +59,7 @@ class Game{
 			case PLAY_CARDS_STAGE:
 			case CARD_ZAR_CHOICE_STAGE:
 				return setTimeout(this.nextStageByTimeOut.bind(this),this.settings.turnDuration * 1000);
+				
 			case WAIT_FOR_NEXT_ROUND_STAGE:
 				this.callbacks.onRoundEnd(this._id,this.state.winner);
 				return setTimeout(this.nextStage.bind(this),NEXT_ROUND_DELAY);
@@ -82,7 +68,6 @@ class Game{
 				console.error('Error, unexpected game stage');
 				break;
 		}
-		
 	}
 
 	nextStageByTimeOut(){
@@ -118,7 +103,7 @@ class Game{
 				this.state.stage = WAIT_FOR_NEXT_ROUND_STAGE;
 				this.state.timer = this.startTimer();
 			case WAIT_FOR_NEXT_ROUND_STAGE:
-				this.nextRound();
+				//this.nextRound();
 				this.state.timer = this.startTimer();
 				break;
 			default:
@@ -134,14 +119,13 @@ class Game{
 	}
 
 	updateCardPacks(cardpack){
-		console.log("Game.updateCardPacks");
+		//console.log("Game.updateCardPacks");
 		this.settings.updateCardPacks(cardpack);
-		//console.log(this.settings);
 		this.callbacks.onCardPacksUpdate(this._id,cardpack,this.settings.cardPacks);
 	}
 	
 	addPlayer(socket){
-		console.log("Game.addPlayer");
+		//console.log("Game.addPlayer");
 		this.players.append(new Player(socket.handshake.session.username,socket));
 	}
 
@@ -157,7 +141,6 @@ class Game{
 		}catch(err){
 			console.error('Unable to update player\'s socket: '+err);
 		}
-		
 	}
 
 	removePlayer(name){
@@ -167,7 +150,7 @@ class Game{
 			throw new Error("Tried to remove player from game, who is not in the game");
 		}
 		this.players.remove(index);
-		if(this.players.length() === 0){
+		if(this.players.length() < 2){
 			this.callbacks.onGameOver(this._id);
 			return;
 		}
@@ -186,10 +169,20 @@ class Game{
 	}
 
 	setZar(index){
+		if(index === NaN){
+			this.abort();
+			throw "setZar given NaN as an argument";
+		}
 		console.log("Game.setZar");
 		this.state.cardZar = index;
 		console.log("Player at "+index+" is zar");
-		this.callbacks.onNewZar(this.players.at(index).socket);
+		try{
+			this.callbacks.onNewZar(this.players.at(index).socket, this._id, this.state.cardZar);
+		}catch(err){
+			console.log(err);
+			this.abort();
+		}
+		
 	}
 
 	hasRoom(){
@@ -200,7 +193,15 @@ class Game{
 	dealCards(){
 		console.log("Game.dealCards");
 		for(let i = 0;i<this.players.length;i++){
-			this.players.at(i).giveCards(this.whiteDeck.draw(HAND_SIZE));
+			let player = this.players.at(i);
+			try{
+				player.giveCards(this.whiteDeck.draw(player.cardsNeeded()));
+				this.callbacks.onHandChanged(player.socket,player.hand);
+			}catch(err){
+				this.callbacks.onOutOfCards(this._id);
+				return;
+			}
+			
 		}
 	}
 
@@ -225,6 +226,11 @@ class Game{
 
 		let player = this.players.lookup("name",name);
 		let playedCards = player.getCards(cards);
+
+		console.log("PlayedCards:");
+		console.log(playedCards);
+		console.log(cards);
+
 		this.state.playedCards.push(playedCards);
 		player.removeCards(cards);
 		this.state.played.push(name);
@@ -233,6 +239,12 @@ class Game{
 			this.nextStage();
 		}
 		return playedCards;
+	}
+
+	abort(){
+		clearTimeout(this.state.timer);
+		this.callbacks.onGameOver(this._id);
+		console.log("Game "+this._id+" has been aborted");
 	}
 
 	roundWinner(cards_index){
@@ -271,6 +283,13 @@ class Game{
 		this.callbacks.onNextRound(this);
 	}
 
+
+
+	/*
+	Functions for exporting the game state with only safe/needed data
+	 */
+
+
 	getPlayersSafe(){
 		let players_out = [];
 		for(let i = 0;i<this.players.length();i++){
@@ -305,7 +324,9 @@ class Game{
 			min:Math.floor(this.settings.turnDuration/60),
 			sec:this.settings.turnDuration % 60,
 			round:this.state.round,
-			stage:this.state.stage
+			stage:this.state.stage,
+			cardZar:this.state.cardZar,
+			played:this.state.playedCards
 		};
 	}
 	getFullSafeVersion(){
@@ -315,10 +336,11 @@ class Game{
 			sec:this.settings.turnDuration % 60,
 			round:this.state.round,
 			stage:this.state.stage,
+			cardZar:this.state.cardZar,
+			played:this.state.playedCards,
 			settings:this.settings
 		};
 	}
-
 }
 
 module.exports = Game;

@@ -48,7 +48,6 @@ class GameUI extends Component{
 		if(this.state.game.min > 0 || this.state.game.sec > 0){
 			setTimeout(this.updateTime.bind(this),1000);
 		}
-		
 	}
 
 	componentDidMount(){
@@ -64,7 +63,9 @@ class GameUI extends Component{
 		this.socket = io('http://localhost:8989');
 		this.socket.on('connect',()=>{
 			this.socket.emit('inGame');
+			this.socket.emit('amIZar');
 		});
+
 		this.socket.on('nextRound',(game)=>{
 			this.setState((prevState,props)=>{
 				return Object.assign(prevState,{game:game});
@@ -98,28 +99,38 @@ class GameUI extends Component{
 		this.socket.on('iPlayed',(cards)=>{
 			this.setState((prevState,props)=>{
 				let state = prevState;
-				state.player.ownCards = state.game.played.push(cards) - 1;
+				state.player.ownCards = state.game.played.push(cards);
 				return state;
 			});
 		});
 		this.socket.on('zar',()=>{
+			console.log('zar');
 			this.setState((prevState,props)=>{
+
 				let state = prevState;
 				state.player.isZar = true;
 				return state;
 			});
 		});
+		this.socket.on('noZar',()=>{
+			console.log('noZar');
+			this.setState((prevState,props)=>{
+				let state = prevState;
+				state.player.isZar = false;
+				return state;
+			});
+		})
 		this.socket.on('updateHand',(cards)=>{
 			this.setState((prevState,props)=>{
 				console.log("updateHand has been called");
-				console.log(cards);
+				//console.log(cards);
 				let state = prevState;
 				state.player.cards = cards.data;
 				return state;
 			});
 		});
 		this.socket.on('noZarChoice',()=>{
-			alert('Card Zar took too long to choose a winner');
+			console.log('Card Zar took too long to choose a winner');
 		});
 
 		this.socket.on('displayPlayed',(winner)=>{
@@ -156,7 +167,6 @@ class GameUI extends Component{
 				});
 				return state;
 			});
-			
 			return;
 		}
 		if(this.state.selected.length < this.state.game.blackCard.blankSpaces){
@@ -217,10 +227,10 @@ class GameUI extends Component{
 								 onSelect={this.onSelectCardGroup.bind(this)}/>
 				);
 			case 2:
-				if(this.state.player.isZar){
+				if(!this.state.player.isZar){
 					return (
 						<PlayedCards cards={this.state.game.played} usersCards= {this.state.player.ownCards}
-									 onSelect={this.onSelectCardGroup.bind(this)}/>
+									 onSelect={this.onSelectCardGroup.bind(this)} selectable={false} displayAll={true}/>
 					);
 				}
 				return (
@@ -244,8 +254,10 @@ class GameUI extends Component{
 					<span className="gameTopBar" id="Time">
 							Time:&nbsp;{this.state.game.min}:{this.state.game.sec > 9 ? this.state.game.sec : "0" + this.state.game.sec }</span>
 				</div>
-				<GameActionBar blackCard={this.state.game.blackCard.text} onConfirmSelection={this.onConfirm.bind(this)} />
-				{this.renderPlayedCards()}
+				<div className="gameBoard">
+					<GameActionBar blackCard={this.state.game.blackCard.text} onConfirmSelection={this.onConfirm.bind(this)} />
+					{this.renderPlayedCards()}
+				</div>
 				<PlayerHand cards={this.state.player.cards ? this.state.player.cards : []} onSelect={this.onSelectCard.bind(this)} selectable={!this.state.player.isZar}/>
 			</div>
 		);

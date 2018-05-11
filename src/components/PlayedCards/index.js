@@ -7,9 +7,6 @@ class PlayedCards extends Component{
 	constructor(){
 		super();
 		this.state = {
-			cards:[],
-			usersCards:-1,
-			selectable:false,
 			choice:-1
 		};
 	}
@@ -22,7 +19,7 @@ class PlayedCards extends Component{
 	}
 
 	onSelect(choice){
-		if(!this.state.selectable || this.state.usersCards !== -1){
+		if(!this.props.selectable || this.props.usersCards !== -1){
 			return;
 		}
 		if(this.state.choice === -1){
@@ -42,30 +39,43 @@ class PlayedCards extends Component{
 	}
 
 	renderCards(){
-		return this.state.cards.map((cards,i)=>{
-			let card_group = cards.map((card,j)=>{
+		try{
+			return this.props.cards.map((cards,i)=>{
+				let card_group = cards.map((card,j)=>{
+					return(
+						<WhiteCard key={i+" "+j} text={card.text} visible={this.props.usersCards === j || this.props.displayAll} /> 
+					);
+				});
 				return(
-					<WhiteCard text={card.text} visible={this.props.usersCards === j || this.props.displayAll} /> 
-				);
+					<div key={i} style={(this.props.winner === i)?{borderColor:'blue'}:{}} onClick={()=>{this.onSelect(i)}} id={"group"+i} className="cardGroup">{card_group}</div>
+				);	
 			});
-			return(
-				<div style={(this.props.winner === i)?{borderColor:'blue'}:{}} onClick={()=>{this.onSelect(i)}} id={"group"+i} className="cardGroup">{card_group}</div>
-			);	
-		});
+		}catch(err){
+			console.log(err);
+			console.log(this.props);
+			return;
+		}
+		
 	}
 
 	render(){
 		return(
-			<div id="player_hand">{this.renderCards()}</div>
+			<div id="playedCards">{this.renderCards()}</div>
 		);
 	}
 }
 
+PlayedCards.defaultProps = {
+	cards:[],
+	usersCards:-1,
+	selectable:false
+}
+
 PlayedCards.propTypes = {
-	cards: PropTypes.array,
-	usersCards: PropTypes.number,
+	cards: PropTypes.array.isRequired,
+	usersCards: PropTypes.number.isRequired,
 	onSelect: PropTypes.func.isRequired,
-	selectable:PropTypes.bool,
+	selectable:PropTypes.bool.isRequired,
 	displayAll:PropTypes.bool,
 	winner:PropTypes.number
 };

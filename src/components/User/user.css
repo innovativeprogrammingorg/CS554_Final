@@ -12,6 +12,10 @@ div.user p{
 
 }
 
-p.user_name{
+p.userName{
 	font-weight: bold;
+}
+
+p.userName span{
+	color:#444;
 }
