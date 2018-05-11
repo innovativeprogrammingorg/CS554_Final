@@ -43,11 +43,14 @@ class PlayedCards extends Component{
 			return this.props.cards.map((cards,i)=>{
 				let card_group = cards.map((card,j)=>{
 					return(
-						<WhiteCard key={i+" "+j} text={card.text} visible={this.props.usersCards === j || this.props.displayAll} /> 
+						<WhiteCard float={false} key={i+" "+j} text={card.text} selectable={false} 
+						visible={this.props.usersCards === j || this.props.displayAll} /> 
 					);
 				});
 				return(
-					<div key={i} style={(this.props.winner === i)?{borderColor:'blue'}:{}} onClick={()=>{this.onSelect(i)}} id={"group"+i} className="cardGroup">{card_group}</div>
+					<div key={i} onClick={()=>{this.onSelect(i)}} id={"group"+i} 
+					style={ {'width':(9.5*cards.length)+'vw'}  }
+					className="cardGroup">{card_group}</div>
 				);	
 			});
 		}catch(err){

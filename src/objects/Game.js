@@ -54,7 +54,7 @@ class Game{
 	}
 
 	startTimer(){
-		console.log("Game.startTimer");
+		console.log("Game.startTimer stage is "+this.state.stage);
 		switch(this.state.stage){
 			case PLAY_CARDS_STAGE:
 			case CARD_ZAR_CHOICE_STAGE:
@@ -62,7 +62,8 @@ class Game{
 
 			case WAIT_FOR_NEXT_ROUND_STAGE:
 				this.callbacks.onRoundEnd(this._id,this.state.winner);
-				return setTimeout(this.nextStage.bind(this),NEXT_ROUND_DELAY);
+				this.nextRound();
+				return null;
 				break;
 			default:
 				console.error('Error, unexpected game stage');
@@ -72,6 +73,7 @@ class Game{
 
 	nextStageByTimeOut(){
 		console.log("Game.nextStageByTimeOut");
+		this.state.roundStart = Math.floor(Date.now()/1000);
 		switch(this.state.stage){
 			case PLAY_CARDS_STAGE:
 				this.callbacks.onAllUsersPlayed(this._id);
@@ -91,6 +93,7 @@ class Game{
 
 	nextStage(){
 		console.log("Game.nextStage");
+		this.state.roundStart = Math.floor(Date.now()/1000);
 		switch(this.state.stage){
 			case PLAY_CARDS_STAGE:
 				clearTimeout(this.state.timer);
@@ -110,6 +113,113 @@ class Game{
 				console.error('Error, unexpected game stage');
 				break;	
 		}
+	}
+
+	nextRound(){
+		console.log("Game.nextRound");
+		this.state.round++;
+		this.dealCards();
+		this.drawBlackCard();
+		this.state.playedCards = [];
+		this.state.played = [];
+		this.state.winner = -1;
+		this.setZar( (this.state.cardZar + 1) % (this.players.length() - 1) );
+		this.callbacks.onNextRound(this);
+		this.nextStage();
+		
+	}
+
+	abort(){
+		clearTimeout(this.state.timer);
+		this.callbacks.onGameOver(this._id);
+		console.log("Game "+this._id+" has been aborted");
+	}
+
+	roundWinner(cards_index){
+		console.log("Game.roundWinner");
+
+		clearTimeout(this.state.timer);
+		let name = this.state.played[cards_index];
+		let player = this.players.lookup("name",name);
+		player.awardPoint();
+		if(player.score >= this.settings.winPoints){
+			this.callbacks.onPlayerWin(this._id,name);
+		}else{
+			this.callbacks.onRoundWon(this._id,name);
+			this.nextStage();
+		}
+	}
+
+	/****Functions for internally modifying the game state*****/
+
+	dealCards(){
+		console.log("Game.dealCards");
+		for(let i = 0;i<this.players.length;i++){
+			let player = this.players.at(i);
+			try{
+				player.giveCards(this.whiteDeck.draw(player.cardsNeeded()));
+				this.callbacks.onHandChanged(player.socket,player.hand);
+			}catch(err){
+				this.callbacks.onOutOfCards(this._id);
+				return;
+			}
+			
+		}
+	}
+
+	drawBlackCard(){
+		console.log("Game.drawBlackCard");
+		try{
+			this.state.blackCard = this.blackDeck.draw();
+		}catch(err){
+			this.callbacks.onOutOfCards(this._id);
+			this.callbacks.onGameOver(this._id);
+		}
+	}
+
+	setZar(index){
+		if(index === NaN){
+			this.abort();
+			throw "setZar given NaN as an argument";
+		}
+		console.log("Game.setZar");
+		this.state.cardZar = index;
+		console.log("Player at "+index+" is zar");
+		try{
+			this.callbacks.onNewZar(this.players.at(index).socket, this._id, this.state.cardZar);
+		}catch(err){
+			console.log(err);
+			this.abort();
+		}
+		
+	}
+
+	/****Functions for externally modifying the game state*****/
+
+	playCards(name,cards){
+		console.log("Game.playCards");
+		if(Math.floor(Date.now()/1000) - this.state.roundStart > this.settings.turnDuration){
+			return;
+		}
+		if(this.state.stage != PLAY_CARDS_STAGE){
+			return;
+		}
+
+		let player = this.players.lookup("name",name);
+		let playedCards = player.getCards(cards);
+
+		console.log("PlayedCards:");
+		console.log(playedCards);
+		console.log(cards);
+
+		this.state.playedCards.push(playedCards);
+		player.removeCards(cards);
+		this.state.played.push(name);
+		this.dealCards();
+		if(this.state.played.length === this.players.length() - 1){
+			this.nextStage();//GOTO STAGE 2
+		}
+		return playedCards;
 	}
 
 	updateSettings(newSetting){
@@ -160,6 +270,8 @@ class Game{
 		}
 	}
 
+	/*Functions for exporting the game state with only safe/needed data*/
+
 	isCardZar(name){
 		console.log("Game.isCardZar");
 		if(this.state.round < 1){
@@ -168,128 +280,10 @@ class Game{
 		return this.players.at(this.state.cardZar).name === name;
 	}
 
-	setZar(index){
-		if(index === NaN){
-			this.abort();
-			throw "setZar given NaN as an argument";
-		}
-		console.log("Game.setZar");
-		this.state.cardZar = index;
-		console.log("Player at "+index+" is zar");
-		try{
-			this.callbacks.onNewZar(this.players.at(index).socket, this._id, this.state.cardZar);
-		}catch(err){
-			console.log(err);
-			this.abort();
-		}
-		
-	}
-
 	hasRoom(){
 		console.log("Game.hasRoom");
 		return this.settings.maxPlayers > this.players.length(); 
 	}
-	
-	dealCards(){
-		console.log("Game.dealCards");
-		for(let i = 0;i<this.players.length;i++){
-			let player = this.players.at(i);
-			try{
-				player.giveCards(this.whiteDeck.draw(player.cardsNeeded()));
-				this.callbacks.onHandChanged(player.socket,player.hand);
-			}catch(err){
-				this.callbacks.onOutOfCards(this._id);
-				return;
-			}
-			
-		}
-	}
-
-	drawBlackCard(){
-		console.log("Game.drawBlackCard");
-		try{
-			this.state.blackCard = this.blackDeck.draw();
-		}catch(err){
-			this.callbacks.onOutOfCards(this._id);
-			this.callbacks.onGameOver(this._id);
-		}
-	}
-
-	playCards(name,cards){
-		console.log("Game.playCards");
-		if(Math.floor(Date.now()/1000) - this.state.roundStart > this.settings.turnDuration){
-			return;
-		}
-		if(this.state.stage != PLAY_CARDS_STAGE){
-			return;
-		}
-
-		let player = this.players.lookup("name",name);
-		let playedCards = player.getCards(cards);
-
-		console.log("PlayedCards:");
-		console.log(playedCards);
-		console.log(cards);
-
-		this.state.playedCards.push(playedCards);
-		player.removeCards(cards);
-		this.state.played.push(name);
-
-		if(this.state.played.length === this.players.length() - 1){
-			this.nextStage();//GOTO STAGE 2
-		}
-		return playedCards;
-	}
-
-	abort(){
-		clearTimeout(this.state.timer);
-		this.callbacks.onGameOver(this._id);
-		console.log("Game "+this._id+" has been aborted");
-	}
-
-	roundWinner(cards_index){
-		console.log("Game.roundWinner");
-
-		clearTimeout(this.state.timer);
-		let name = this.state.played[cards_index];
-		let player = this.players.lookup("name",name);
-		player.awardPoint();
-		if(player.score >= this.settings.winPoints){
-			this.callbacks.onPlayerWin(this._id,name);
-		}else{
-			this.callbacks.onRoundWon(this._id,name);
-			this.nextStage();
-		}
-	}
-
-	nextRound(){
-		console.log("Game.nextRound");
-		this.state.round++;
-		for(let i = 0;i<this.state.played.length;i++){
-			let player = this.players.lookup("name",this.state.played[i]);
-			try{
-				player.giveCards(this.whiteDeck.draw(player.cardsNeeded()));
-				this.callbacks.onHandChanged(player.socket,player.hand);
-			}catch(err){
-				this.callbacks.onOutOfCards(this._id);
-				return;
-			}
-		}
-		this.drawBlackCard();
-		this.state.playedCards = [];
-		this.state.played = [];
-		this.state.winner = -1;
-		this.setZar( (this.state.cardZar + 1) % (this.players.length() - 1) );
-		this.state.stage = PLAY_CARDS_STAGE;
-		this.callbacks.onNextRound(this);
-	}
-
-
-
-	/*
-	Functions for exporting the game state with only safe/needed data
-	 */
-
 
 	getPlayersSafe(){
 		let players_out = [];
@@ -324,17 +318,20 @@ class Game{
 			blackCard:this.state.blackCard,
 			min:Math.floor(this.settings.turnDuration/60),
 			sec:this.settings.turnDuration % 60,
+			time:this.state.roundStart,
 			round:this.state.round,
 			stage:this.state.stage,
 			cardZar:this.state.cardZar,
 			played:this.state.playedCards
 		};
 	}
+
 	getFullSafeVersion(){
 		return{
 			blackCard:this.state.blackCard,
 			min:Math.floor(this.settings.turnDuration/60),
 			sec:this.settings.turnDuration % 60,
+			time:this.state.roundStart,
 			round:this.state.round,
 			stage:this.state.stage,
 			cardZar:this.state.cardZar,

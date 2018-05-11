@@ -55,6 +55,18 @@ class PlayersBar extends Component{
 		this.socket.on('onNewZar',(zar)=>{
 			this.setZar(zar);
 		});
+		this.socket.on('roundWinner',(winner)=>{
+			this.setState((prevState,props)=>{
+				let state = prevState;
+				let index = state.players.findIndex((player)=>{
+					return player.username === winner;
+				});
+				if(index !== -1){
+					state.players[index].points++;
+				}
+				return state;
+			});
+		});
 
 		this.socket.on('joined',(msg)=>{
 			console.log('A player has joined the game');

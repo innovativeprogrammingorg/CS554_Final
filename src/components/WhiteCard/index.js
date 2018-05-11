@@ -30,9 +30,16 @@ class WhiteCard extends Component{
 			return {selected:!prevState.selected};
 		});
 	}
+	getStyle(){
+		return {
+			borderColor: (this.state.selected ? 'blue' : 'black'),
+			float: (this.props.float)? 'left' : 'none'
+
+		};
+	}
 	render(){
 		return (
-			<div style={(this.state.selected ?{borderColor:'blue'}:{borderColor:'black'}) } 
+			<div style={this.getStyle() } 
 				 className={this.props.selectable ? "whiteCardSelectable whiteCard" : "whiteCard" } onClick={this.onSelect.bind(this)}>
 				{this.renderText()}
 			</div>
@@ -40,11 +47,16 @@ class WhiteCard extends Component{
 	}
 }
 
+WhiteCard.defaultProps = {
+	float:true
+};
+
 WhiteCard.propTypes = {
   	text: PropTypes.string,
   	visible: PropTypes.bool,
   	selectable:PropTypes.bool,
-  	onSelect:PropTypes.func
+  	onSelect:PropTypes.func,
+  	float:PropTypes.bool
 };
 
 export default WhiteCard;
