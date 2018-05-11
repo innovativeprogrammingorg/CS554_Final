@@ -1,6 +1,6 @@
 const Auth = require('../authentication.js');
 const GameHandler = require('./GameHandler.js');
-const guestStore = require('./guestStore.js');
+const guestStore = require('../objects/guestStore.js');
 
 /**
  * +++++++++++++++++++EVENTS++++++++++++++++++++
@@ -46,7 +46,7 @@ class socketHandler{
 			}
 			socket.on('logout',()=>{
 				if(socket.handshake.session.isGuest === true){
-					this.guestStore.remove(socket.handshake.session.username);
+					this.guests.remove(socket.handshake.session.username);
 				}
 				delete socket.handshake.session.game;
 				delete socket.handshake.session.username;
@@ -159,7 +159,7 @@ class socketHandler{
 
 	async loginGuest(socket,guestName){
 		console.log("received guest request!");
-		if(!this.guestStore.isAvailible(guestName)){
+		if(!this.guests.isAvailible(guestName)){
 			socket.emit('guestLogin',false);
 			return;
 		}
@@ -170,7 +170,7 @@ class socketHandler{
 					socket.handshake.session.isGuest = true;
 					socket.handshake.session.save();
 					socket.emit('guestLogin',true);
-					this.guestStore.add(guestName);
+					this.guests.add(guestName);
 				}else{
 					socket.emit('guestLogin',false);
 				}
