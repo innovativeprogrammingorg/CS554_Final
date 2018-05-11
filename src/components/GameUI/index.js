@@ -30,7 +30,7 @@ class GameUI extends Component{
 			selected:[],//player
 			selection:-1//zar
 		};
-		this.state.time = this.state.game.sec + (this.state.game.min*60);
+		//this.state.time = this.state.game.sec + (this.state.game.min*60);
 	}
 
 	updateTime(){
@@ -79,7 +79,7 @@ class GameUI extends Component{
 			this.setState((prevState,props)=>{
 				let state = prevState;
 				state.game = game;
-				state.time = Math.floor(Date.now()/1000) - game.time;
+				//state.time = Math.floor(Date.now()/1000) - game.time;
 				return state;
 			});
 		});
@@ -251,7 +251,7 @@ class GameUI extends Component{
 				return;
 		}
 	}
-	outputTime(){
+	/*outputTime(){
 		let sec = this.state.time % 60;
 		let min = Math.floor(this.state.time/60);
 
@@ -262,14 +262,14 @@ class GameUI extends Component{
 			out += "0"+sec;
 		}
 		return out;
-	}
+	}*/
 	render(){
 		return(
 			<div className="gameUI">
 				<div className="gameTopBar">
 					<span className="gameTopBar" id="Round">Round:{this.state.game.round}&emsp;&emsp;</span>
 					<span className="gameTopBar" id="Time">
-							{this.outputTime()}</span>
+							Time:&nbsp;{this.state.game.min}:{this.state.game.sec > 9 ? this.state.game.sec : "0" + this.state.game.sec }</span>
 				</div>
 				<div className="gameBoard">
 					<GameActionBar blackCard={this.state.game.blackCard.text} onConfirmSelection={this.onConfirm.bind(this)} />

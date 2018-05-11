@@ -73,7 +73,7 @@ class Game{
 
 	nextStageByTimeOut(){
 		console.log("Game.nextStageByTimeOut");
-		this.state.roundStart = Math.floor(Date.now()/1000);
+		//this.state.roundStart = Math.floor(Date.now()/1000);
 		switch(this.state.stage){
 			case PLAY_CARDS_STAGE:
 				this.callbacks.onAllUsersPlayed(this._id);
@@ -93,7 +93,7 @@ class Game{
 
 	nextStage(){
 		console.log("Game.nextStage");
-		this.state.roundStart = Math.floor(Date.now()/1000);
+		//this.state.roundStart = Math.floor(Date.now()/1000);
 		switch(this.state.stage){
 			case PLAY_CARDS_STAGE:
 				clearTimeout(this.state.timer);
@@ -318,7 +318,7 @@ class Game{
 			blackCard:this.state.blackCard,
 			min:Math.floor(this.settings.turnDuration/60),
 			sec:this.settings.turnDuration % 60,
-			time:this.state.roundStart,
+			//time:this.state.roundStart,
 			round:this.state.round,
 			stage:this.state.stage,
 			cardZar:this.state.cardZar,
@@ -331,7 +331,7 @@ class Game{
 			blackCard:this.state.blackCard,
 			min:Math.floor(this.settings.turnDuration/60),
 			sec:this.settings.turnDuration % 60,
-			time:this.state.roundStart,
+			//time:this.state.roundStart,
 			round:this.state.round,
 			stage:this.state.stage,
 			cardZar:this.state.cardZar,
