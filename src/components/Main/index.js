@@ -46,9 +46,7 @@ class Main extends React.Component{
 		}
 	}
 
-
 	startGame(){
-		console.log("Called start game");
 		this.socket.emit('startGame');
 	}
 

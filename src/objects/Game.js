@@ -39,7 +39,7 @@ class Game{
 	}
 
 	start(){
-		console.log("Game.start");
+		//console.log("Game.start");
 		this.state.round = 1;
 		this.drawBlackCard();
 		this.dealCards();
@@ -169,7 +169,7 @@ class Game{
 	}
 
 	drawBlackCard(){
-		console.log("Game.drawBlackCard");
+		//console.log("Game.drawBlackCard");
 		try{
 			this.state.blackCard = this.blackDeck.draw();
 		}catch(err){
@@ -187,9 +187,9 @@ class Game{
 			this.abort();
 			throw "setZar given NaN as an argument";
 		}
-		console.log("Game.setZar");
+		//console.log("Game.setZar");
 		this.state.cardZar = index;
-		console.log("Player at "+index+" is zar");
+		//console.log("Player at "+index+" is zar");
 		try{
 			this.callbacks.onNewZar(this.players.at(index).socket, this._id, this.state.cardZar);
 		}catch(err){
@@ -212,11 +212,6 @@ class Game{
 
 		let player = this.players.lookup("name",name);
 		let playedCards = player.getCards(cards);
-
-		console.log("PlayedCards:");
-		console.log(playedCards);
-		console.log(cards);
-
 		this.state.playedCards.push(playedCards);
 		player.removeCards(cards);
 		this.state.played.push(name);
@@ -243,7 +238,7 @@ class Game{
 	}
 
 	updatePlayer(socket){
-		console.log("Game.updatePlayer");
+		//console.log("Game.updatePlayer");
 		try{
 			let player = this.players.lookup("name",socket.handshake.session.username);
 			player.socket = socket;
@@ -257,7 +252,7 @@ class Game{
 	}
 
 	removePlayer(name){
-		console.log("Game.removePlayer");
+		//console.log("Game.removePlayer");
 		let index = this.players.find("name",name);
 		if(index === -1){
 			throw new Error("Tried to remove player from game, who is not in the game");

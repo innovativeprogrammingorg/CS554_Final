@@ -12,7 +12,7 @@ class Authentication{
 			let out = await user.verify(password);
 			cb(out);
 		}catch(err){
-			console.log("auth error")
+			console.log("auth error");
 			console.log(err);
 			cb(false);
 		}	

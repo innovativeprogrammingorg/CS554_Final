@@ -37,17 +37,14 @@ class Callbacks{
 
 	async onServerFull(){
 		this.io.in('lobby').emit('full','Lobby is full!');
-		console.log("onServerFull");
 	}
 
 	async onServerHasRoom(){
 		this.io.in('lobby').emit('room','Room for more games!');
-		console.log("onServerHasRoom");
 	}
 
 	async onGameCreate(game){
 		this.io.in('lobby').emit('game',game);
-		console.log("onGameCreate");
 	}	
 
 	async onGameRemoved(gameId){
@@ -58,7 +55,7 @@ class Callbacks{
 	async onGameStart(gameId){
 		console.log("Starting game "+gameId);
 		this.io.in(gameId).emit('start');
-		console.log("onGameStart");
+		//console.log("onGameStart");
 	}
 
 	async onPlayerChange(game){
@@ -72,9 +69,9 @@ class Callbacks{
 	}
 
 	async onPlayerLeave(gameId,username){
-		console.log(username +" has left game "+ gameId);
+		//console.log(username +" has left game "+ gameId);
 		this.io.in(gameId).emit('left',username);
-		console.log("onPlayerLeave");
+		//console.log("onPlayerLeave");
 	}
 
 	async onPlayerWin(gameId,winner){
@@ -89,6 +86,7 @@ class Callbacks{
 
 	async onRoundWon(gameId,username){
 		this.io.in(gameId).emit('roundWinner',username);
+		this.io.in(gameId).emit('newMessage',username+" has won the round!");
 		console.log("onRoundWon");
 	}
 
@@ -98,7 +96,7 @@ class Callbacks{
 	}
 	
 	async onGameStartFailed(gameId,reason='Error'){
-		console.error("Game couldn't start because "+reason);
+		console.log("Game couldn't start because "+reason);
 		this.io.in(gameId).emit('error',reason);
 		console.log("onGameStartFailed");
 	}
@@ -120,7 +118,6 @@ class Callbacks{
 			id:gameId,
 			cardPacks:cardPacks
 		});
-		console.log("onCardPacksUpdate");
 	}
 
 	async onNewOwner(socket){
@@ -132,7 +129,7 @@ class Callbacks{
 		socket.emit('zar',gameId);
 		this.io.in(gameId).emit('onNewZar',cardZar);
 		socket.in(gameId).emit('noZar');
-		console.log("onNewZar");
+		//console.log("onNewZar");
 	}
 
 	async onHandChanged(socket,cards){

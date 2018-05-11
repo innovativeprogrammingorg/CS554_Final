@@ -67,6 +67,7 @@ class GameUI extends Component{
 				let state = prevState;
 				state.game = game;
 				state.time = state.game.sec + (state.game.min*60);
+				state.game.stage = 1;
 				return state;
 			});
 		});
@@ -97,7 +98,7 @@ class GameUI extends Component{
 			});
 		});
 		this.socket.on('roundWinner',(winner)=>{
-			alert(winner+" has won this round!");
+			console.log(winner+" has won this round!");
 		});
 		this.socket.on('iPlayed',(cards)=>{
 			this.setState((prevState,props)=>{

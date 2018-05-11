@@ -10,7 +10,6 @@ class User extends Component{
 		return (<p className="userName" > {this.props.username}</p>);
 	}
 	render(){
-		/**TODO change look for owner**/
 		return (
 			<div className="user">
 				{this.renderZar()}
