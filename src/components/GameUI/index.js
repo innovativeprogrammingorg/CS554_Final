@@ -28,7 +28,7 @@ class GameUI extends Component{
 				ownCards:-1
 			},
 			selected:[],//player
-			selection:-1//zar
+			selection:-1,//zar
 		};
 		this.state.time = 100;
 	}
@@ -64,7 +64,10 @@ class GameUI extends Component{
 
 		this.socket.on('nextRound',(game)=>{
 			this.setState((prevState,props)=>{
-				return Object.assign(prevState,{game:game});
+				let state = prevState;
+				state.game = game;
+				state.time = state.game.sec + (state.game.min*60);
+				return state;
 			});
 		});
 
@@ -258,10 +261,21 @@ class GameUI extends Component{
 		}
 		return out;
 	}
+	renderStage(){
+		switch(this.state.game.stage){
+			case 1:
+				return (<h1 className="stage">User's are Picking Cards</h1>);
+			case 2:
+				return (<h1 className="stage">Card Zar is selecting a winner</h1> );
+			default:
+				return (<h1 className="stage"></h1> );
+		}
+	}
 	render(){
 		return(
 			<div className="gameUI">
 				<div className="gameTopBar">
+					{this.renderStage()}
 					<span className="gameTopBar" id="Round">Round:{this.state.game.round}&emsp;&emsp;</span>
 					<span className="gameTopBar" id="Time">
 							{this.outputTime()}</span>

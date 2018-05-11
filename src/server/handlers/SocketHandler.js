@@ -77,7 +77,6 @@ class socketHandler{
 
 			socket.on('leaveGame',()=>{
 				this.gameHandler.leaveGame(socket);
-				
 			});
 
 			socket.on('joinedGame',()=>{

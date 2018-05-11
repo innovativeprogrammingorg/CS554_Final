@@ -21,7 +21,6 @@ class Game{
 		this.whiteDeck = whiteDeck;
 		this.settings = (settings===null)? new Settings() : settings;
 		this.players = new DArray();
-		this.winner = undefined;
 		for(let i = 0;i < players.length;i++){
 			this.players.append(players[i]);
 		}
@@ -34,7 +33,7 @@ class Game{
 			blackCard:null,
 			playedCards:[],
 			played: [],
-			cardZar:-1,
+			cardZar:0,
 			stage:1
 		};
 	}
@@ -43,14 +42,28 @@ class Game{
 		console.log("Game.start");
 		this.state.round = 1;
 		this.drawBlackCard();
+		this.dealCards();
 		this.state.playedCards = [];
 		this.state.played = [];
-		this.setZar(Math.floor(Math.random()*this.players.length()));
+		this.nextZar();
 		this.state.roundStart = Math.floor(Date.now()/1000);
 		this.state.stage = PLAY_CARDS_STAGE;
 		this.state.timer = this.startTimer();
-		this.state.winner = -1;
+	}
+
+	nextRound(){
+		console.log("Game.nextRound");
+		clearTimeout(this.state.timer);
+		this.state.round++;
 		this.dealCards();
+		this.drawBlackCard();
+		this.state.playedCards = [];
+		this.state.played = [];
+
+		this.nextZar();
+		this.state.roundStart = Math.floor(Date.now()/1000);
+		this.callbacks.onNextRound(this);
+		this.state.stage = PLAY_CARDS_STAGE;
 	}
 
 	startTimer(){
@@ -73,7 +86,7 @@ class Game{
 
 	nextStageByTimeOut(){
 		console.log("Game.nextStageByTimeOut");
-		//this.state.roundStart = Math.floor(Date.now()/1000);
+		this.state.roundStart = Math.floor(Date.now()/1000);
 		switch(this.state.stage){
 			case PLAY_CARDS_STAGE:
 				this.callbacks.onAllUsersPlayed(this._id);
@@ -93,7 +106,7 @@ class Game{
 
 	nextStage(){
 		console.log("Game.nextStage");
-		//this.state.roundStart = Math.floor(Date.now()/1000);
+		this.state.roundStart = Math.floor(Date.now()/1000);
 		switch(this.state.stage){
 			case PLAY_CARDS_STAGE:
 				clearTimeout(this.state.timer);
@@ -115,19 +128,7 @@ class Game{
 		}
 	}
 
-	nextRound(){
-		console.log("Game.nextRound");
-		this.state.round++;
-		this.dealCards();
-		this.drawBlackCard();
-		this.state.playedCards = [];
-		this.state.played = [];
-		this.state.winner = -1;
-		this.setZar( (this.state.cardZar + 1) % (this.players.length() - 1) );
-		this.callbacks.onNextRound(this);
-		this.nextStage();
-		
-	}
+	
 
 	abort(){
 		clearTimeout(this.state.timer);
@@ -154,7 +155,7 @@ class Game{
 
 	dealCards(){
 		console.log("Game.dealCards");
-		for(let i = 0;i<this.players.length;i++){
+		for(let i = 0;i<this.players.length();i++){
 			let player = this.players.at(i);
 			try{
 				player.giveCards(this.whiteDeck.draw(player.cardsNeeded()));
@@ -177,7 +178,11 @@ class Game{
 		}
 	}
 
-	setZar(index){
+	nextZar(){
+		let index = this.state.cardZar + 1;
+		if(index >= this.players.length()){
+			index = 0;
+		}
 		if(index === NaN){
 			this.abort();
 			throw "setZar given NaN as an argument";
@@ -208,9 +213,9 @@ class Game{
 		let player = this.players.lookup("name",name);
 		let playedCards = player.getCards(cards);
 
-		console.log("PlayedCards:");
-		console.log(playedCards);
-		console.log(cards);
+		//console.log("PlayedCards:");
+		//console.log(playedCards);
+		//console.log(cards);
 
 		this.state.playedCards.push(playedCards);
 		player.removeCards(cards);
@@ -223,19 +228,16 @@ class Game{
 	}
 
 	updateSettings(newSetting){
-		console.log("Game.updateSettings");
 		this.settings = Object.assign(this.settings,newSetting);
 		this.callbacks.onSettingUpdate(this._id,this.settings);
 	}
 
 	updateCardPacks(cardpack){
-		//console.log("Game.updateCardPacks");
 		this.settings.updateCardPacks(cardpack);
 		this.callbacks.onCardPacksUpdate(this._id,cardpack,this.settings.cardPacks);
 	}
 	
 	addPlayer(socket){
-		//console.log("Game.addPlayer");
 		this.players.append(new Player(socket.handshake.session.username,socket));
 	}
 
@@ -273,15 +275,10 @@ class Game{
 	/*Functions for exporting the game state with only safe/needed data*/
 
 	isCardZar(name){
-		console.log("Game.isCardZar");
-		if(this.state.round < 1){
-			return false;
-		}
-		return this.players.at(this.state.cardZar).name === name;
+		return this.state.round >= 1 && this.players.at(this.state.cardZar).name === name;
 	}
 
 	hasRoom(){
-		console.log("Game.hasRoom");
 		return this.settings.maxPlayers > this.players.length(); 
 	}
 

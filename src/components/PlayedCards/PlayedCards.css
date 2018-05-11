@@ -1,5 +1,6 @@
 div.cardGroup{
 	border:2px solid transparent;
+	display:inline-block;
 }
 
 div.cardGroup:hover{

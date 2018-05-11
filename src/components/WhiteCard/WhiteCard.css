@@ -7,6 +7,7 @@ div.whiteCard{
 	border-radius:5px;
 	margin-left:5px;
 	float:left;
+	display:inline-block;
 }
 
 div.whiteCard p{

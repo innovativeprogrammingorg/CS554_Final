@@ -68,7 +68,7 @@ class Callbacks{
 	}
 
 	async onPlayerWin(gameId,winner){
-		this.io.in(gameId).emit('winner',username);
+		this.io.in(gameId).emit('winner',winner);
 		console.log("onPlayerWin");
 	}
 

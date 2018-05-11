@@ -5,6 +5,8 @@ nav{
 
 button.nav{
 	margin:0 1% 0 0;
+	color:#000;
+	background-color:#DDD;
 }
 button.nav:hover{
 	cursor:pointer;
