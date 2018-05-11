@@ -273,6 +273,28 @@ class GameHandler{
 			console.log(err);
 		}
 	}
+
+	async getMessages(socket){
+		try{
+			let game = this.gameManager.getGame(socket.handshake.session.game);
+			socket.emit('messages',game.chat.getAll());
+
+		}catch(err){
+			socket.emit('error',err);
+			console.log(err);
+		}
+	}
+
+	async sendMessage(socket,message){
+		try{
+			let game = this.gameManager.getGame(socket.handshake.session.game);
+			game.chat.send(socket.handshake.session.username,message);
+
+		}catch(err){
+			socket.emit('error',err);
+			console.log(err);
+		}
+	}
 }
 
 module.exports = GameHandler;

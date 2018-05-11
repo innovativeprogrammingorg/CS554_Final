@@ -1,4 +1,4 @@
-div.message_history{
+div.messageHistory{
 	width:95%;
 	height:95%;
 	margin: auto auto auto auto;
@@ -7,4 +7,7 @@ div.message_history{
 	border-width: 2px 2px 0 2px;
 	border-style:solid;
 	border-color:#000;
+}
+div.message{
+	padding-left:10px;
 }

@@ -63,9 +63,8 @@ class GameManager{
 			this.callbacks.onMaxCapacity();
 			this.full = true;
 		}
-		let game = new Game();
+		let game = new Game(this.callbacks.game);
 		game.addPlayer(owner);
-		game.callbacks = this.callbacks.game;
 		this.callbacks.onGameCreate(game.getLobbyVersion());
 		this.games.append(game);
 		return game._id;

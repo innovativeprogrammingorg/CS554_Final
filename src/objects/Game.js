@@ -3,6 +3,7 @@ const uuidv4 = require('uuid/v4');
 const {NEXT_ROUND_DELAY} = require('../config/constants.js');
 const Settings = require('./Settings.js');
 const Player = require('./Player.js');
+const Chat = require('./Chat.js');
 
 /**
  * Represents the individual game
@@ -12,18 +13,16 @@ const CARD_ZAR_CHOICE_STAGE = 2;
 const WAIT_FOR_NEXT_ROUND_STAGE = 3;
 
 class Game{
-	constructor(blackDeck=null,whiteDeck=null,settings=null,players=[]){
+	constructor(callbacks){
 		/**
 		 * Game vars
 		 */
 		this._id = uuidv4();
-		this.blackDeck = blackDeck;
-		this.whiteDeck = whiteDeck;
-		this.settings = (settings===null)? new Settings() : settings;
+		this.blackDeck = undefined;
+		this.whiteDeck = undefined;
+		this.settings = new Settings();
 		this.players = new DArray();
-		for(let i = 0;i < players.length;i++){
-			this.players.append(players[i]);
-		}
+		this.callbacks = callbacks;
 		/**
 		 * Game state vars
 		 */
@@ -36,6 +35,7 @@ class Game{
 			cardZar:0,
 			stage:1
 		};
+		this.chat = new Chat(this._id,this.callbacks.chat);
 	}
 
 	start(){

@@ -49,10 +49,10 @@ class Settings extends React.Component{
 		
 		this.socket.on('updateSetting',(msg)=>{
 			this.setState((prevState,props)=>{
-				console.log(msg);
+				//console.log(msg);
 				let state = prevState;
 				state.settingValues = Object.assign(state.settingValues,msg);
-				console.log(state);
+				//console.log(state);
 				return state;
 			});
 		});

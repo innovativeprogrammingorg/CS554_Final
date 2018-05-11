@@ -5,7 +5,7 @@ div.chat{
 	min-height:400px;
 	width:80vw;
 }
-form.msg_sender{
+div.msg_sender{
 	text-align: center;
 
 }

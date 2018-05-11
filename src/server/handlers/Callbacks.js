@@ -26,7 +26,10 @@ class Callbacks{
 				onNewOwner:this.onNewOwner.bind(this),
 				onNewZar:this.onNewZar.bind(this),
 				onHandChanged:this.onHandChanged.bind(this),
-				onRoundEnd:this.onRoundEnd.bind(this)
+				onRoundEnd:this.onRoundEnd.bind(this),
+				chat:{
+					onNewMessage:this.onNewMessage.bind(this)
+				}
 			}
 		};
 	}
@@ -133,6 +136,11 @@ class Callbacks{
 	async onRoundEnd(gameId,winner){
 		this.io.in(gameId).emit('displayPlayed',winner);
 		console.log("onRoundEnd");
+	}
+
+	async onNewMessage(gameId,message){
+		this.io.in(gameId).emit('newMessage',message);
+		console.log('newMessage');
 	}
 }
 

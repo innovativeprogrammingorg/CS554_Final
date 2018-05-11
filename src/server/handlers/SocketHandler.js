@@ -25,6 +25,8 @@ const guestStore = require('../objects/guestStore.js');
  * amIZar: Am I the card zar?
  * inGame: The user is in a game. Respond with game data for init. Calling socket will be bound to the player.
  * isStarted: Is the game started?
+ * getMessages: Get messages in chat
+ * sendMessage: User sent a message!
  */
 
 class socketHandler{
@@ -119,6 +121,12 @@ class socketHandler{
 			});
 			socket.on('getZar',()=>{
 				this.gameHandler.getZar(socket);
+			});
+			socket.on('getMessages',()=>{
+				this.gameHandler.getMessages(socket);
+			});
+			socket.on('sendMessage',(message)=>{
+				this.gameHandler.sendMessage(socket,message);
 			});
 			socket.on('disconnect',()=>{
 			});

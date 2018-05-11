@@ -21,8 +21,9 @@ const SESSION_SECRET = "4wehjgwegfwkw3k23";
 
 const SESSION_COOKIE_KEY = "cah.sid";
 
+const MAX_MESSAGES = 200;
 
-
+const MAX_MESSAGE_LENGTH = 300;
 
 module.exports = {
 	MONGODB_URL:MONGODB_URL,

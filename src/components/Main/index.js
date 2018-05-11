@@ -12,7 +12,7 @@ class Main extends React.Component{
 		super();
 		this.state = {
 			viewType:'SETTINGS',
-			name:'Some Game'
+			name:'Cards Against Humanity® Online Game'
 		};
 	}
 
