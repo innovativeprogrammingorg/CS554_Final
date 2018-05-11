@@ -59,7 +59,7 @@ class Game{
 			case PLAY_CARDS_STAGE:
 			case CARD_ZAR_CHOICE_STAGE:
 				return setTimeout(this.nextStageByTimeOut.bind(this),this.settings.turnDuration * 1000);
-				
+
 			case WAIT_FOR_NEXT_ROUND_STAGE:
 				this.callbacks.onRoundEnd(this._id,this.state.winner);
 				return setTimeout(this.nextStage.bind(this),NEXT_ROUND_DELAY);
@@ -103,7 +103,7 @@ class Game{
 				this.state.stage = WAIT_FOR_NEXT_ROUND_STAGE;
 				this.state.timer = this.startTimer();
 			case WAIT_FOR_NEXT_ROUND_STAGE:
-				//this.nextRound();
+				this.state.stage = PLAY_CARDS_STAGE;
 				this.state.timer = this.startTimer();
 				break;
 			default:
@@ -236,7 +236,7 @@ class Game{
 		this.state.played.push(name);
 
 		if(this.state.played.length === this.players.length() - 1){
-			this.nextStage();
+			this.nextStage();//GOTO STAGE 2
 		}
 		return playedCards;
 	}
@@ -249,6 +249,7 @@ class Game{
 
 	roundWinner(cards_index){
 		console.log("Game.roundWinner");
+
 		clearTimeout(this.state.timer);
 		let name = this.state.played[cards_index];
 		let player = this.players.lookup("name",name);

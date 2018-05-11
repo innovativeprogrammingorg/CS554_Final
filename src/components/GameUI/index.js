@@ -96,6 +96,9 @@ class GameUI extends Component{
 				return state;
 			});
 		});
+		this.socket.on('roundWinner',(winner)=>{
+			alert(winner+" has won this round!");
+		});
 		this.socket.on('iPlayed',(cards)=>{
 			this.setState((prevState,props)=>{
 				let state = prevState;
