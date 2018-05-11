@@ -127,7 +127,6 @@ class CardPacks extends Component{
 					{this.renderCardPacks()}
 					
 				</div>
-				{this.renderExternalCPInput()}
 			</div>
 		);
 	}

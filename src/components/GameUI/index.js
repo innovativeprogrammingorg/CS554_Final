@@ -178,9 +178,10 @@ class GameUI extends Component{
 				state.selected.push(index);
 				return state;
 			});
-		}else{
-			alert('Cannot Select any more cards at once!');
+			return;
 		}
+		alert('Cannot Select any more cards at once!');
+		
 	}
 
 	onSelectCardGroup(index){
@@ -268,7 +269,7 @@ class GameUI extends Component{
 			case 2:
 				return (<h1 className="stage">Card Zar is selecting a winner</h1> );
 			default:
-				return (<h1 className="stage"></h1> );
+				return (<h1 className="stage">Waiting for next round</h1> );
 		}
 	}
 	render(){

@@ -1,5 +1,6 @@
 const Auth = require('../authentication.js');
 const GameHandler = require('./GameHandler.js');
+const guestStore = require('./guestStore.js');
 
 /**
  * +++++++++++++++++++EVENTS++++++++++++++++++++
@@ -32,27 +33,24 @@ class socketHandler{
 		this.io = io;
 		this.gameHandler = new GameHandler(this.io.of('/'));
 		this.start();
+		this.guests = new guestStore();
 	}
 
 	start(){
 		this.io.on('connection',(socket)=>{
 			//console.log("Received a new connection");
-			
-			//console.log(socket.handshake.session);
-
-			/*if(!socket.session || !socket.session.username){
-				
-				console.log("Disconnecting a socket for not being authenticated!");
-				socket.disconnect(true);
-				return;
-			}*/
+		
 			//console.log(socket.handshake);
 			if(socket.handshake.session && socket.handshake.session.game){
 				socket.join(socket.handshake.session.game);
 			}
 			socket.on('logout',()=>{
+				if(socket.handshake.session.isGuest === true){
+					this.guestStore.remove(socket.handshake.session.username);
+				}
 				delete socket.handshake.session.game;
 				delete socket.handshake.session.username;
+				delete socket.handshake.session.isGuest;
 				socket.handshake.session.save();
 				socket.emit('loggedOut');
 			});
@@ -161,6 +159,10 @@ class socketHandler{
 
 	async loginGuest(socket,guestName){
 		console.log("received guest request!");
+		if(!this.guestStore.isAvailible(guestName)){
+			socket.emit('guestLogin',false);
+			return;
+		}
 		try{
 			Auth.authGuest(guestName,(valid)=>{
 				if(valid){
@@ -168,6 +170,7 @@ class socketHandler{
 					socket.handshake.session.isGuest = true;
 					socket.handshake.session.save();
 					socket.emit('guestLogin',true);
+					this.guestStore.add(guestName);
 				}else{
 					socket.emit('guestLogin',false);
 				}
