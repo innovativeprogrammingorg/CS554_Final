@@ -30,23 +30,18 @@ class GameUI extends Component{
 			selected:[],//player
 			selection:-1//zar
 		};
-		//this.state.time = this.state.game.sec + (this.state.game.min*60);
+		this.state.time = 100;
 	}
 
 	updateTime(){
 		this.setState((prevState,props)=>{
 			let state = prevState;
-			if(state.game.sec <= 0){
-				if(state.game.min > 0){
-					state.game.sec = 59;
-					state.game.min--;
-				}
-			}else{
-				state.game.sec--;
+			if(state.time > 0){
+				state.time--;
 			}
 			return state;
 		});
-		if(this.state.game.min > 0 || this.state.game.sec > 0){
+		if(this.state.time > 0){
 			setTimeout(this.updateTime.bind(this),1000);
 		}
 	}
@@ -79,7 +74,7 @@ class GameUI extends Component{
 			this.setState((prevState,props)=>{
 				let state = prevState;
 				state.game = game;
-				//state.time = Math.floor(Date.now()/1000) - game.time;
+				state.time = (state.game.sec + (state.game.min*60)) - (Math.floor(Date.now()/1000) - game.time);
 				return state;
 			});
 		});
@@ -251,25 +246,25 @@ class GameUI extends Component{
 				return;
 		}
 	}
-	/*outputTime(){
+	outputTime(){
 		let sec = this.state.time % 60;
 		let min = Math.floor(this.state.time/60);
 
-		let out = "Time:&nbsp"+min+":";
+		let out = "Time: "+min+":";
 		if(sec > 9){
 			out += sec;
 		}else{
 			out += "0"+sec;
 		}
 		return out;
-	}*/
+	}
 	render(){
 		return(
 			<div className="gameUI">
 				<div className="gameTopBar">
 					<span className="gameTopBar" id="Round">Round:{this.state.game.round}&emsp;&emsp;</span>
 					<span className="gameTopBar" id="Time">
-							Time:&nbsp;{this.state.game.min}:{this.state.game.sec > 9 ? this.state.game.sec : "0" + this.state.game.sec }</span>
+							{this.outputTime()}</span>
 				</div>
 				<div className="gameBoard">
 					<GameActionBar blackCard={this.state.game.blackCard.text} onConfirmSelection={this.onConfirm.bind(this)} />
