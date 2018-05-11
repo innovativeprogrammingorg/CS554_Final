@@ -27,7 +27,7 @@ const GAME_SETTINGS = [
 		min:0,
 		default:30
 	},
-	{
+	/*{
 		display_name:"Blank Cards",
 		class:"numberSetting",
 		name:"blankCards",
@@ -35,7 +35,7 @@ const GAME_SETTINGS = [
 		max:50,
 		min:0,
 		default:0
-	},	
+	},	*/
 	{
 		display_name:"Password",
 		class:"passwordSetting",

@@ -20,7 +20,7 @@ class Player{
 	}
 	
 	removeCards(args){
-		for(let i = 0;i<args.length;i++){
+		for(let i = 0;i < args.length;i++){
 			this.hand.remove(args[i]);
 		}
 	}

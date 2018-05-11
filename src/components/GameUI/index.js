@@ -263,14 +263,10 @@ class GameUI extends Component{
 		return out;
 	}
 	renderStage(){
-		switch(this.state.game.stage){
-			case 1:
-				return (<h1 className="stage">User's are Picking Cards</h1>);
-			case 2:
-				return (<h1 className="stage">Card Zar is selecting a winner</h1> );
-			default:
-				return (<h1 className="stage">Waiting for next round</h1> );
+		if(this.state.game.stage === 2){
+			return (<h1 className="stage">Card Zar is selecting a winner</h1> );
 		}
+		return (<h1 className="stage">User's are Picking Cards</h1>);
 	}
 	render(){
 		return(

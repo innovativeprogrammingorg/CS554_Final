@@ -213,9 +213,9 @@ class Game{
 		let player = this.players.lookup("name",name);
 		let playedCards = player.getCards(cards);
 
-		//console.log("PlayedCards:");
-		//console.log(playedCards);
-		//console.log(cards);
+		console.log("PlayedCards:");
+		console.log(playedCards);
+		console.log(cards);
 
 		this.state.playedCards.push(playedCards);
 		player.removeCards(cards);
